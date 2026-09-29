@@ -6,9 +6,13 @@ namespace App\Modules\Organization\Providers;
 
 use App\Modules\Organization\Contracts\AppSettings;
 use App\Modules\Organization\Contracts\HolidayCalendar;
+use App\Modules\Organization\Livewire\AgencyProfileForm;
 use App\Modules\Organization\Services\AgencyHolidayCalendar;
 use App\Modules\Organization\Services\DatabaseAppSettings;
+use App\Modules\Organization\View\BrandingComposer;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
 
 final class OrganizationServiceProvider extends ServiceProvider
 {
@@ -21,5 +25,11 @@ final class OrganizationServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+        $this->loadRoutesFrom(__DIR__ . '/../Routes/web.php');
+        $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'organization');
+
+        Livewire::component('organization.agency-profile-form', AgencyProfileForm::class);
+
+        View::composer(['components.layouts.*', 'partials.head'], BrandingComposer::class);
     }
 }

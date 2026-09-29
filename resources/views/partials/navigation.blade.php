@@ -1,0 +1,27 @@
+@php
+    use App\Modules\Shared\Enums\Permission;
+
+    $items = [
+        ['route' => 'dashboard', 'label' => __('shared.dashboard'), 'permission' => null],
+        ['route' => 'organization.agency', 'label' => __('organization.agency.title'), 'permission' => Permission::OrganizationManage],
+        ['route' => 'organization.branches.index', 'label' => __('organization.branches.title'), 'permission' => Permission::BranchesManage],
+        ['route' => 'organization.holidays', 'label' => __('organization.holidays_screen.title'), 'permission' => Permission::OrganizationManage],
+        ['route' => 'organization.settings', 'label' => __('organization.settings_screen.title'), 'permission' => Permission::OrganizationManage],
+    ];
+@endphp
+<ul class="mt-md flex flex-col gap-xs">
+    @foreach ($items as $item)
+        @if (Route::has($item['route']) && ($item['permission'] === null || auth()->user()?->can($item['permission']->value)))
+            @php($active = request()->routeIs($item['route'].'*'))
+            <li wire:key="nav-{{ $item['route'] }}">
+                <a href="{{ route($item['route']) }}" wire:navigate
+                   @if ($active) aria-current="page" @endif
+                   @class([
+                       'block rounded-control px-sm py-xs text-body',
+                       'bg-brand text-brand-contrast' => $active,
+                       'text-text hover:bg-muted' => ! $active,
+                   ])>{{ $item['label'] }}</a>
+            </li>
+        @endif
+    @endforeach
+</ul>

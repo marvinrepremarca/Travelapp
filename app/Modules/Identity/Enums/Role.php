@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Identity\Enums;
 
 use App\Modules\Organization\Contracts\AppSettings;
+use App\Modules\Shared\Enums\Permission;
 use App\Modules\Shared\Enums\VisibilityScope;
 
 /** Roles internos base (travel-domain/references/roles.md). La agencia puede crear roles propios. */

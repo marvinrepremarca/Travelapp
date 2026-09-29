@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Identity\Enums;
+namespace App\Modules\Shared\Enums;
 
 /** Permisos base con formato `modulo.accion`. Cada módulo agrega los suyos al construirse. */
 enum Permission: string
@@ -21,6 +21,6 @@ enum Permission: string
 
     public function label(): string
     {
-        return __('identity.permissions.' . $this->value);
+        return __('shared.permissions.' . str_replace('.', '_', $this->value));
     }
 }

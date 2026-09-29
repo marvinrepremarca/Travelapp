@@ -77,7 +77,7 @@ it('restores the calendar when an adjustment is deleted', function (): void {
 });
 
 it('rejects inconsistent adjustments', function (string $date, HolidayAdjustmentType $type, string $messageKey): void {
-    expect(fn() => adjust($date, $type))
+    expect(fn(): \App\Modules\Organization\Models\HolidayAdjustment => adjust($date, $type))
         ->toThrow(InvalidHolidayAdjustment::class, __($messageKey, ['date' => $date]));
 })->with([
     'remove a normal day' => ['2026-01-13', HolidayAdjustmentType::Remove, 'organization.errors.not_a_national_holiday'],

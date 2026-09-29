@@ -15,6 +15,8 @@ use Carbon\CarbonInterface;
  */
 final class ColombianHolidayCalculator
 {
+    private const DATE_PATTERN = '%04d-%02d-%02d';
+
     /** Fecha fija, no se traslada. [mes, día, clave] */
     private const FIXED = [
         [1, 1, 'new_year'],
@@ -55,11 +57,11 @@ final class ColombianHolidayCalculator
         $holidays = [];
 
         foreach (self::FIXED as [$month, $day, $key]) {
-            $holidays[] = $this->holiday(CarbonImmutable::create($year, $month, $day), $key);
+            $holidays[] = $this->holiday($this->date($year, $month, $day), $key);
         }
 
         foreach (self::MOVABLE_TO_MONDAY as [$month, $day, $key]) {
-            $holidays[] = $this->holiday($this->nextMondayIfNeeded(CarbonImmutable::create($year, $month, $day)), $key);
+            $holidays[] = $this->holiday($this->nextMondayIfNeeded($this->date($year, $month, $day)), $key);
         }
 
         $easter = $this->easterSunday($year);
@@ -91,7 +93,12 @@ final class ColombianHolidayCalculator
         $month = intdiv($h + $l - 7 * $m + 114, 31);
         $day = (($h + $l - 7 * $m + 114) % 31) + 1;
 
-        return CarbonImmutable::create($year, $month, $day);
+        return $this->date($year, $month, $day);
+    }
+
+    private function date(int $year, int $month, int $day): CarbonImmutable
+    {
+        return CarbonImmutable::parse(sprintf(self::DATE_PATTERN, $year, $month, $day));
     }
 
     private function nextMondayIfNeeded(CarbonImmutable $date): CarbonImmutable

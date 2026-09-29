@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Modules\Identity\Database\Seeders\RolesAndPermissionsSeeder;
-use App\Modules\Identity\Enums\Permission;
 use App\Modules\Identity\Enums\Role;
+use App\Modules\Shared\Enums\Permission;
 use App\Modules\Shared\Enums\VisibilityScope;
 use Spatie\Permission\Models\Permission as PermissionModel;
 use Spatie\Permission\Models\Role as RoleModel;
@@ -54,7 +54,7 @@ it('requires two factor only for configured roles', function (Role $role, bool $
 ]);
 
 it('exposes translated labels', function (): void {
-    expect(Role::TravelAgent->label())->toBe(__('identity.roles.travel_agent'))
-        ->and(Permission::AuditView->label())->toBe(__('identity.permissions.audit.view'))
-        ->and(VisibilityScope::Own->label())->toBe(__('shared.visibility_scope.own'));
+    expect(Role::TravelAgent->label())->toBe('Asesor de viajes')
+        ->and(Permission::AuditView->label())->toBe('Ver auditoría')
+        ->and(VisibilityScope::Own->label())->toBe('Propios');
 });
