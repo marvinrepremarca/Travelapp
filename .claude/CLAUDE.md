@@ -25,7 +25,7 @@ Sistema de información de **una** agencia de viajes (con sus sucursales, asesor
 | Capa | Tecnología |
 |---|---|
 | Lenguaje / framework | PHP 8.2+, Laravel 12 |
-| BD | MySQL 8 (producción) · MariaDB 10.6+ de XAMPP en local. Solo SQL compatible con ambos |
+| BD | MySQL 8 (producción) · MariaDB 10.4+ de XAMPP en local (la CI prueba contra MySQL 8). Solo SQL compatible con ambos |
 | Cache, colas, locks | Redis + Laravel Horizon (local: `database`) |
 | Backoffice y portales | Blade + Livewire 3 + Alpine.js + Tailwind CSS v4 (Vite) |
 | API | REST JSON `/api/v1`, Laravel Sanctum, especificación OpenAPI 3.1 |

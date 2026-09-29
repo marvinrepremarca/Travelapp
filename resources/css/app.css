@@ -1,0 +1,22 @@
+@import 'tailwindcss';
+@import './tokens.css';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../../app/Modules/**/*.blade.php';
+
+@layer base {
+    body {
+        @apply bg-canvas text-body text-text font-sans antialiased;
+    }
+
+    :focus-visible {
+        @apply outline-2 outline-offset-2 outline-focus;
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+}
