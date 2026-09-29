@@ -7,6 +7,8 @@ namespace App\Modules\Identity\Providers;
 use App\Modules\Identity\Auth\ResetUserPassword;
 use App\Modules\Identity\Auth\UniformPasswordResetLinkResponse;
 use App\Modules\Identity\Auth\UpdateUserPassword;
+use App\Modules\Identity\Services\RoleBasedBranchManagerDirectory;
+use App\Modules\Organization\Contracts\BranchManagerDirectory;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
@@ -18,6 +20,11 @@ use Laravel\Fortify\Fortify;
 
 final class IdentityServiceProvider extends ServiceProvider
 {
+    /** @var array<class-string, class-string> */
+    public array $singletons = [
+        BranchManagerDirectory::class => RoleBasedBranchManagerDirectory::class,
+    ];
+
     public function register(): void
     {
         $this->app->bind(
