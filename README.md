@@ -6,4 +6,4 @@ Sistema de gestión integral para una agencia de viajes y turismo: CRM, cotizaci
 - Convenciones y arquitectura: [.claude/CLAUDE.md](.claude/CLAUDE.md)
 - Decisiones de arquitectura: [.claude/adr/](.claude/adr/)
 
-Stack: PHP 8.3+, Laravel 12, MySQL 8, Redis, Livewire 3, Tailwind CSS v4, Pest 3.
+Stack: PHP 8.2+, Laravel 12, MySQL 8, Redis, Livewire 3, Tailwind CSS v4, Pest 3.

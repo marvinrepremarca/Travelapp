@@ -30,7 +30,7 @@ Objetivo: un esqueleto que ya exige la calidad desde el primer commit.
 |---|---|---|
 | 0.1 | Repositorio, `.gitignore`, `README`, este roadmap | Publicado en GitHub |
 | 0.2 | Laravel 12 + `/inicializar-proyecto` (Pint, Larastan 8, Pest 3, Rector, estructura `app/Modules`) | `composer check` en verde en local |
-| 0.3 | CI GitHub Actions: PHP 8.3, MySQL 8, Redis; Pint, PHPStan, Pest con cobertura, `composer audit`, `npm audit`, build Vite | Pipeline verde en PR |
+| 0.3 | CI GitHub Actions: PHP 8.2, MySQL 8, Redis; Pint, PHPStan, Pest con cobertura, `composer audit`, `npm audit`, build Vite | Pipeline verde en PR |
 | 0.4 | Módulo `Shared`: `Money` (brick/money), `DateRange`, `PassengerMix`, `BusinessRuleException`, enums transversales, trait `HasVisibilityScope` | Unit tests con datasets (redondeo, prorrateo `allocate`, monedas 0/2 decimales) |
 | 0.5 | Arch tests de límites entre módulos, `preventLazyLoading`, logs JSON, health check `/up` | Test arch falla si un módulo usa Models/Actions de otro |
 | 0.6 | Tokens de diseño (`resources/css/tokens.css`), layout backoffice, componentes `x-ui` base, `lang/es` | Página de muestra accesible (teclado, contraste AA) |
@@ -90,7 +90,7 @@ Amadeus autos, traslados, tours y actividades; otros proveedores; `Corporate` (p
 
 | Tema | Estado actual | Acción |
 |---|---|---|
-| PHP | XAMPP trae **8.2.12**; el stack exige **8.3+** | Actualizar XAMPP/PHP a 8.3 o 8.4 |
-| GitHub CLI | No instalado | Opcional (`winget install GitHub.cli`) para crear PRs y ver la CI desde la terminal |
+| PHP | 8.2.12 (XAMPP), mínimo soportado por Laravel 12 | Sin sintaxis exclusiva de 8.3+ (constantes tipadas, `#[Override]`, `json_validate`) |
+| GitHub CLI | Instalado | PRs y estado de CI desde la terminal |
 | Redis | No verificado | En local se usa el driver `database`; Redis solo en CI/producción |
 | Node.js | No verificado | Necesario para Vite/Tailwind v4 |

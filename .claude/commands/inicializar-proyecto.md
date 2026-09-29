@@ -7,7 +7,7 @@ Configura el proyecto base siguiendo `CLAUDE.md`. **Precondición:** el esquelet
 Ejecutar este comando aprueba instalar **solo** las dependencias listadas aquí. Cualquier otra requiere preguntar.
 
 ## Pasos
-1. **Entorno:** `C:\xampp\php\php.exe -v` (≥ 8.3) con `intl`, `bcmath`, `sodium`, `zip`, `gd`, `pdo_mysql`; `composer -V`; `node -v`; PCOV o Xdebug para cobertura; versión de MySQL/MariaDB. Si algo falta, detente y repórtalo.
+1. **Entorno:** `C:\xampp\php\php.exe -v` (≥ 8.2) con `intl`, `bcmath`, `sodium`, `zip`, `gd`, `pdo_mysql`; `composer -V`; `node -v`; PCOV o Xdebug para cobertura; versión de MySQL/MariaDB. Si algo falta, detente y repórtalo.
 2. **Dependencias:**
    - `composer require laravel/fortify laravel/sanctum livewire/livewire spatie/laravel-permission spatie/laravel-activitylog brick/money`
    - `composer require --dev larastan/larastan rector/rector driftingly/rector-laravel`
@@ -16,7 +16,7 @@ Ejecutar este comando aprueba instalar **solo** las dependencias listadas aquí.
 3. **Calidad:**
    - `pint.json` con preset `per` y reglas `declare_strict_types`, `strict_comparison`, `no_unused_imports`, `ordered_imports`, `final_class`.
    - `phpstan.neon` nivel 8 sobre `app/`, `database/`, `routes/`, `config/`.
-   - `rector.php` con sets de PHP 8.3 y Laravel 12 (solo en modo `--dry-run` en CI).
+   - `rector.php` con sets de PHP 8.2 y Laravel 12 (solo en modo `--dry-run` en CI).
    - Scripts en `composer.json`: `lint`, `analyse`, `refactor:check`, `test`, `test:coverage` (`--parallel --coverage --min=90`), `check` (todos).
 4. **Configuración de la app:**
    - `.env.example`: `APP_LOCALE=es`, `APP_FALLBACK_LOCALE=en`, `APP_FAKER_LOCALE=es_CO`, `APP_TIMEZONE=UTC`, `QUEUE_CONNECTION=database`, `SESSION_SECURE_COOKIE=true`, `DB_CHARSET=utf8mb4`.
