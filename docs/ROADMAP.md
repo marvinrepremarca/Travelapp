@@ -31,7 +31,7 @@ Objetivo: un esqueleto que ya exige la calidad desde el primer commit.
 | 0.1 ✔ | Repositorio, `.gitignore`, `README`, este roadmap | Publicado en GitHub |
 | 0.2 ✔ | Laravel 12 + `/inicializar-proyecto` (Pint, Larastan 8, Pest 3, Rector, estructura `app/Modules`, Fortify con 2FA, roles base, tokens y componentes `x-ui`) | `composer check` en verde en local |
 | 0.3 | CI GitHub Actions: PHP 8.2, MySQL 8; Pint, PHPStan, Rector, Pest con cobertura, `composer audit`, `npm audit`, build Vite | Pipeline verde en PR |
-| 0.4 | Módulo `Shared`: `Money` (brick/money), `DateRange`, `PassengerMix`, `BusinessRuleException`, enums transversales, trait `HasVisibilityScope` | Unit tests con datasets (redondeo, prorrateo `allocate`, monedas 0/2 decimales) |
+| 0.4 ✔ | Módulo `Shared`: `Money` (brick/money), `DateRange`, `PassengerMix`, `BusinessRuleException`, enums transversales, trait `HasVisibilityScope` | Unit tests con datasets (redondeo, prorrateo `allocate`, monedas 0/2 decimales) |
 | 0.5 | Arch tests de límites entre módulos, `preventLazyLoading`, logs JSON, health check `/up` | Test arch falla si un módulo usa Models/Actions de otro |
 | 0.6 | Tokens de diseño (`resources/css/tokens.css`), layout backoffice, componentes `x-ui` base, `lang/es` | Página de muestra accesible (teclado, contraste AA) |
 
