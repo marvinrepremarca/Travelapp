@@ -47,6 +47,15 @@ return [
         'hide_margins_from_agents' => (bool) env('TRAVEL_HIDE_MARGINS_FROM_AGENTS', true),
     ],
 
+    'ui' => [
+        // Página de muestra del sistema de diseño; solo para desarrollo y revisión.
+        'showcase_enabled' => (bool) env('TRAVEL_UI_SHOWCASE_ENABLED', false),
+    ],
+
+    'health' => [
+        'requests_per_minute' => (int) env('TRAVEL_HEALTH_REQUESTS_PER_MINUTE', 60),
+    ],
+
     'security' => [
         'two_factor_required_roles' => ['system_admin', 'agency_owner', 'finance'],
     ],
