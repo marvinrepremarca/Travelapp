@@ -138,8 +138,23 @@ return [
     ],
     'holidays_screen' => [
         'title' => 'Festivos',
+        'year' => 'Año',
+        'calendar' => 'Días no hábiles de :year',
+        'add_title' => 'Ajustar el calendario',
+        'adjustments_title' => 'Ajustes de la agencia',
+        'no_adjustments' => 'La agencia no tiene ajustes para este año.',
+        'name_hint' => 'Motivo, por ejemplo "Festivo municipal" o "Inventario anual".',
+        'saved' => 'El calendario se actualizó.',
+        'removed' => 'El ajuste se eliminó y el calendario volvió al festivo nacional.',
+        'confirm_remove' => '¿Eliminar el ajuste ":name"?',
+        'fields' => [
+            'date' => 'fecha',
+            'type' => 'tipo de ajuste',
+            'name' => 'motivo',
+        ],
     ],
     'settings_screen' => [
         'title' => 'Parámetros',
+        'saved' => 'Los parámetros se guardaron y ya están en uso.',
     ],
 ];

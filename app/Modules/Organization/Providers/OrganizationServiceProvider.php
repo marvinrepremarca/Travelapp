@@ -9,6 +9,8 @@ use App\Modules\Organization\Contracts\HolidayCalendar;
 use App\Modules\Organization\Livewire\AgencyProfileForm;
 use App\Modules\Organization\Livewire\BranchesIndex;
 use App\Modules\Organization\Livewire\BranchForm;
+use App\Modules\Organization\Livewire\HolidaysManager;
+use App\Modules\Organization\Livewire\SettingsForm;
 use App\Modules\Organization\Models\Branch;
 use App\Modules\Organization\Policies\BranchPolicy;
 use App\Modules\Organization\Services\AgencyHolidayCalendar;
@@ -36,6 +38,8 @@ final class OrganizationServiceProvider extends ServiceProvider
         Livewire::component('organization.agency-profile-form', AgencyProfileForm::class);
         Livewire::component('organization.branches-index', BranchesIndex::class);
         Livewire::component('organization.branch-form', BranchForm::class);
+        Livewire::component('organization.holidays-manager', HolidaysManager::class);
+        Livewire::component('organization.settings-form', SettingsForm::class);
 
         Gate::policy(Branch::class, BranchPolicy::class);
 

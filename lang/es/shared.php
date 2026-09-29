@@ -70,4 +70,6 @@ return [
     'search' => 'Buscar',
     'active' => 'Activa',
     'inactive' => 'Inactiva',
+    'yes' => 'Sí',
+    'no' => 'No',
 ];
