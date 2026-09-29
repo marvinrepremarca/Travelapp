@@ -40,5 +40,8 @@ final class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('search', static fn(Request $request): Limit => Limit::perMinute(self::SEARCH_REQUESTS_PER_MINUTE)
             ->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())));
+
+        RateLimiter::for('health', static fn(Request $request): Limit => Limit::perMinute(config()->integer('travel.health.requests_per_minute'))
+            ->by((string) $request->ip()));
     }
 }
