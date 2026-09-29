@@ -19,6 +19,19 @@ return [
         'locale' => env('TRAVEL_AGENCY_LOCALE', 'es_CO'),
     ],
 
+    'money' => [
+        // Decimales al mostrar/facturar por moneda; si no está aquí se usan los de ISO 4217.
+        'presentation_decimals' => [
+            'COP' => (int) env('TRAVEL_COP_PRESENTATION_DECIMALS', 0),
+        ],
+    ],
+
+    'passengers' => [
+        // Edad cumplida a la fecha del servicio: infante hasta 1 año (< 2), niño hasta 11 (< 12).
+        'infant_max_age' => (int) env('TRAVEL_INFANT_MAX_AGE', 1),
+        'child_max_age' => (int) env('TRAVEL_CHILD_MAX_AGE', 11),
+    ],
+
     'quotes' => [
         'validity_hours' => (int) env('TRAVEL_QUOTE_VALIDITY_HOURS', 72),
     ],

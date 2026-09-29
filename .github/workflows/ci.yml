@@ -37,7 +37,7 @@ jobs:
       DB_PASSWORD: ''
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -45,13 +45,13 @@ jobs:
           extensions: intl, bcmath, sodium, zip, gd, pdo_mysql
           coverage: pcov
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: npm
 
       - name: Caché de Composer
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: vendor
           key: composer-${{ hashFiles('composer.lock') }}
