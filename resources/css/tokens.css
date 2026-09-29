@@ -1,0 +1,69 @@
+/*
+ * Tokens de diseño: única fuente de verdad de la apariencia (regla frontend.md).
+ * Los colores de marca editables desde la administración sobrescriben solo las variables --brand-*.
+ */
+@theme {
+    /* Color: marca y semánticos */
+    --color-brand: var(--brand-primary, oklch(50% 0.15 250));
+    --color-brand-contrast: var(--brand-primary-contrast, oklch(99% 0 0));
+    --color-accent: var(--brand-accent, oklch(70% 0.15 60));
+    --color-surface: oklch(99% 0 0);
+    --color-canvas: oklch(97% 0.005 250);
+    --color-muted: oklch(95% 0.005 250);
+    --color-border: oklch(88% 0.01 250);
+    --color-text: oklch(22% 0.02 250);
+    --color-text-subtle: oklch(45% 0.02 250);
+    --color-success: oklch(50% 0.13 150);
+    --color-warning: oklch(55% 0.13 75);
+    --color-danger: oklch(52% 0.2 25);
+    --color-info: oklch(50% 0.12 240);
+    --color-focus: var(--color-brand);
+
+    /* Tipografía */
+    --font-sans: var(--brand-font, 'Inter'), ui-sans-serif, system-ui, sans-serif;
+    --font-display: var(--brand-font-display, var(--font-sans));
+    --text-caption: 0.75rem;
+    --text-caption--line-height: 1rem;
+    --text-body: 0.9375rem;
+    --text-body--line-height: 1.5rem;
+    --text-heading-3: 1.125rem;
+    --text-heading-3--line-height: 1.5rem;
+    --text-heading-2: 1.375rem;
+    --text-heading-2--line-height: 1.75rem;
+    --text-heading-1: 1.75rem;
+    --text-heading-1--line-height: 2.25rem;
+
+    /* Espaciado: única escala permitida */
+    --spacing: 0.25rem;
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+    --spacing-gutter: 1rem;
+    --spacing-section: 2.5rem;
+
+    /* Contenedores */
+    --container-form: 28rem;
+    --container-page: 80rem;
+    --spacing-sidebar: 16rem;
+
+    /* Forma, elevación, movimiento */
+    --radius-control: 0.5rem;
+    --radius-card: 0.75rem;
+    --radius-pill: 9999px;
+    --shadow-card: 0 1px 2px oklch(0% 0 0 / 0.06), 0 1px 3px oklch(0% 0 0 / 0.08);
+    --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --default-transition-duration: 150ms;
+}
+
+/* Modo oscuro: mismos tokens, otros valores */
+[data-theme='dark'] {
+    --color-surface: oklch(22% 0.01 250);
+    --color-canvas: oklch(17% 0.01 250);
+    --color-muted: oklch(27% 0.01 250);
+    --color-border: oklch(35% 0.01 250);
+    --color-text: oklch(95% 0.005 250);
+    --color-text-subtle: oklch(75% 0.01 250);
+}

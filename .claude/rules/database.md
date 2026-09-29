@@ -4,7 +4,7 @@ paths:
   - "app/Modules/**/Database/**/*.php"
 ---
 
-# Reglas: base de datos (MySQL 8 / MariaDB 10.6+)
+# Reglas: base de datos (MySQL 8 / MariaDB 10.4+ en local)
 
 <migraciones>
 - Clase anónima, una responsabilidad por migración, `down()` funcional. Nunca edites una migración ya ejecutada fuera de tu máquina.

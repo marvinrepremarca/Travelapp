@@ -1,0 +1,11 @@
+{
+    "preset": "per",
+    "rules": {
+        "declare_strict_types": true,
+        "strict_comparison": true,
+        "no_unused_imports": true,
+        "ordered_imports": { "sort_algorithm": "alpha", "imports_order": ["class", "function", "const"] },
+        "final_class": true
+    },
+    "exclude": ["bootstrap/cache", "storage"]
+}
