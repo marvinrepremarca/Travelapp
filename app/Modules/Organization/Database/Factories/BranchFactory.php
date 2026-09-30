@@ -18,8 +18,17 @@ final class BranchFactory extends Factory
         return [
             'code' => fake()->unique()->bothify('SUC-###'),
             'name' => fake()->city(),
+            'city' => fake()->city(),
+            'address' => fake()->streetAddress(),
+            'phone' => fake()->numerify('60########'),
+            'email' => fake()->safeEmail(),
             'timezone' => config('travel.agency.timezone'),
             'is_active' => true,
         ];
+    }
+
+    public function inactive(): self
+    {
+        return $this->state(['is_active' => false]);
     }
 }

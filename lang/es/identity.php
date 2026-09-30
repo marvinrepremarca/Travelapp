@@ -40,17 +40,4 @@ return [
         'product_manager' => 'Gestor de producto',
         'finance' => 'Finanzas',
     ],
-    'permissions' => [
-        'organization.manage' => 'Administrar la agencia',
-        'organization.branches.manage' => 'Administrar sucursales',
-        'identity.users.view' => 'Ver usuarios',
-        'identity.users.manage' => 'Administrar usuarios',
-        'identity.roles.manage' => 'Administrar roles y permisos',
-        'audit.view' => 'Ver auditoría',
-        'crm.sensitive_data.view' => 'Ver datos sensibles de pasajeros',
-        'crm.personal_data.export' => 'Exportar datos personales',
-        'integrations.manage' => 'Administrar integraciones',
-        'finance.access' => 'Acceder a finanzas',
-        'pricing.margins.view' => 'Ver márgenes',
-    ],
 ];

@@ -47,6 +47,16 @@ return [
         'hide_margins_from_agents' => (bool) env('TRAVEL_HIDE_MARGINS_FROM_AGENTS', true),
     ],
 
+    'organization' => [
+        'logo_disk' => env('TRAVEL_LOGO_DISK', 'public'),
+        'logo_directory' => 'branding',
+        'logo_max_kb' => (int) env('TRAVEL_LOGO_MAX_KB', 1024),
+        // Color del texto que se pinta sobre el color de marca (debe cumplir contraste AA).
+        'brand_text_color' => '#ffffff',
+        'rnt_expiry_warning_days' => (int) env('TRAVEL_RNT_EXPIRY_WARNING_DAYS', 60),
+        'branches_per_page' => (int) env('TRAVEL_BRANCHES_PER_PAGE', 20),
+    ],
+
     'ui' => [
         // Página de muestra del sistema de diseño; solo para desarrollo y revisión.
         'showcase_enabled' => (bool) env('TRAVEL_UI_SHOWCASE_ENABLED', false),

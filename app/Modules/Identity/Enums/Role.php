@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Identity\Enums;
 
+use App\Modules\Organization\Contracts\AppSettings;
+use App\Modules\Shared\Enums\Permission;
 use App\Modules\Shared\Enums\VisibilityScope;
 
 /** Roles internos base (travel-domain/references/roles.md). La agencia puede crear roles propios. */
@@ -28,7 +30,7 @@ enum Role: string
         return match ($this) {
             self::SystemAdmin, self::AgencyOwner, self::Operations, self::ProductManager, self::Finance => VisibilityScope::All,
             self::BranchManager => VisibilityScope::Branch,
-            self::TravelAgent => VisibilityScope::from(config()->string('travel.visibility.travel_agent_scope')),
+            self::TravelAgent => app(AppSettings::class)->travelAgentScope(),
         };
     }
 

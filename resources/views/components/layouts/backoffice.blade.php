@@ -7,8 +7,8 @@
     <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:p-sm">{{ __('shared.skip_to_content') }}</a>
     <div class="flex min-h-screen flex-col md:flex-row">
         <nav aria-label="{{ __('shared.main_navigation') }}" class="border-b border-border bg-surface p-md md:w-sidebar md:border-b-0 md:border-r">
-            <p class="text-heading-3 font-semibold text-brand">{{ config('app.name') }}</p>
-            {{ $navigation ?? '' }}
+            <p class="text-heading-3 font-semibold text-brand">{{ $agencyName ?? config('app.name') }}</p>
+            @include('partials.navigation')
         </nav>
         <div class="flex flex-1 flex-col">
             <header class="flex items-center justify-between gap-md border-b border-border bg-surface px-gutter py-sm">
