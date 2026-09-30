@@ -12,5 +12,6 @@
             <x-ui.input name="password_confirmation" type="password" autocomplete="new-password" required />
         </x-ui.field>
         <x-ui.button type="submit">{{ __('identity.auth.reset_password') }}</x-ui.button>
+        <a href="{{ route('login') }}" class="text-center text-body text-brand underline">{{ __('identity.auth.back_to_login') }}</a>
     </form>
 </x-layouts.guest>

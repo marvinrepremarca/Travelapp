@@ -93,3 +93,31 @@ it('shows the security and users entries in the navigation', function (): void {
         ->assertSee(route('identity.users.index'))
         ->assertSee(route('identity.security'));
 });
+
+it('lets the user cancel the password confirmation and go back', function (): void {
+    $agent = agent();
+
+    actingAs($agent)
+        ->from(route('workflow.tasks'))
+        ->get(route('password.confirm'))
+        ->assertOk()
+        ->assertSee(__('shared.cancel'))
+        ->assertSee('href="' . route('workflow.tasks') . '"', false);
+});
+
+it('sends cancel to the dashboard when going back would loop', function (): void {
+    actingAs(agent())
+        ->withSession(['url.intended' => route('identity.security')])
+        ->from(route('identity.security'))
+        ->get(route('password.confirm'))
+        ->assertSee('href="' . route('dashboard') . '"', false);
+});
+
+it('offers logout instead of cancel while two factor is pending', function (): void {
+    actingAs(ownerWithoutTwoFactor())
+        ->get(route('password.confirm'))
+        ->assertOk()
+        ->assertSee(__('identity.auth.logout'))
+        ->assertSee('action="' . route('logout') . '"', false)
+        ->assertDontSee(__('shared.cancel'));
+});

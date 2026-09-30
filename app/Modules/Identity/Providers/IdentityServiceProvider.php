@@ -75,7 +75,28 @@ final class IdentityServiceProvider extends ServiceProvider
         Fortify::requestPasswordResetLinkView(static fn(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View => view('identity::auth.forgot-password'));
         Fortify::resetPasswordView(static fn(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View => view('identity::auth.reset-password', ['request' => $request]));
         Fortify::twoFactorChallengeView(static fn(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View => view('identity::auth.two-factor-challenge'));
-        Fortify::confirmPasswordView(static fn(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View => view('identity::auth.confirm-password'));
+        Fortify::confirmPasswordView(static function (Request $request): \Illuminate\Contracts\View\View {
+            $user = $request->user();
+
+            return view('identity::auth.confirm-password', [
+                'cancelUrl' => self::cancelUrl($request),
+                'mustEnableTwoFactor' => $user instanceof User && $user->mustEnableTwoFactor(),
+            ]);
+        });
+    }
+
+    /**
+     * "Cancelar" vuelve a la página desde la que llegó el usuario; si esa página es la misma
+     * confirmación o la que la exige (evitaría un ciclo), vuelve al inicio.
+     */
+    private static function cancelUrl(Request $request): string
+    {
+        $previous = url()->previous();
+        $blocked = [route('password.confirm'), (string) $request->session()->get('url.intended')];
+
+        return in_array($previous, $blocked, true) || ! str_starts_with($previous, url('/'))
+            ? route('dashboard')
+            : $previous;
     }
 
     private function configureRateLimiting(): void
