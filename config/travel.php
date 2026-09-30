@@ -57,6 +57,10 @@ return [
         'branches_per_page' => (int) env('TRAVEL_BRANCHES_PER_PAGE', 20),
     ],
 
+    'identity' => [
+        'users_per_page' => (int) env('TRAVEL_USERS_PER_PAGE', 20),
+    ],
+
     'ui' => [
         // Página de muestra del sistema de diseño; solo para desarrollo y revisión.
         'showcase_enabled' => (bool) env('TRAVEL_UI_SHOWCASE_ENABLED', false),

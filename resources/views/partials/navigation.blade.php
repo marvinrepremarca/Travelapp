@@ -7,6 +7,8 @@
         ['route' => 'organization.branches.index', 'label' => __('organization.branches.title'), 'permission' => Permission::BranchesManage],
         ['route' => 'organization.holidays', 'label' => __('organization.holidays_screen.title'), 'permission' => Permission::OrganizationManage],
         ['route' => 'organization.settings', 'label' => __('organization.settings_screen.title'), 'permission' => Permission::OrganizationManage],
+        ['route' => 'identity.users.index', 'label' => __('identity.users.title'), 'permission' => Permission::UsersView],
+        ['route' => 'identity.security', 'label' => __('identity.security.title'), 'permission' => null],
     ];
 @endphp
 <ul class="mt-md flex flex-col gap-xs">

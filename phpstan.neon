@@ -9,9 +9,3 @@ parameters:
         - database/
         - routes/
     tmpDir: storage/phpstan
-    ignoreErrors:
-        # HasVisibilityScope se prueba en tests/Feature/Shared; el primer modelo operativo
-        # que lo usa llega en la Fase 1 (Crm). Quitar esta entrada entonces.
-        -
-            identifier: trait.unused
-            path: app/Modules/Shared/Concerns/HasVisibilityScope.php

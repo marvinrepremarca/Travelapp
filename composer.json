@@ -60,6 +60,7 @@
         ],
         "test": [
             "@php artisan config:clear --ansi",
+            "@putenv XDEBUG_MODE=off",
             "pest"
         ],
         "post-autoload-dump": [
@@ -93,6 +94,7 @@
             "rector process --dry-run"
         ],
         "test:coverage": [
+            "Composer\\Config::disableProcessTimeout",
             "@php artisan config:clear --ansi",
             "@putenv XDEBUG_MODE=coverage",
             "pest --coverage --min=90"

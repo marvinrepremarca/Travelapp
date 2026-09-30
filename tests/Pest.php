@@ -35,7 +35,9 @@ const MODULE_INTERNALS = ['Actions', 'Services', 'Http', 'Jobs', 'Listeners', 'P
 
 function userWithRole(Role $role): User
 {
-    return User::factory()->withRole($role)->create();
+    $factory = User::factory()->withRole($role);
+
+    return ($role->requiresTwoFactor() ? $factory->withTwoFactor() : $factory)->create();
 }
 
 function agent(): User

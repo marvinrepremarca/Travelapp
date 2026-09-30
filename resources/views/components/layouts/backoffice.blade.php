@@ -21,6 +21,9 @@
                 @endauth
             </header>
             <main id="main" class="mx-auto w-full max-w-page flex-1 px-gutter py-lg">
+                @if (session('error'))
+                    <x-ui.alert :tone="\App\Modules\Shared\Enums\Tone::Danger" class="mb-md">{{ session('error') }}</x-ui.alert>
+                @endif
                 @if (session('status'))
                     <x-ui.alert :tone="\App\Modules\Shared\Enums\Tone::Success" class="mb-md">{{ session('status') }}</x-ui.alert>
                 @endif

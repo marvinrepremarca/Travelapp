@@ -17,6 +17,8 @@ final class UserFactory extends Factory
 {
     private const REMEMBER_TOKEN_LENGTH = 10;
 
+    private const TWO_FACTOR_SECRET_LENGTH = 16;
+
     protected $model = User::class;
 
     private static ?string $password = null;
@@ -46,6 +48,16 @@ final class UserFactory extends Factory
     {
         return $this->state(['visibility_scope' => $role->defaultScope()])
             ->afterCreating(static fn(User $user) => $user->assignRole($role->value));
+    }
+
+    /** 2FA ya configurado y confirmado (obligatorio para algunos roles ⚙). */
+    public function withTwoFactor(): self
+    {
+        return $this->state([
+            'two_factor_secret' => encrypt(Str::random(self::TWO_FACTOR_SECRET_LENGTH)),
+            'two_factor_recovery_codes' => encrypt((string) json_encode([Str::random(self::REMEMBER_TOKEN_LENGTH)])),
+            'two_factor_confirmed_at' => now(),
+        ]);
     }
 
     public function unverified(): self
