@@ -306,3 +306,33 @@ it('fails closed when the hash key is missing', function (): void {
 
     app(App\Modules\Crm\Services\PersonalDataHasher::class)->hash('x', 'y');
 })->throws(RuntimeException::class);
+
+it('re-encrypts the document when it changes on edit', function (): void {
+    $agent = agent();
+    $customer = Customer::factory()->ownedBy($agent)->create(['document_number' => '111222333']);
+    actingAs($agent);
+
+    Livewire::test(CustomerForm::class, ['customer' => $customer])
+        ->set('document_number', '444.555.666')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect($customer->fresh()?->document_number)->toBe('444555666');
+});
+
+it('lists companies with their legal name', function (): void {
+    $agent = agent();
+    $company = Customer::factory()->company()->ownedBy($agent)->create();
+    actingAs($agent);
+
+    Livewire::test(CustomersIndex::class)
+        ->set('type', CustomerType::Company->value)
+        ->assertSee($company->display_name)
+        ->assertSee(CustomerType::Company->label());
+});
+
+it('forbids reassignment to branch managers outside their scope with 404', function (): void {
+    $response = Illuminate\Support\Facades\Gate::forUser(branchManager())->inspect('reassign', Customer::factory()->create());
+
+    expect($response->status())->toBe(404);
+});

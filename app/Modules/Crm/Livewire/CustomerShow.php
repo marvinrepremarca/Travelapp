@@ -7,6 +7,7 @@ namespace App\Modules\Crm\Livewire;
 use App\Modules\Crm\Actions\ReassignCustomerAction;
 use App\Modules\Crm\Actions\RecordConsentAction;
 use App\Modules\Crm\Actions\RevealCustomerFieldAction;
+use App\Modules\Crm\Actions\RevealTravelerPassportAction;
 use App\Modules\Crm\Enums\ConsentChannel;
 use App\Modules\Crm\Enums\ConsentPurpose;
 use App\Modules\Crm\Enums\SensitiveCustomerField;
@@ -14,6 +15,7 @@ use App\Modules\Crm\Exceptions\CustomerRuleViolation;
 use App\Modules\Crm\Models\Customer;
 use App\Modules\Identity\Models\User;
 use App\Modules\Shared\Enums\Permission;
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -27,7 +29,11 @@ final class CustomerShow extends Component
     #[Locked]
     public string $customerUlid;
 
-    /** Valores revelados en esta vista; no se guardan en ninguna parte. @var array<string, string> */
+    /**
+     * Valores revelados en esta vista; no se guardan en ninguna parte.
+     *
+     * @var array<string, string>
+     */
     public array $revealed = [];
 
     public string $revealReason = '';
@@ -48,6 +54,18 @@ final class CustomerShow extends Component
 
         try {
             $this->revealed[$field] = $reveal->execute($this->customer(), SensitiveCustomerField::from($field), $this->actor(), $this->revealReason);
+        } catch (CustomerRuleViolation $violation) {
+            $this->addError('revealReason', $violation->getMessage());
+        }
+    }
+
+    public function revealPassport(string $travelerUlid, RevealTravelerPassportAction $reveal): void
+    {
+        $this->validate(['revealReason' => ['required', 'string', 'max:255']], attributes: ['revealReason' => __('crm.customers.reveal_reason')]);
+        $traveler = $this->customer()->travelers()->where('ulid', $travelerUlid)->first() ?? abort(404);
+
+        try {
+            $this->revealed["passport:{$travelerUlid}"] = $reveal->execute($traveler, $this->actor(), $this->revealReason);
         } catch (CustomerRuleViolation $violation) {
             $this->addError('revealReason', $violation->getMessage());
         }
@@ -81,7 +99,7 @@ final class CustomerShow extends Component
     public function render(): View
     {
         $customer = $this->customer();
-        $customer->load('consents');
+        $customer->load(['consents', 'travelers']);
         $actor = $this->actor();
 
         return view('crm::livewire.customer-show', [
@@ -93,6 +111,8 @@ final class CustomerShow extends Component
             'marketing' => $customer->hasConsent(ConsentPurpose::Marketing),
             'channels' => ConsentChannel::cases(),
             'fields' => SensitiveCustomerField::cases(),
+            'today' => CarbonImmutable::today(),
+            'passportWarningMonths' => config()->integer('travel.crm.passport_min_validity_months'),
         ])->title($customer->display_name)
             ->layoutData(['heading' => $customer->display_name]);
     }

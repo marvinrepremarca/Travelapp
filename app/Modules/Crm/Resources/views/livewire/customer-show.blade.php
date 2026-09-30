@@ -46,6 +46,54 @@
             </div>
         </x-ui.card>
 
+        <x-ui.card :title="__('crm.travelers.title')">
+            <div class="flex flex-col gap-md">
+                @if ($customer->travelers->isEmpty())
+                    <x-ui.empty-state :title="__('crm.travelers.empty_title')" :description="__('crm.travelers.empty_description')" />
+                @else
+                    <ul class="flex flex-col divide-y divide-border">
+                        @foreach ($customer->travelers as $traveler)
+                            <li class="flex flex-col gap-xs py-sm md:flex-row md:items-center md:justify-between" wire:key="traveler-{{ $traveler->ulid }}">
+                                <div class="flex flex-col gap-xs">
+                                    <p class="font-medium">{{ $traveler->fullName() }}</p>
+                                    <p class="text-caption text-text-subtle">
+                                        {{ $traveler->airlineName() }} · {{ $traveler->gender->label() }} · {{ $traveler->nationality }}
+                                        @if ($traveler->passport_number)
+                                            · {{ __('crm.travelers.fields.passport_number') }}: {{ $revealed['passport:'.$traveler->ulid] ?? $traveler->maskedPassport() }}
+                                        @endif
+                                    </p>
+                                    <div class="flex flex-wrap gap-xs">
+                                        @php($type = $traveler->passengerTypeAt($today))
+                                        @if ($type !== \App\Modules\Shared\Enums\PassengerType::Adult)
+                                            <x-ui.badge :tone="Tone::Info">{{ $type->label() }}</x-ui.badge>
+                                        @endif
+                                        @if ($traveler->passport_expires_on === null)
+                                            <x-ui.badge :tone="Tone::Neutral">{{ __('crm.travelers.no_passport') }}</x-ui.badge>
+                                        @elseif (! $traveler->passportValidFor($today, $passportWarningMonths))
+                                            <x-ui.badge :tone="Tone::Warning">{{ __('crm.travelers.passport_expiring', ['date' => $traveler->passport_expires_on->toDateString()]) }}</x-ui.badge>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="flex gap-sm">
+                                    @if ($canReveal && $traveler->passport_number)
+                                        <x-ui.button variant="ghost" wire:click="revealPassport('{{ $traveler->ulid }}')" wire:loading.attr="disabled">
+                                            {{ __('crm.customers.reveal', ['field' => __('crm.travelers.fields.passport_number')]) }}<span class="sr-only"> {{ $traveler->fullName() }}</span>
+                                        </x-ui.button>
+                                    @endif
+                                    <a href="{{ route('crm.customers.travelers.edit', [$customer, $traveler]) }}" wire:navigate class="text-brand underline">
+                                        {{ __('shared.edit') }}<span class="sr-only"> {{ $traveler->fullName() }}</span>
+                                    </a>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+                <div class="flex justify-end">
+                    <x-ui.link-button :href="route('crm.customers.travelers.create', $customer)" variant="secondary">{{ __('crm.travelers.create') }}</x-ui.link-button>
+                </div>
+            </div>
+        </x-ui.card>
+
         @if ($canReveal)
             <x-ui.card :title="__('crm.customers.reveal_title')">
                 <div class="flex flex-col gap-md">

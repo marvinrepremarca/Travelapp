@@ -80,6 +80,12 @@ final class Customer extends Model
         return $this->hasMany(CustomerConsent::class)->latest('recorded_at')->latest('id');
     }
 
+    /** @return HasMany<Traveler, $this> */
+    public function travelers(): HasMany
+    {
+        return $this->hasMany(Traveler::class)->orderBy('first_name');
+    }
+
     /** Autorización vigente = el último registro de esa finalidad. */
     public function hasConsent(ConsentPurpose $purpose): bool
     {

@@ -7,6 +7,7 @@ namespace App\Modules\Crm\Providers;
 use App\Modules\Crm\Livewire\CustomerForm;
 use App\Modules\Crm\Livewire\CustomerShow;
 use App\Modules\Crm\Livewire\CustomersIndex;
+use App\Modules\Crm\Livewire\TravelerForm;
 use App\Modules\Crm\Models\Customer;
 use App\Modules\Crm\Policies\CustomerPolicy;
 use Illuminate\Support\Facades\Gate;
@@ -24,6 +25,7 @@ final class CrmServiceProvider extends ServiceProvider
         Livewire::component('crm.customers-index', CustomersIndex::class);
         Livewire::component('crm.customer-form', CustomerForm::class);
         Livewire::component('crm.customer-show', CustomerShow::class);
+        Livewire::component('crm.traveler-form', TravelerForm::class);
 
         Gate::policy(Customer::class, CustomerPolicy::class);
     }

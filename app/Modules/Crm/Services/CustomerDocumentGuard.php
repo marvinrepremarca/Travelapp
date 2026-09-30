@@ -28,7 +28,7 @@ final readonly class CustomerDocumentGuard
         $duplicate = Customer::withTrashed()
             ->where('document_type', $data->documentType)
             ->where('document_hash', $hash)
-            ->when($existing !== null, static fn($query) => $query->whereKeyNot($existing?->id))
+            ->when($existing instanceof \App\Modules\Crm\Models\Customer, static fn($query) => $query->whereKeyNot($existing?->id))
             ->exists();
 
         if ($duplicate) {
