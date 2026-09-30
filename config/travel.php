@@ -65,6 +65,10 @@ return [
         'per_page' => (int) env('TRAVEL_AUDIT_PER_PAGE', 25),
     ],
 
+    'workflow' => [
+        'per_page' => (int) env('TRAVEL_WORKFLOW_PER_PAGE', 20),
+    ],
+
     'ui' => [
         // Página de muestra del sistema de diseño; solo para desarrollo y revisión.
         'showcase_enabled' => (bool) env('TRAVEL_UI_SHOWCASE_ENABLED', false),
