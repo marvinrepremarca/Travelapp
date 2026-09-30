@@ -98,3 +98,13 @@ it('identifies branches publicly by ulid', function (): void {
     expect($branch->getRouteKey())->toBe($branch->ulid)
         ->and($branch->ulid)->toHaveLength(26);
 });
+
+it('seeds demo data idempotently in local', function (): void {
+    $this->seed(Database\Seeders\DemoSeeder::class);
+    $this->seed(Database\Seeders\DemoSeeder::class);
+
+    expect(App\Modules\Identity\Models\User::query()->where('email', 'like', '%@viajesdemo.test')->count())->toBe(8)
+        ->and(App\Modules\Workflow\Models\Task::query()->count())->toBe(3)
+        ->and(App\Modules\Workflow\Models\ApprovalRequest::query()->count())->toBe(3)
+        ->and(App\Modules\Organization\Models\AgencyProfile::query()->count())->toBe(1);
+});

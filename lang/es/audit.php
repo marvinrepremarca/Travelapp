@@ -17,6 +17,7 @@ return [
         'organization' => 'Agencia y sucursales',
         'identity' => 'Usuarios',
         'security' => 'Seguridad',
+        'workflow' => 'Tareas y aprobaciones',
     ],
     'filters' => [
         'module' => 'Módulo',

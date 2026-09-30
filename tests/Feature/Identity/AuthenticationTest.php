@@ -194,3 +194,12 @@ it('builds users with an explicit scope and unverified email', function (): void
     expect($user->visibilityScope())->toBe(VisibilityScope::All)
         ->and($user->email_verified_at)->toBeNull();
 });
+
+it('offers a way back to login from the two factor and reset screens', function (): void {
+    $user = agent();
+    $user->forceFill(['two_factor_secret' => encrypt('SECRETSECRETSECR'), 'two_factor_confirmed_at' => now()])->save();
+    post(route('login'), ['email' => $user->email, 'password' => 'password']);
+
+    get(route('two-factor.login'))->assertSee(__('identity.auth.back_to_login'));
+    get(route('password.reset', ['token' => 'x']))->assertSee(__('identity.auth.back_to_login'));
+});

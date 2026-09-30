@@ -5,6 +5,19 @@
         <x-ui.field :label="__('identity.fields.password')" for="password">
             <x-ui.input name="password" type="password" autocomplete="current-password" required autofocus />
         </x-ui.field>
-        <x-ui.button type="submit">{{ __('identity.auth.confirm') }}</x-ui.button>
+        <div class="flex flex-col-reverse gap-sm md:flex-row md:justify-end">
+            @if ($mustEnableTwoFactor)
+                <x-ui.button type="submit" form="logout-form" variant="secondary">{{ __('identity.auth.logout') }}</x-ui.button>
+            @else
+                <x-ui.link-button :href="$cancelUrl" variant="secondary">{{ __('shared.cancel') }}</x-ui.link-button>
+            @endif
+            <x-ui.button type="submit">{{ __('identity.auth.confirm') }}</x-ui.button>
+        </div>
     </form>
+    @if ($mustEnableTwoFactor)
+        <form id="logout-form" method="POST" action="{{ route('logout') }}" class="hidden">
+            @csrf
+        </form>
+        <p class="mt-md text-caption text-text-subtle">{{ __('identity.security.required_notice') }}</p>
+    @endif
 </x-layouts.guest>

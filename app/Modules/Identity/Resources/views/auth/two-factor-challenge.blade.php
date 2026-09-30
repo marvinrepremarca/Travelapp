@@ -9,5 +9,6 @@
             <x-ui.input name="recovery_code" autocomplete="off" />
         </x-ui.field>
         <x-ui.button type="submit">{{ __('identity.auth.verify') }}</x-ui.button>
+        <a href="{{ route('login') }}" class="text-center text-body text-brand underline">{{ __('identity.auth.back_to_login') }}</a>
     </form>
 </x-layouts.guest>

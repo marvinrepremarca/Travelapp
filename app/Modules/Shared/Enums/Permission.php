@@ -18,6 +18,11 @@ enum Permission: string
     case IntegrationsManage = 'integrations.manage';
     case FinanceAccess = 'finance.access';
     case MarginsView = 'pricing.margins.view';
+    case ApprovalsDiscounts = 'workflow.approvals.discounts';
+    case ApprovalsRefunds = 'workflow.approvals.refunds';
+    case ApprovalsInvoiceVoids = 'workflow.approvals.invoice_voids';
+    case ApprovalsPriceChanges = 'workflow.approvals.price_changes';
+    case ApprovalsDataExports = 'workflow.approvals.data_exports';
 
     public function label(): string
     {
