@@ -7,16 +7,24 @@ namespace App\Modules\Identity\Providers;
 use App\Modules\Identity\Auth\ResetUserPassword;
 use App\Modules\Identity\Auth\UniformPasswordResetLinkResponse;
 use App\Modules\Identity\Auth\UpdateUserPassword;
+use App\Modules\Identity\Livewire\SecuritySettings;
+use App\Modules\Identity\Livewire\UserForm;
+use App\Modules\Identity\Livewire\UsersIndex;
+use App\Modules\Identity\Models\User;
+use App\Modules\Identity\Policies\UserPolicy;
 use App\Modules\Identity\Services\RoleBasedBranchManagerDirectory;
 use App\Modules\Organization\Contracts\BranchManagerDirectory;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\FailedPasswordResetLinkRequestResponse;
 use Laravel\Fortify\Fortify;
+use Livewire\Livewire;
 
 final class IdentityServiceProvider extends ServiceProvider
 {
@@ -37,6 +45,13 @@ final class IdentityServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'identity');
+        $this->loadRoutesFrom(__DIR__ . '/../Routes/web.php');
+
+        Livewire::component('identity.users-index', UsersIndex::class);
+        Livewire::component('identity.user-form', UserForm::class);
+        Livewire::component('identity.security-settings', SecuritySettings::class);
+
+        Gate::policy(User::class, UserPolicy::class);
 
         $this->configureFortify();
         $this->configureRateLimiting();
@@ -46,6 +61,15 @@ final class IdentityServiceProvider extends ServiceProvider
     {
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
+
+        // Usuarios inactivos no inician sesión; el mensaje es el mismo que para credenciales inválidas.
+        Fortify::authenticateUsing(static function (Request $request): ?User {
+            $user = User::query()->where('email', Str::lower($request->string(Fortify::username())->toString()))->first();
+
+            return $user !== null && $user->isActive() && Hash::check($request->string('password')->toString(), $user->password)
+                ? $user
+                : null;
+        });
 
         Fortify::loginView(static fn(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View => view('identity::auth.login'));
         Fortify::requestPasswordResetLinkView(static fn(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View => view('identity::auth.forgot-password'));

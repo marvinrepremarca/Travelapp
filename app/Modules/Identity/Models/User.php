@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Modules\Identity\Models;
 
 use App\Modules\Identity\Database\Factories\UserFactory;
+use App\Modules\Identity\Enums\Role;
 use App\Modules\Organization\Models\Branch;
+use App\Modules\Shared\Concerns\HasVisibilityScope;
 use App\Modules\Shared\Contracts\ScopedViewer;
 use App\Modules\Shared\Enums\VisibilityScope;
 use Carbon\CarbonImmutable;
@@ -15,6 +17,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -28,6 +32,10 @@ use Spatie\Permission\Traits\HasRoles;
  * @property VisibilityScope $visibility_scope
  * @property int|null $branch_id
  * @property bool $is_active
+ * @property CarbonImmutable|null $two_factor_confirmed_at
+ * @property string $password
+ * @property string|null $two_factor_secret
+ * @property string|null $two_factor_recovery_codes
  */
 final class User extends Authenticatable implements ScopedViewer
 {
@@ -35,6 +43,8 @@ final class User extends Authenticatable implements ScopedViewer
     use HasFactory;
     use HasRoles;
     use HasUlids;
+    use HasVisibilityScope;
+    use LogsActivity;
     use Notifiable;
     use TwoFactorAuthenticatable;
 
@@ -42,6 +52,54 @@ final class User extends Authenticatable implements ScopedViewer
     protected $fillable = ['name', 'email', 'password'];
 
     protected $hidden = ['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'];
+
+    public function getRouteKeyName(): string
+    {
+        return 'ulid';
+    }
+
+    public function isActive(): bool
+    {
+        return $this->is_active;
+    }
+
+    public function hasTwoFactorEnabled(): bool
+    {
+        // Recién creado por código, el atributo puede no estar cargado: equivale a no confirmado.
+        return ($this->attributes['two_factor_confirmed_at'] ?? null) !== null;
+    }
+
+    /** Algún rol del usuario exige segundo factor ⚙. */
+    public function requiresTwoFactor(): bool
+    {
+        foreach ($this->getRoleNames() as $roleName) {
+            if (Role::tryFrom($roleName)?->requiresTwoFactor() === true) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function mustEnableTwoFactor(): bool
+    {
+        return $this->requiresTwoFactor() && ! $this->hasTwoFactorEnabled();
+    }
+
+    /** Nunca se registran contraseñas ni secretos de 2FA. */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'email', 'visibility_scope', 'branch_id', 'is_active'])
+            ->logOnlyDirty()
+            ->useLogName('identity');
+    }
+
+    /** Alcance "propio" sobre usuarios = solo uno mismo. */
+    protected function ownerColumn(): string
+    {
+        return 'id';
+    }
 
     /** @return list<string> */
     public function uniqueIds(): array
