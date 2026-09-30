@@ -67,14 +67,14 @@ it('shows the dashboard to authenticated users', function (): void {
 });
 
 it('logs out', function (): void {
-    actingAs(agent())->post(route('logout'))->assertRedirect('/');
+    actingAs(agent())->post(route('logout'))->assertRedirect(config('fortify.redirects.logout'));
 
     assertGuest();
 });
 
 it('does not expose public registration', function (): void {
     expect(Features::enabled(Features::registration()))->toBeFalse();
-    get('/register')->assertNotFound();
+    get('/travelapp/register')->assertNotFound();
 });
 
 it('sends a reset link without revealing whether the email exists', function (): void {

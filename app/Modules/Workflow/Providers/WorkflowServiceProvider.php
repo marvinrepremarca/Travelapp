@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Workflow\Providers;
 
+use App\Modules\Shared\Routing\PathPrefix;
 use App\Modules\Workflow\Actions\CreateTaskAction;
 use App\Modules\Workflow\Actions\RequestApprovalAction;
 use App\Modules\Workflow\Console\ExpireApprovalsCommand;
@@ -30,7 +31,9 @@ final class WorkflowServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/web.php');
+        if (! $this->app->routesAreCached()) {
+            PathPrefix::load(__DIR__ . '/../Routes/web.php');
+        }
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'workflow');
 
         Livewire::component('workflow.tasks-board', TasksBoard::class);

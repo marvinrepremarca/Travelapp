@@ -14,6 +14,7 @@ use App\Modules\Identity\Models\User;
 use App\Modules\Identity\Policies\UserPolicy;
 use App\Modules\Identity\Services\RoleBasedBranchManagerDirectory;
 use App\Modules\Organization\Contracts\BranchManagerDirectory;
+use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
@@ -45,7 +46,9 @@ final class IdentityServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'identity');
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/web.php');
+        if (! $this->app->routesAreCached()) {
+            PathPrefix::load(__DIR__ . '/../Routes/web.php');
+        }
 
         Livewire::component('identity.users-index', UsersIndex::class);
         Livewire::component('identity.user-form', UserForm::class);

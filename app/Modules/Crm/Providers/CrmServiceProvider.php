@@ -15,6 +15,7 @@ use App\Modules\Crm\Models\Customer;
 use App\Modules\Crm\Models\Lead;
 use App\Modules\Crm\Policies\CustomerPolicy;
 use App\Modules\Crm\Policies\LeadPolicy;
+use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -24,7 +25,9 @@ final class CrmServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/web.php');
+        if (! $this->app->routesAreCached()) {
+            PathPrefix::load(__DIR__ . '/../Routes/web.php');
+        }
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'crm');
 
         Livewire::component('crm.customers-index', CustomersIndex::class);

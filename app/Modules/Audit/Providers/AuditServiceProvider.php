@@ -8,6 +8,7 @@ use App\Modules\Audit\Contracts\SensitiveDataAccessRecorder;
 use App\Modules\Audit\Listeners\RecordSecurityEvent;
 use App\Modules\Audit\Livewire\AuditLogIndex;
 use App\Modules\Audit\Services\DatabaseSensitiveDataAccessRecorder;
+use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Auth\Events\Login;
@@ -42,7 +43,9 @@ final class AuditServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/web.php');
+        if (! $this->app->routesAreCached()) {
+            PathPrefix::load(__DIR__ . '/../Routes/web.php');
+        }
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'audit');
 
         Livewire::component('audit.audit-log-index', AuditLogIndex::class);

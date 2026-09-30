@@ -10,7 +10,7 @@ php artisan storage:link
 php artisan serve
 ```
 
-Abrir http://127.0.0.1:8000. En `.env` local: `QUEUE_CONNECTION=sync` (los correos salen al instante) y `MAIL_MAILER=log` (los correos se escriben en `storage/logs/laravel.log`).
+Abrir http://127.0.0.1:8000/travelapp (la carpeta se define con `APP_PATH_PREFIX`; vacía = raíz del dominio). En `.env` local: `QUEUE_CONNECTION=sync` (los correos salen al instante) y `MAIL_MAILER=log` (los correos se escriben en `storage/logs/laravel.log`).
 
 ## Usuarios de demostración
 
@@ -32,8 +32,8 @@ Para el 2FA usa una app de autenticación (Google Authenticator, Microsoft Authe
 ## Guion por fase
 
 ### Fase 0 — Base
-- [ ] `/health` responde `{"status":"up",...}`.
-- [ ] `/design-system` (con sesión) muestra todos los componentes; navega con Tab y verifica el foco visible.
+- [ ] `/travelapp/health` responde `{"status":"up",...}`.
+- [ ] `/travelapp/design-system` (con sesión) muestra todos los componentes; navega con Tab y verifica el foco visible.
 
 ### Fase 1.1 — Organization (usuario: gerente)
 - [ ] **Datos de la agencia:** cambia el color principal a `#fde047` → error de contraste; a `#0f766e` → se guarda y el menú cambia de color. Pon un dígito de verificación incorrecto → error. Sube un logo PNG.
