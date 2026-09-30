@@ -69,6 +69,11 @@ return [
         'per_page' => (int) env('TRAVEL_WORKFLOW_PER_PAGE', 20),
     ],
 
+    'demo' => [
+        // Solo para DemoSeeder en local. Nunca se usa en producción.
+        'password' => env('TRAVEL_DEMO_PASSWORD', 'ViajesDemo2026'),
+    ],
+
     'ui' => [
         // Página de muestra del sistema de diseño; solo para desarrollo y revisión.
         'showcase_enabled' => (bool) env('TRAVEL_UI_SHOWCASE_ENABLED', false),
