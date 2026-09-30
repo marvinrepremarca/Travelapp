@@ -3,6 +3,8 @@
 
     $items = [
         ['route' => 'dashboard', 'label' => __('shared.dashboard'), 'permission' => null],
+        ['route' => 'crm.leads.index', 'label' => __('crm.leads.title'), 'permission' => null],
+        ['route' => 'crm.customers.index', 'label' => __('crm.customers.title'), 'permission' => null],
         ['route' => 'workflow.tasks', 'label' => __('workflow.tasks.title'), 'permission' => null],
         ['route' => 'workflow.approvals', 'label' => __('workflow.approvals.title'), 'permission' => null],
         ['route' => 'organization.agency', 'label' => __('organization.agency.title'), 'permission' => Permission::OrganizationManage],

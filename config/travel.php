@@ -74,6 +74,21 @@ return [
         'password' => env('TRAVEL_DEMO_PASSWORD', 'ViajesDemo2026'),
     ],
 
+    'crm' => [
+        'per_page' => (int) env('TRAVEL_CRM_PER_PAGE', 20),
+        'board_column_size' => (int) env('TRAVEL_CRM_BOARD_COLUMN_SIZE', 25),
+        'max_lead_travelers' => (int) env('TRAVEL_CRM_MAX_LEAD_TRAVELERS', 500),
+        // Vigencia mínima del pasaporte después del regreso (regla habitual de migración) ⚙.
+        'passport_min_validity_months' => (int) env('TRAVEL_PASSPORT_MIN_VALIDITY_MONTHS', 6),
+    ],
+
+    'privacy' => [
+        // Clave HMAC dedicada para buscar datos cifrados (documentos). Nunca reutilizar APP_KEY.
+        'hash_key' => (string) env('TRAVEL_PII_HASH_KEY', ''),
+        // Versión vigente de la política de tratamiento de datos que acepta el titular.
+        'policy_version' => (string) env('TRAVEL_PRIVACY_POLICY_VERSION', '1.0'),
+    ],
+
     'ui' => [
         // Página de muestra del sistema de diseño; solo para desarrollo y revisión.
         'showcase_enabled' => (bool) env('TRAVEL_UI_SHOWCASE_ENABLED', false),

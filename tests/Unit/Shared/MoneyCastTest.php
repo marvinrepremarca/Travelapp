@@ -49,3 +49,14 @@ it('writes nulls when value is null', function (): void {
 it('rejects values that are not money', function (): void {
     moneyCast()->set(anyModel(), 'amount', '99.99', []);
 })->throws(InvalidArgumentException::class);
+
+it('encrypts dates at rest and reads them back as immutable dates', function (): void {
+    $cast = new App\Modules\Shared\Casts\EncryptedDate();
+    $stored = $cast->set(anyModel(), 'birth_date', '1990-05-17 13:45:00', []);
+
+    expect($stored)->not->toContain('1990')
+        ->and($cast->get(anyModel(), 'birth_date', $stored, [])?->toDateString())->toBe('1990-05-17')
+        ->and($cast->set(anyModel(), 'birth_date', new DateTimeImmutable('2001-02-03'), []))->toBeString()
+        ->and($cast->set(anyModel(), 'birth_date', null, []))->toBeNull()
+        ->and($cast->get(anyModel(), 'birth_date', null, []))->toBeNull();
+});

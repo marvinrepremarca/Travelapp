@@ -43,7 +43,7 @@ Objetivo: un esqueleto que ya exige la calidad desde el primer commit.
 | 1.2 ✔ | `Identity` | Login Fortify + 2FA, roles/permisos (enum + spatie), alcance `own/branch/all`, usuarios internos | Tests: 2FA obligatorio por rol, usuario fuera de alcance recibe 404 |
 | 1.3 ✔ | `Audit` | Bitácora de cambios y de accesos a datos sensibles | Test: toda mutación de pasajero/precio genera registro |
 | 1.4 ✔ | `Workflow` | Tareas, recordatorios, aprobaciones genéricas | Test de ciclo solicitar → aprobar/rechazar con eventos |
-| 1.5 | `Crm` | Clientes (persona/empresa), pasajeros con documentos cifrados, leads, oportunidades, embudo, interacciones | Tests de cifrado en reposo y enmascarado en UI/logs; consentimiento Ley 1581 |
+| 1.5 ✔ | `Crm` | Clientes (persona/empresa), pasajeros con documentos cifrados, leads, oportunidades, embudo, interacciones | Tests de cifrado en reposo y enmascarado en UI/logs; consentimiento Ley 1581 |
 | 1.6 | `Suppliers` | Proveedores, contratos, condiciones de pago, comisiones pactadas, contactos | Tests de validación y alcance |
 
 ### Fase 2 — Vender · `v0.3.0`

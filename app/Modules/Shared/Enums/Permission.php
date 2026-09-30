@@ -18,6 +18,7 @@ enum Permission: string
     case IntegrationsManage = 'integrations.manage';
     case FinanceAccess = 'finance.access';
     case MarginsView = 'pricing.margins.view';
+    case CustomersReassign = 'crm.customers.reassign';
     case ApprovalsDiscounts = 'workflow.approvals.discounts';
     case ApprovalsRefunds = 'workflow.approvals.refunds';
     case ApprovalsInvoiceVoids = 'workflow.approvals.invoice_voids';

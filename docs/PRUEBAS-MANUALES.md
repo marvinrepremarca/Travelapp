@@ -61,3 +61,12 @@ Para el 2FA usa una app de autenticación (Google Authenticator, Microsoft Authe
 - [ ] Como **director.bogota**: *Aprobaciones* muestra el descuento de San Andrés, no el de Medellín ni el reembolso. Recházalo sin nota → error; con nota → rechazado.
 - [ ] Como **finanzas**: aparece el reembolso; apruébalo.
 - [ ] Como **asesor.bogota**: *Aprobaciones → Mis solicitudes* muestra los estados y la nota de rechazo.
+
+### Fase 1.5 — Crm
+- [ ] Como **asesor.bogota**: *Clientes* muestra a Laura Pérez con el documento enmascarado (52••••56). Busca por `52.123.456` → la encuentra.
+- [ ] Crea un cliente sin marcar la autorización de datos → error. Con autorización → queda registrado con su evidencia.
+- [ ] Crea otro cliente con el mismo documento escrito distinto (`52-123-456`) → "ya existe".
+- [ ] Como **gerente**: en la ficha de Laura escribe un motivo y pulsa "Mostrar número de documento" → aparece y queda en *Auditoría → Accesos a datos sensibles*.
+- [ ] Tomás (8 años) aparece como **Niño** y con alerta de pasaporte por vencer.
+- [ ] *Embudo de ventas*: abre "Familia Gómez", registra una llamada → pasa a Contactado. Márcalo perdido sin motivo → error.
+- [ ] "Carlos Ruiz" (cotizado): márcalo ganado eligiendo a Laura Pérez como cliente.
