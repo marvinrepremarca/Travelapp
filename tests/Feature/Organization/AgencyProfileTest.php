@@ -8,6 +8,7 @@ use App\Modules\Organization\Livewire\AgencyProfileForm;
 use App\Modules\Organization\Models\AgencyProfile;
 use App\Modules\Organization\Services\NitCheckDigit;
 use App\Modules\Shared\Accessibility\ContrastRatio;
+use App\Modules\Shared\Enums\AuditLogName;
 use App\Modules\Shared\Enums\Permission;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\UploadedFile;
@@ -104,7 +105,7 @@ it('creates the agency profile, audits it and applies the brand', function (): v
     expect($profile)->not->toBeNull()
         ->and($profile->nit_check_digit)->toBe(8)
         ->and($profile->formattedNit())->toBe('900.123.456-8')
-        ->and(Activity::query()->where('log_name', 'organization')->where('subject_type', $profile->getMorphClass())->exists())->toBeTrue();
+        ->and(Activity::query()->where('log_name', AuditLogName::Organization->value)->where('subject_type', $profile->getMorphClass())->exists())->toBeTrue();
     Storage::disk('public')->assertExists((string) $profile->logo_path);
 
     get(route('dashboard'))

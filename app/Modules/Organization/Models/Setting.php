@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Organization\Models;
 
 use App\Modules\Organization\Enums\SettingKey;
+use App\Modules\Shared\Enums\AuditLogName;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -24,7 +25,7 @@ final class Setting extends Model
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->logFillable()->logOnlyDirty()->useLogName('organization');
+        return LogOptions::defaults()->logFillable()->logOnlyDirty()->useLogName(AuditLogName::Organization->value);
     }
 
     /** @return array<string, string> */

@@ -11,6 +11,7 @@ use App\Modules\Organization\Enums\HolidayAdjustmentType;
 use App\Modules\Organization\Enums\HolidaySource;
 use App\Modules\Organization\Exceptions\InvalidHolidayAdjustment;
 use App\Modules\Organization\Models\HolidayAdjustment;
+use App\Modules\Shared\Enums\AuditLogName;
 use Carbon\CarbonImmutable;
 use Spatie\Activitylog\Models\Activity;
 
@@ -56,7 +57,7 @@ it('adds an agency day off and audits it', function (): void {
     $holiday = collect(calendar()->holidaysIn(2026))->first(fn(Holiday $h): bool => $h->date->toDateString() === '2026-12-24');
     expect($holiday?->source)->toBe(HolidaySource::Agency)
         ->and($holiday?->name)->toBe('Cierre de Nochebuena')
-        ->and(Activity::query()->where('log_name', 'organization')->count())->toBe(1);
+        ->and(Activity::query()->where('log_name', AuditLogName::Organization->value)->count())->toBe(1);
 });
 
 it('removes a national holiday when the agency works that day', function (): void {

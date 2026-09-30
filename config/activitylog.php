@@ -13,7 +13,8 @@ return [
      * When the clean-command is executed, all recording activities older than
      * the number of days specified here will be deleted.
      */
-    'delete_records_older_than_days' => 365,
+    // Retención ⚙: define con asesoría legal. activitylog:clean solo borra si se programa explícitamente.
+    'delete_records_older_than_days' => (int) env('AUDIT_RETENTION_DAYS', 3650),
 
     /*
      * If no log name is passed to the activity() helper

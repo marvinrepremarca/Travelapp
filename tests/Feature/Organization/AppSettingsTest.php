@@ -9,6 +9,7 @@ use App\Modules\Organization\Enums\SettingKey;
 use App\Modules\Organization\Models\Branch;
 use App\Modules\Organization\Models\Setting;
 use App\Modules\Organization\Services\SettingsStore;
+use App\Modules\Shared\Enums\AuditLogName;
 use App\Modules\Shared\Enums\VisibilityScope;
 use Illuminate\Validation\ValidationException;
 use Spatie\Activitylog\Models\Activity;
@@ -61,7 +62,7 @@ it('stores only changed values, audits them and applies them immediately', funct
         ->and($settings->travelAgentScope())->toBe(VisibilityScope::Branch)
         ->and($settings->hideMarginsFromAgents())->toBeFalse()
         ->and(app(SettingsStore::class)->isOverridden(SettingKey::QuoteValidityHours))->toBeTrue()
-        ->and(Activity::query()->where('log_name', 'organization')->count())->toBe(3);
+        ->and(Activity::query()->where('log_name', AuditLogName::Organization->value)->count())->toBe(3);
 });
 
 it('gives new travel agents the configured scope', function (): void {

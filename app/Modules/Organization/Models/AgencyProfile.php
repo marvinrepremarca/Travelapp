@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Organization\Models;
 
 use App\Modules\Organization\Database\Factories\AgencyProfileFactory;
+use App\Modules\Shared\Enums\AuditLogName;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -60,7 +61,7 @@ final class AgencyProfile extends Model
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->logFillable()->logOnlyDirty()->useLogName('organization');
+        return LogOptions::defaults()->logFillable()->logOnlyDirty()->useLogName(AuditLogName::Organization->value);
     }
 
     protected static function newFactory(): AgencyProfileFactory

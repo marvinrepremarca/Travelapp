@@ -9,6 +9,7 @@ use App\Modules\Identity\Enums\Role;
 use App\Modules\Organization\Models\Branch;
 use App\Modules\Shared\Concerns\HasVisibilityScope;
 use App\Modules\Shared\Contracts\ScopedViewer;
+use App\Modules\Shared\Enums\AuditLogName;
 use App\Modules\Shared\Enums\VisibilityScope;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -92,7 +93,7 @@ final class User extends Authenticatable implements ScopedViewer
         return LogOptions::defaults()
             ->logOnly(['name', 'email', 'visibility_scope', 'branch_id', 'is_active'])
             ->logOnlyDirty()
-            ->useLogName('identity');
+            ->useLogName(AuditLogName::Identity->value);
     }
 
     /** Alcance "propio" sobre usuarios = solo uno mismo. */
