@@ -76,6 +76,8 @@ return [
 
     'crm' => [
         'per_page' => (int) env('TRAVEL_CRM_PER_PAGE', 20),
+        'board_column_size' => (int) env('TRAVEL_CRM_BOARD_COLUMN_SIZE', 25),
+        'max_lead_travelers' => (int) env('TRAVEL_CRM_MAX_LEAD_TRAVELERS', 500),
         // Vigencia mínima del pasaporte después del regreso (regla habitual de migración) ⚙.
         'passport_min_validity_months' => (int) env('TRAVEL_PASSPORT_MIN_VALIDITY_MONTHS', 6),
     ],

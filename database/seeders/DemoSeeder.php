@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Modules\Crm\Enums\ConsentChannel;
+use App\Modules\Crm\Enums\ConsentPurpose;
+use App\Modules\Crm\Enums\LeadStatus;
+use App\Modules\Crm\Models\Customer;
+use App\Modules\Crm\Models\Lead;
+use App\Modules\Crm\Models\Traveler;
 use App\Modules\Identity\Database\Seeders\RolesAndPermissionsSeeder;
 use App\Modules\Identity\Enums\Role;
 use App\Modules\Identity\Models\User;
@@ -71,7 +77,30 @@ final class DemoSeeder extends Seeder
         $this->approval($agentMde, ApprovalType::Discount, $medellin, 'Descuento del 8 % en tour a Guatapé', 'Grupo de 10 personas');
         $this->approval($agentBog, ApprovalType::Refund, $bogota, 'Reembolso por cancelación de tour', 'Cancelado por el proveedor');
 
+        $this->crm($agentBog);
+
         unset($admin, $finance);
+    }
+
+    private function crm(User $agent): void
+    {
+        if (Customer::query()->exists()) {
+            return;
+        }
+
+        $customer = Customer::factory()->ownedBy($agent)->create([
+            'first_name' => 'Laura', 'last_name' => 'Pérez', 'display_name' => 'Laura Pérez',
+            'document_number' => '52123456', 'email' => 'laura.perez@correo.test',
+        ]);
+        $customer->consents()->create([
+            'purpose' => ConsentPurpose::DataProcessing, 'granted' => true, 'channel' => ConsentChannel::InPerson,
+            'policy_version' => config()->string('travel.privacy.policy_version'), 'recorded_by' => $agent->id, 'recorded_at' => now(),
+        ]);
+        Traveler::factory()->for($customer)->create(['first_name' => 'Laura', 'last_name' => 'Pérez']);
+        Traveler::factory()->for($customer)->child(8)->create(['first_name' => 'Tomás', 'last_name' => 'Pérez', 'passport_expires_on' => now()->addMonths(3)]);
+
+        Lead::factory()->ownedBy($agent)->create(['contact_name' => 'Familia Gómez', 'destination' => 'Cartagena']);
+        Lead::factory()->ownedBy($agent)->inStatus(LeadStatus::Quoted)->create(['contact_name' => 'Carlos Ruiz', 'destination' => 'Madrid']);
     }
 
     private function branch(string $code, string $name, string $city): Branch

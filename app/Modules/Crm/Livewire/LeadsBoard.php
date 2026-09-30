@@ -1,0 +1,55 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Modules\Crm\Livewire;
+
+use App\Modules\Crm\Enums\LeadStatus;
+use App\Modules\Crm\Models\Lead;
+use App\Modules\Identity\Models\User;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Url;
+use Livewire\Component;
+
+/** Embudo: columnas por etapa abierta y totales de ganados y perdidos, dentro del alcance. */
+#[Layout('components.layouts.backoffice')]
+final class LeadsBoard extends Component
+{
+    #[Url(except: '')]
+    public string $search = '';
+
+    public function render(): View
+    {
+        $base = fn(): Builder => Lead::query()
+            ->visibleTo($this->actor())
+            ->when($this->search !== '', fn(Builder $query) => $query->where(fn(Builder $inner) => $inner
+                ->where('contact_name', 'like', '%' . $this->search . '%')
+                ->orWhere('destination', 'like', '%' . $this->search . '%')));
+
+        $columns = [];
+
+        foreach ([LeadStatus::New, LeadStatus::Contacted, LeadStatus::Quoted] as $status) {
+            $columns[] = [
+                'status' => $status,
+                'leads' => $base()->where('status', $status)->latest('status_changed_at')->limit(config()->integer('travel.crm.board_column_size'))->get(),
+                'total' => $base()->where('status', $status)->count(),
+            ];
+        }
+
+        return view('crm::livewire.leads-board', [
+            'columns' => $columns,
+            'won' => $base()->where('status', LeadStatus::Won)->count(),
+            'lost' => $base()->where('status', LeadStatus::Lost)->count(),
+        ])->title(__('crm.leads.title'))
+            ->layoutData(['heading' => __('crm.leads.title')]);
+    }
+
+    private function actor(): User
+    {
+        /** @var User */
+        return Auth::user();
+    }
+}
