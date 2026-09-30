@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Organization\Models;
 
 use App\Modules\Organization\Database\Factories\BranchFactory;
+use App\Modules\Shared\Enums\AuditLogName;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -54,7 +55,7 @@ final class Branch extends Model
         return LogOptions::defaults()
             ->logOnly([...$this->fillable, 'manager_id', 'is_active'])
             ->logOnlyDirty()
-            ->useLogName('organization');
+            ->useLogName(AuditLogName::Organization->value);
     }
 
     /** @param Builder<self> $query */

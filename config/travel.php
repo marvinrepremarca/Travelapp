@@ -61,6 +61,10 @@ return [
         'users_per_page' => (int) env('TRAVEL_USERS_PER_PAGE', 20),
     ],
 
+    'audit' => [
+        'per_page' => (int) env('TRAVEL_AUDIT_PER_PAGE', 25),
+    ],
+
     'ui' => [
         // Página de muestra del sistema de diseño; solo para desarrollo y revisión.
         'showcase_enabled' => (bool) env('TRAVEL_UI_SHOWCASE_ENABLED', false),

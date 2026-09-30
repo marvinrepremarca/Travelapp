@@ -8,6 +8,7 @@
         ['route' => 'organization.holidays', 'label' => __('organization.holidays_screen.title'), 'permission' => Permission::OrganizationManage],
         ['route' => 'organization.settings', 'label' => __('organization.settings_screen.title'), 'permission' => Permission::OrganizationManage],
         ['route' => 'identity.users.index', 'label' => __('identity.users.title'), 'permission' => Permission::UsersView],
+        ['route' => 'audit.index', 'label' => __('audit.title'), 'permission' => Permission::AuditView],
         ['route' => 'identity.security', 'label' => __('identity.security.title'), 'permission' => null],
     ];
 @endphp

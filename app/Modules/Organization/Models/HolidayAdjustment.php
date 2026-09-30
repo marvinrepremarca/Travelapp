@@ -6,6 +6,7 @@ namespace App\Modules\Organization\Models;
 
 use App\Modules\Organization\Database\Factories\HolidayAdjustmentFactory;
 use App\Modules\Organization\Enums\HolidayAdjustmentType;
+use App\Modules\Shared\Enums\AuditLogName;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -44,7 +45,7 @@ final class HolidayAdjustment extends Model
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->logFillable()->logOnlyDirty()->useLogName('organization');
+        return LogOptions::defaults()->logFillable()->logOnlyDirty()->useLogName(AuditLogName::Organization->value);
     }
 
     protected static function newFactory(): HolidayAdjustmentFactory

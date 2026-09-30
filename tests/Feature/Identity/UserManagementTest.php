@@ -13,6 +13,7 @@ use App\Modules\Identity\Models\User;
 use App\Modules\Identity\Notifications\UserInvitation;
 use App\Modules\Identity\Services\AssignableRoles;
 use App\Modules\Organization\Models\Branch;
+use App\Modules\Shared\Enums\AuditLogName;
 use App\Modules\Shared\Enums\VisibilityScope;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
@@ -107,7 +108,7 @@ it('invites a user who defines their own password', function (): void {
     expect($user->hasRole(Role::TravelAgent->value))->toBeTrue()
         ->and($user->branch_id)->toBe($branch->id)
         ->and($user->is_active)->toBeTrue()
-        ->and(Activity::query()->where('log_name', 'identity')->where('subject_id', $user->id)->exists())->toBeTrue();
+        ->and(Activity::query()->where('log_name', AuditLogName::Identity->value)->where('subject_id', $user->id)->exists())->toBeTrue();
 
     Notification::assertSentTo($user, UserInvitation::class, function (UserInvitation $invitation) use ($user): bool {
         $mail = $invitation->toMail($user);
