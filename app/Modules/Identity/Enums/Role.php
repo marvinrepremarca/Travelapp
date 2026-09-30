@@ -40,7 +40,7 @@ enum Role: string
         return match ($this) {
             self::SystemAdmin => [Permission::UsersView, Permission::UsersManage, Permission::RolesManage, Permission::AuditView, Permission::IntegrationsManage],
             self::AgencyOwner => Permission::cases(),
-            self::BranchManager => [Permission::UsersView, Permission::MarginsView, Permission::ApprovalsDiscounts],
+            self::BranchManager => [Permission::UsersView, Permission::MarginsView, Permission::ApprovalsDiscounts, Permission::CustomersReassign],
             self::Finance => [Permission::FinanceAccess, Permission::MarginsView, Permission::ApprovalsRefunds, Permission::ApprovalsInvoiceVoids],
             self::TravelAgent, self::Operations, self::ProductManager => [],
         };

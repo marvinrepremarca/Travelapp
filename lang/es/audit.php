@@ -18,6 +18,7 @@ return [
         'identity' => 'Usuarios',
         'security' => 'Seguridad',
         'workflow' => 'Tareas y aprobaciones',
+        'crm' => 'Clientes',
     ],
     'filters' => [
         'module' => 'Módulo',

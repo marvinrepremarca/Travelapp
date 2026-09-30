@@ -74,6 +74,17 @@ return [
         'password' => env('TRAVEL_DEMO_PASSWORD', 'ViajesDemo2026'),
     ],
 
+    'crm' => [
+        'per_page' => (int) env('TRAVEL_CRM_PER_PAGE', 20),
+    ],
+
+    'privacy' => [
+        // Clave HMAC dedicada para buscar datos cifrados (documentos). Nunca reutilizar APP_KEY.
+        'hash_key' => (string) env('TRAVEL_PII_HASH_KEY', ''),
+        // Versión vigente de la política de tratamiento de datos que acepta el titular.
+        'policy_version' => (string) env('TRAVEL_PRIVACY_POLICY_VERSION', '1.0'),
+    ],
+
     'ui' => [
         // Página de muestra del sistema de diseño; solo para desarrollo y revisión.
         'showcase_enabled' => (bool) env('TRAVEL_UI_SHOWCASE_ENABLED', false),
