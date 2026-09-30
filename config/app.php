@@ -67,6 +67,12 @@ return [
     |
     */
 
+    /*
+    | Carpeta bajo la que se publica la aplicación (p. ej. travelapp → http://host/travelapp).
+    | Vacío = raíz del dominio.
+    */
+    'path_prefix' => trim((string) env('APP_PATH_PREFIX', ''), '/'),
+
     'timezone' => env('APP_TIMEZONE', 'UTC'),
 
     /*

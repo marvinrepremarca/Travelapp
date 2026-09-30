@@ -21,9 +21,13 @@ return [
 
     'lowercase_usernames' => true,
 
-    'home' => '/',
+    'home' => '/' . trim((string) env('APP_PATH_PREFIX', ''), '/'),
 
-    'prefix' => '',
+    'prefix' => trim((string) env('APP_PATH_PREFIX', ''), '/'),
+
+    'redirects' => [
+        'logout' => '/' . trim((string) env('APP_PATH_PREFIX', ''), '/'),
+    ],
 
     'domain' => null,
 
