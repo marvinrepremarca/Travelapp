@@ -64,6 +64,12 @@ return [
                 'help' => 'Si está activo, los asesores no ven el margen de la venta.',
             ],
         ],
+        'pricing' => [
+            'fx_spread_basis_points' => [
+                'label' => 'Spread cambiario de la agencia (puntos básicos)',
+                'help' => 'Se suma a la tasa oficial al convertir monedas. 100 = 1 %.',
+            ],
+        ],
     ],
     'errors' => [
         'business_days_negative' => 'La cantidad de días hábiles no puede ser negativa.',

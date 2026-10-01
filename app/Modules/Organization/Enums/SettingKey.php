@@ -19,8 +19,12 @@ enum SettingKey: string
     case OnRequestResponseSlaHours = 'bookings.on_request_response_sla_hours';
     case TravelAgentScope = 'visibility.travel_agent_scope';
     case HideMarginsFromAgents = 'visibility.hide_margins_from_agents';
+    case FxSpreadBasisPoints = 'pricing.fx_spread_basis_points';
 
     private const MAX_HOURS = 720;
+
+    /** 10 % como tope razonable de spread cambiario. */
+    private const MAX_SPREAD_BASIS_POINTS = 1000;
 
     public function configPath(): string
     {
@@ -30,7 +34,7 @@ enum SettingKey: string
     public function type(): SettingType
     {
         return match ($this) {
-            self::QuoteValidityHours, self::OnRequestResponseSlaHours => SettingType::Integer,
+            self::QuoteValidityHours, self::OnRequestResponseSlaHours, self::FxSpreadBasisPoints => SettingType::Integer,
             self::HideMarginsFromAgents => SettingType::Boolean,
             self::AgencyTimezone, self::DefaultCurrency, self::TravelAgentScope => SettingType::String,
         };
@@ -45,6 +49,7 @@ enum SettingKey: string
             self::QuoteValidityHours, self::OnRequestResponseSlaHours => ['required', 'integer', 'min:1', 'max:' . self::MAX_HOURS],
             self::TravelAgentScope => ['required', Rule::in([VisibilityScope::Own->value, VisibilityScope::Branch->value])],
             self::HideMarginsFromAgents => ['required', 'boolean'],
+            self::FxSpreadBasisPoints => ['required', 'integer', 'min:0', 'max:' . self::MAX_SPREAD_BASIS_POINTS],
         };
     }
 

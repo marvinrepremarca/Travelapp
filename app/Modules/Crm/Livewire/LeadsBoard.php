@@ -29,20 +29,26 @@ final class LeadsBoard extends Component
                 ->where('contact_name', 'like', '%' . $this->search . '%')
                 ->orWhere('destination', 'like', '%' . $this->search . '%')));
 
+        // Un solo conteo agrupado por etapa en lugar de una consulta por columna.
+        $totals = $base()->toBase()
+            ->selectRaw('status, count(*) as aggregate')
+            ->groupBy('status')
+            ->pluck('aggregate', 'status')
+            ->map(static fn(mixed $count): int => (int) $count);
         $columns = [];
 
         foreach ([LeadStatus::New, LeadStatus::Contacted, LeadStatus::Quoted] as $status) {
             $columns[] = [
                 'status' => $status,
                 'leads' => $base()->where('status', $status)->latest('status_changed_at')->limit(config()->integer('travel.crm.board_column_size'))->get(),
-                'total' => $base()->where('status', $status)->count(),
+                'total' => $totals->get($status->value, 0),
             ];
         }
 
         return view('crm::livewire.leads-board', [
             'columns' => $columns,
-            'won' => $base()->where('status', LeadStatus::Won)->count(),
-            'lost' => $base()->where('status', LeadStatus::Lost)->count(),
+            'won' => $totals->get(LeadStatus::Won->value, 0),
+            'lost' => $totals->get(LeadStatus::Lost->value, 0),
         ])->title(__('crm.leads.title'))
             ->layoutData(['heading' => __('crm.leads.title')]);
     }

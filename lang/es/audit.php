@@ -20,6 +20,7 @@ return [
         'workflow' => 'Tareas y aprobaciones',
         'crm' => 'Clientes',
         'suppliers' => 'Proveedores',
+        'pricing' => 'Precios y tasas',
     ],
     'filters' => [
         'module' => 'Módulo',

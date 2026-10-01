@@ -4,6 +4,9 @@
     $items = [
         ['route' => 'dashboard', 'label' => __('shared.dashboard'), 'permission' => null],
         ['route' => 'crm.leads.index', 'label' => __('crm.leads.title'), 'permission' => null],
+        ['route' => 'pricing.simulator', 'label' => __('pricing.simulator.title'), 'permission' => null],
+        ['route' => 'pricing.rules', 'label' => __('pricing.rules.title'), 'permission' => Permission::PricingManage],
+        ['route' => 'pricing.rates', 'label' => __('pricing.rates.title'), 'permission' => null],
         ['route' => 'suppliers.index', 'label' => __('suppliers.title'), 'permission' => null],
         ['route' => 'crm.customers.index', 'label' => __('crm.customers.title'), 'permission' => null],
         ['route' => 'workflow.tasks', 'label' => __('workflow.tasks.title'), 'permission' => null],

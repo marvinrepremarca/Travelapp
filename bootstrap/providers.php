@@ -5,7 +5,9 @@ declare(strict_types=1);
 use App\Modules\Audit\Providers\AuditServiceProvider;
 use App\Modules\Crm\Providers\CrmServiceProvider;
 use App\Modules\Identity\Providers\IdentityServiceProvider;
+use App\Modules\Integrations\Providers\IntegrationsServiceProvider;
 use App\Modules\Organization\Providers\OrganizationServiceProvider;
+use App\Modules\Pricing\Providers\PricingServiceProvider;
 use App\Modules\Suppliers\Providers\SuppliersServiceProvider;
 use App\Modules\Workflow\Providers\WorkflowServiceProvider;
 use App\Providers\AppServiceProvider;
@@ -18,4 +20,6 @@ return [
     WorkflowServiceProvider::class,
     CrmServiceProvider::class,
     SuppliersServiceProvider::class,
+    PricingServiceProvider::class,
+    IntegrationsServiceProvider::class,
 ];

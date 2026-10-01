@@ -6,7 +6,7 @@ namespace App\Modules\Organization\View;
 
 use App\Modules\Organization\Models\AgencyProfile;
 use App\Modules\Shared\Accessibility\ContrastRatio;
-use Illuminate\Contracts\Cache\Repository as Cache;
+use Illuminate\Cache\CacheManager;
 use Illuminate\View\View;
 
 /**
@@ -17,12 +17,12 @@ final readonly class BrandingComposer
 {
     public const CACHE_KEY = 'organization:branding';
 
-    public function __construct(private Cache $cache) {}
+    public function __construct(private CacheManager $cache) {}
 
     public function compose(View $view): void
     {
         /** @var array{name: string|null, css: string} $branding */
-        $branding = $this->cache->rememberForever(self::CACHE_KEY, static function (): array {
+        $branding = $this->cache->memo()->rememberForever(self::CACHE_KEY, static function (): array {
             $profile = AgencyProfile::current();
             $variables = [
                 '--brand-primary' => $profile?->brand_primary_color,

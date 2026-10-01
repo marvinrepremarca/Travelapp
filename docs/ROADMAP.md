@@ -50,7 +50,7 @@ Objetivo: un esqueleto que ya exige la calidad desde el primer commit.
 
 | # | Módulo | Entregables | Verificación clave |
 |---|---|---|---|
-| 2.1 | `Pricing` | Markups, fees, comisiones, impuestos, tasas de cambio con fecha/fuente, redondeo | Datasets de precios y conversiones; margen siempre derivado |
+| 2.1 ✔ | `Pricing` | Markups, fees, comisiones, impuestos, tasas de cambio con fecha/fuente, redondeo | Datasets de precios y conversiones; margen siempre derivado |
 | 2.2 | `Catalog` | Producto propio (tours, pasadías, traslados, paquetes), temporadas, tarifas, cupos | Tests de cupo agotado y concurrencia (locks) |
 | 2.3 | `Quotes` | Cotización versionada multi-opción, itinerario día a día, envío y aceptación en línea | Tests de versión inmutable y vencimiento configurable |
 | 2.4 | `Bookings` | Expediente, ítems, pasajeros por ítem, máquina de estados, plazos, cancelaciones con penalidad, saga con compensación (proveedores manuales primero) | Tests de transiciones válidas/ inválidas, idempotencia, compensación |

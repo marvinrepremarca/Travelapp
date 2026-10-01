@@ -62,6 +62,7 @@ return [
         'pricing_margins_view' => 'Ver márgenes',
         'crm_customers_reassign' => 'Reasignar clientes',
         'suppliers_manage' => 'Administrar proveedores',
+        'pricing_manage' => 'Administrar reglas de precio',
         'workflow_approvals_discounts' => 'Aprobar descuentos',
         'workflow_approvals_refunds' => 'Aprobar reembolsos',
         'workflow_approvals_invoice_voids' => 'Aprobar anulaciones de factura',

@@ -8,7 +8,7 @@ use App\Modules\Organization\Data\AgencyProfileData;
 use App\Modules\Organization\Models\AgencyProfile;
 use App\Modules\Organization\Services\NitCheckDigit;
 use App\Modules\Organization\View\BrandingComposer;
-use Illuminate\Contracts\Cache\Repository as Cache;
+use Illuminate\Cache\CacheManager;
 use Illuminate\Contracts\Config\Repository as Config;
 use Illuminate\Contracts\Filesystem\Factory as Filesystem;
 
@@ -17,7 +17,7 @@ final readonly class UpdateAgencyProfileAction
     public function __construct(
         private Filesystem $storage,
         private Config $config,
-        private Cache $cache,
+        private CacheManager $cache,
     ) {}
 
     /** Crea o actualiza el perfil. El dígito de verificación siempre se calcula en el servidor. */
@@ -53,7 +53,9 @@ final readonly class UpdateAgencyProfileAction
             $disk->delete($previousLogo);
         }
 
-        $this->cache->forget(BrandingComposer::CACHE_KEY);
+        $this->cache->memo()->forget(BrandingComposer::CACHE_KEY);
+        // El perfil memorizado del request ya no es válido (p. ej. si antes no existía).
+        \Illuminate\Support\Once::flush();
 
         return $profile;
     }

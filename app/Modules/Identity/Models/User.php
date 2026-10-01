@@ -52,6 +52,13 @@ final class User extends Authenticatable implements ScopedViewer
     /** `visibility_scope`, `branch_id` y roles nunca vienen del request: se asignan en Actions. */
     protected $fillable = ['name', 'email', 'password'];
 
+    /** Mismos valores por defecto que la BD: una instancia nueva se lee igual que una cargada, sin recargarla. */
+    protected $attributes = [
+        'two_factor_secret' => null,
+        'two_factor_recovery_codes' => null,
+        'two_factor_confirmed_at' => null,
+    ];
+
     protected $hidden = ['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'];
 
     public function getRouteKeyName(): string

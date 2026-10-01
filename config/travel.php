@@ -89,6 +89,14 @@ return [
         'max_payment_days' => (int) env('TRAVEL_SUPPLIER_MAX_PAYMENT_DAYS', 180),
     ],
 
+    'pricing' => [
+        // Spread de la agencia sobre la tasa oficial (100 = 1 %) ⚙.
+        'fx_spread_basis_points' => (int) env('TRAVEL_FX_SPREAD_BASIS_POINTS', 0),
+        'per_page' => (int) env('TRAVEL_PRICING_PER_PAGE', 20),
+        // Horas (zona de la agencia) en que se intenta descargar la TRM del día.
+        'official_rate_fetch_times' => ['06:00', '08:00', '10:00'],
+    ],
+
     'privacy' => [
         // Clave HMAC dedicada para buscar datos cifrados (documentos). Nunca reutilizar APP_KEY.
         'hash_key' => (string) env('TRAVEL_PII_HASH_KEY', ''),
@@ -103,6 +111,12 @@ return [
 
     'health' => [
         'requests_per_minute' => (int) env('TRAVEL_HEALTH_REQUESTS_PER_MINUTE', 60),
+    ],
+
+    // Presupuestos de rendimiento (regla performance.md); los verifica tests/Feature/Shared/PerformanceBudgetTest.
+    'performance' => [
+        'max_queries_per_screen' => (int) env('TRAVEL_MAX_QUERIES_PER_SCREEN', 15),
+        'max_duplicate_queries_per_screen' => 0,
     ],
 
     'security' => [

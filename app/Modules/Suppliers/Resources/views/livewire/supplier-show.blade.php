@@ -53,7 +53,7 @@
                     @foreach ($supplier->commissions as $commission)
                         <tr wire:key="commission-{{ $commission->id }}">
                             <td class="px-md py-sm">{{ $commission->product_type->label() }}</td>
-                            <td class="px-md py-sm">{{ __('suppliers.percent', ['value' => $commission->rate()->toFraction()->multipliedBy(100)->toScale(2)]) }}</td>
+                            <td class="px-md py-sm">{{ __('suppliers.percent', ['value' => $commission->rate()->toPercentString()]) }}</td>
                             <td class="px-md py-sm">{{ $commission->base->label() }}</td>
                             <td class="px-md py-sm">
                                 {{ $commission->valid_from->toDateString() }} – {{ $commission->valid_until?->toDateString() ?? __('suppliers.open_ended') }}
