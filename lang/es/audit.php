@@ -22,6 +22,7 @@ return [
         'suppliers' => 'Proveedores',
         'pricing' => 'Precios y tasas',
         'catalog' => 'Catálogo',
+        'quotes' => 'Cotizaciones',
     ],
     'filters' => [
         'module' => 'Módulo',

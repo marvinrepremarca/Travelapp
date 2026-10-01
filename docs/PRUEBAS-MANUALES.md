@@ -97,3 +97,11 @@ Para el 2FA usa una app de autenticación (Google Authenticator, Microsoft Authe
 - [ ] Abre "Cartagena esencial 3 días": itinerario día 1 (traslado + city tour), día 2 (Rosario), día 3 (traslado) y "Neto desde (adulto)" igual a la suma de los netos de adulto más bajos.
 - [ ] Como **gerente**: agrega un componente al paquete; repite el mismo producto el mismo día → error. Quita un componente (pide confirmación).
 - [ ] Edita "City tour Cartagena" y cámbialo a tipo Paquete → error (forma parte de un paquete).
+
+### Fase 2.3 — Quotes (parte A)
+- [ ] Como **asesor.bogota**: *Cotizaciones* muestra "Cartagena en familia" (enviada, con vigencia) y "Escapada a San Andrés" (borrador). Otro asesor no las ve; por URL → 404.
+- [ ] Abre el borrador: agrega un ítem de catálogo (paquete Cartagena, edades "38, 8") y uno manual (hotel con neto y noches). El total sale del servidor; el margen no se muestra al asesor.
+- [ ] Agrega la opción B vacía e intenta enviar → error "La opción B no tiene ítems". Quítala y envía: aparece la versión 1 con su vigencia.
+- [ ] En la enviada, "Editar nueva versión" → vuelve a borrador; envía de nuevo → versión 2 (la 1 sigue en la lista).
+- [ ] Registra la aceptación de la opción A con una nota → estado Aceptada.
+- [ ] Como **gerente**: la misma cotización muestra neto, tasa y margen por ítem.
