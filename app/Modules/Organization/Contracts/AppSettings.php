@@ -20,4 +20,7 @@ interface AppSettings
     public function travelAgentScope(): VisibilityScope;
 
     public function hideMarginsFromAgents(): bool;
+
+    /** Spread de la agencia sobre la tasa oficial, en puntos básicos (100 = 1 %). */
+    public function fxSpreadBasisPoints(): int;
 }

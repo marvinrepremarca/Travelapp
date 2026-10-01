@@ -42,4 +42,9 @@ final readonly class DatabaseAppSettings implements AppSettings
     {
         return (bool) $this->store->get(SettingKey::HideMarginsFromAgents);
     }
+
+    public function fxSpreadBasisPoints(): int
+    {
+        return (int) $this->store->get(SettingKey::FxSpreadBasisPoints);
+    }
 }
