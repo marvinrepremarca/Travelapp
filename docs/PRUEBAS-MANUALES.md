@@ -105,3 +105,8 @@ Para el 2FA usa una app de autenticación (Google Authenticator, Microsoft Authe
 - [ ] En la enviada, "Editar nueva versión" → vuelve a borrador; envía de nuevo → versión 2 (la 1 sigue en la lista).
 - [ ] Registra la aceptación de la opción A con una nota → estado Aceptada.
 - [ ] Como **gerente**: la misma cotización muestra neto, tasa y margen por ítem.
+
+### Fase 2.3 — Quotes (parte B: enlace del cliente)
+- [ ] En "Cartagena en familia" (enviada) copia el **enlace para el cliente** y ábrelo en una ventana privada: se ven opciones, itinerario por día y total, sin neto ni margen.
+- [ ] Cambia una letra de la firma en la URL → 403. Acepta sin nombre o sin marcar condiciones → errores. Acepta bien → "¡Gracias!"; en el backoffice queda Aceptada por "Enlace del cliente".
+- [ ] En otra cotización: envía, copia el enlace, "Editar nueva versión" y vuelve a abrir el enlace viejo → "Esta versión fue reemplazada".

@@ -11,3 +11,11 @@
 - **Vencimiento automático** cada 15 minutos (`quotes:expire`) y cancelación auditada.
 - Eventos `QuoteSent` y `QuoteAccepted` para CRM, notificaciones y reservas.
 - El margen se oculta a los asesores salvo permiso o configuración de la agencia.
+
+## Fase 2.3 (parte B: enlace del cliente e itinerario)
+
+### Agregado
+- **Enlace firmado** por versión, sin sesión, que caduca con la vigencia; límite de solicitudes por IP ⚙. El asesor lo copia desde la cotización enviada.
+- El cliente ve **solo precios de venta** de la versión enviada (nunca neto ni margen), el **itinerario día a día** de cada opción y **acepta una opción** con su nombre y la aceptación de condiciones (canal "Enlace del cliente").
+- Un enlace de una versión reemplazada, vencida, cancelada o ya aceptada lo explica y no permite aceptar.
+- **Itinerario día a día** también en la ficha interna, con noches y fecha de salida de hoteles.

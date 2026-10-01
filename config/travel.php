@@ -41,6 +41,7 @@ return [
         'max_passenger_age' => (int) env('TRAVEL_QUOTE_MAX_PASSENGER_AGE', 120),
         'max_nights' => (int) env('TRAVEL_QUOTE_MAX_NIGHTS', 90),
         'per_page' => (int) env('TRAVEL_QUOTES_PER_PAGE', 20),
+        'customer_link_requests_per_minute' => (int) env('TRAVEL_QUOTE_LINK_REQUESTS_PER_MINUTE', 30),
     ],
 
     'bookings' => [

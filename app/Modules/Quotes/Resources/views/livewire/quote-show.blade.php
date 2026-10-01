@@ -25,6 +25,16 @@
                 </x-ui.alert>
             @endif
             @error('quote')<x-ui.alert :tone="Tone::Danger">{{ $message }}</x-ui.alert>@enderror
+            @if ($customerLink)
+                <div class="flex flex-col gap-xs" x-data="{ copied: false }">
+                    <label for="customer-link" class="text-caption text-text-subtle">{{ __('quotes.public.link_label') }}</label>
+                    <div class="flex flex-col gap-sm md:flex-row">
+                        <x-ui.input name="customer-link" :value="$customerLink" readonly x-ref="link" />
+                        <x-ui.button type="button" variant="secondary" x-on:click="navigator.clipboard.writeText($refs.link.value); copied = true">{{ __('quotes.public.copy_link') }}</x-ui.button>
+                    </div>
+                    <p class="text-caption text-success" x-show="copied" x-cloak role="status">{{ __('quotes.public.copied') }}</p>
+                </div>
+            @endif
 
             <div class="flex flex-wrap justify-end gap-sm">
                 @if ($quote->status === QuoteStatus::Draft)
@@ -95,6 +105,13 @@
                         {{ __('quotes.options.total') }}: {{ $presenter->format($activeOption->saleTotal($currency)) }}
                         @if ($canSeeMargin) · {{ __('quotes.options.margin') }}: {{ $presenter->format($activeOption->marginTotal($currency)) }} @endif
                     </p>
+                @endif
+
+                @if ($itinerary !== [])
+                    <section aria-labelledby="itinerary-title" class="border-t border-border pt-md">
+                        <h4 id="itinerary-title" class="mb-sm font-medium">{{ __('quotes.itinerary.title') }}</h4>
+                        @include('quotes::partials.itinerary', ['days' => $itinerary])
+                    </section>
                 @endif
 
                 @if ($editable)
