@@ -40,6 +40,36 @@ final class CatalogRuleViolation extends BusinessRuleException
         return self::make('product_inactive', __('catalog.errors.product_inactive'));
     }
 
+    public static function notAPackage(): self
+    {
+        return self::make('not_a_package', __('catalog.errors.not_a_package'));
+    }
+
+    public static function nestedPackage(): self
+    {
+        return self::make('nested_package', __('catalog.errors.nested_package'));
+    }
+
+    public static function componentCurrencyMismatch(string $currency): self
+    {
+        return self::make('component_currency_mismatch', __('catalog.errors.component_currency_mismatch', ['currency' => $currency]));
+    }
+
+    public static function duplicatedComponent(): self
+    {
+        return self::make('duplicated_component', __('catalog.errors.duplicated_component'));
+    }
+
+    public static function emptyPackage(): self
+    {
+        return self::make('empty_package', __('catalog.errors.empty_package'));
+    }
+
+    public static function productTypeLocked(): self
+    {
+        return self::make('product_type_locked', __('catalog.errors.product_type_locked'));
+    }
+
     public function errorCode(): string
     {
         return $this->stableCode;

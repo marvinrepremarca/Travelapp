@@ -48,7 +48,7 @@ it('renders every backoffice screen within the query budget', function (string $
     'identity.security',
 ]);
 
-it('renders the product sheet within the query budget', function (): void {
+it('renders the product and package sheets within the query budget', function (string $code): void {
     $this->seed(DemoSeeder::class);
     actingAs(userWithRole(Role::AgencyOwner));
     $queries = [];
@@ -56,8 +56,8 @@ it('renders the product sheet within the query budget', function (): void {
         $queries[] = $query->sql . json_encode($query->bindings);
     });
 
-    get(route('catalog.show', App\Modules\Catalog\Models\CatalogProduct::query()->where('code', 'CTG-ROSARIO')->sole()))->assertOk();
+    get(route('catalog.show', App\Modules\Catalog\Models\CatalogProduct::query()->where('code', $code)->sole()))->assertOk();
 
     expect(count($queries))->toBeLessThanOrEqual(config()->integer('travel.performance.max_queries_per_screen'))
         ->and(count(array_filter(array_count_values($queries), static fn(int $times): bool => $times > 1)))->toBe(0);
-});
+})->with(['CTG-ROSARIO', 'CTG-3D']);
