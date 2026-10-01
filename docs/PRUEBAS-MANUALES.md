@@ -12,7 +12,7 @@ php artisan serve
 
 Abrir http://127.0.0.1:8000/travelapp (la carpeta se define con `APP_PATH_PREFIX`; vacía = raíz del dominio). En `.env` local: `QUEUE_CONNECTION=sync` (los correos salen al instante) y `MAIL_MAILER=log` (los correos se escriben en `storage/logs/laravel.log`).
 
-**Rendimiento local (obligatorio para medir):** en `C:\xampp\php\php.ini` deja `zend_extension=opcache`, `opcache.enable=1` y `xdebug.mode=off`; reinicia `php artisan serve`. Con Xdebug en modo `coverage` cada pantalla tarda de 0,4 a 1 s; con OPcache y sin Xdebug, de 50 a 100 ms. La cobertura enciende Xdebug sola (`composer test:coverage`). Si publicas bajo una carpeta en Apache, define `ASSET_URL=/<carpeta>` para que CSS y JS carguen desde ella.
+**Rendimiento local (obligatorio para medir):** en `C:\xampp\php\php.ini` deja `zend_extension=opcache`, `opcache.enable=1` y `xdebug.mode=off`; reinicia `php artisan serve`. Con Xdebug en modo `coverage` cada pantalla tarda de 0,4 a 1 s; con OPcache y sin Xdebug, de 100 a 150 ms con sesión iniciada. Unos 100 ms son el piso del servidor de desarrollo de Windows (`/health` sin BD ni sesión ya tarda eso); la pantalla en sí toma de 10 a 40 ms. Si el antivirus de Windows analiza `C:\xampp` y la carpeta del proyecto, cada request es más lento. La cobertura enciende Xdebug sola (`composer test:coverage`). Si publicas bajo una carpeta en Apache, define `ASSET_URL=/<carpeta>` para que CSS y JS carguen desde ella.
 
 ## Usuarios de demostración
 
@@ -87,3 +87,10 @@ Para el 2FA usa una app de autenticación (Google Authenticator, Microsoft Authe
 - [ ] *Simulador*: neto 1.000.000 COP, hotel, 2 pasajeros → markup 120.000 (gana la regla de hoteles), fee 30.000, IVA 28.500 sobre el ingreso de la agencia, total 1.178.500 y margen 150.000.
 - [ ] Repite con un tour → aplica la regla general del 10 %. Con neto en USD se muestra la tasa usada y su fecha.
 - [ ] Como **asesor.bogota**: el simulador no muestra el margen y no ve *Reglas de precio* (403 si entra por URL).
+
+### Fase 2.2 — Catalog (producto propio)
+- [ ] Como **asesor.bogota**: *Catálogo* muestra 3 productos; filtra por "Traslado" y por texto "rosario". No ve "Nuevo producto" ni los formularios de temporadas/salidas.
+- [ ] Abre "Pasadía Islas del Rosario": temporadas media y alta con neto adulto/niño/infante y dos salidas; la de 2 cupos muestra "2 de 2 disponibles".
+- [ ] Como **gerente**: crea un producto (código, tipo, ciudad); intenta un código repetido → error.
+- [ ] Agrega una temporada que se cruce con otra → error; una contigua → se guarda. Deja vacío el neto de niño → aparece "Sin tarifa".
+- [ ] Programa una salida en una fecha pasada → error; la misma fecha y hora dos veces → error. Cierra la venta de una salida y reábrela.

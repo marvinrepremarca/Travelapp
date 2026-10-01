@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Modules\Catalog\Actions\AddDepartureAction;
+use App\Modules\Catalog\Actions\AddSeasonAction;
+use App\Modules\Catalog\Models\CatalogProduct;
 use App\Modules\Crm\Enums\ConsentChannel;
 use App\Modules\Crm\Enums\ConsentPurpose;
 use App\Modules\Crm\Enums\LeadStatus;
@@ -17,6 +20,7 @@ use App\Modules\Organization\Models\AgencyProfile;
 use App\Modules\Organization\Models\Branch;
 use App\Modules\Organization\Services\NitCheckDigit;
 use App\Modules\Pricing\Database\Seeders\TaxReferenceSeeder;
+use App\Modules\Shared\Enums\ProductType;
 use App\Modules\Suppliers\Models\Supplier;
 use App\Modules\Workflow\Enums\ApprovalStatus;
 use App\Modules\Workflow\Enums\ApprovalType;
@@ -24,6 +28,7 @@ use App\Modules\Workflow\Enums\TaskPriority;
 use App\Modules\Workflow\Enums\TaskStatus;
 use App\Modules\Workflow\Models\ApprovalRequest;
 use App\Modules\Workflow\Models\Task;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Seeder;
 use RuntimeException;
 
@@ -81,6 +86,7 @@ final class DemoSeeder extends Seeder
 
         $this->crm($agentBog);
         $this->suppliers();
+        $this->catalog();
 
         unset($admin, $finance);
     }
@@ -95,6 +101,31 @@ final class DemoSeeder extends Seeder
         Supplier::factory()->rntExpiringIn(10)->create(['trade_name' => 'Tours Ciudad Amurallada', 'legal_name' => 'Tours CA S.A.S.']);
         Supplier::factory()->rntExpiringIn(-5)->create(['trade_name' => 'Transportes Sabana', 'legal_name' => 'Transportes Sabana Ltda.']);
         Supplier::factory()->foreign()->create(['trade_name' => 'Global Hotels', 'legal_name' => 'Global Hotels Inc.']);
+    }
+
+    /** Producto propio con temporadas y salidas para probar cupos y tarifas por edad. */
+    private function catalog(): void
+    {
+        if (CatalogProduct::query()->exists()) {
+            return;
+        }
+
+        $operator = Supplier::query()->where('trade_name', 'Tours Ciudad Amurallada')->first();
+        $today = CarbonImmutable::today();
+        $seasons = app(AddSeasonAction::class);
+        $departures = app(AddDepartureAction::class);
+
+        $rosario = CatalogProduct::factory()->create(['code' => 'CTG-ROSARIO', 'name' => 'Pasadía Islas del Rosario', 'product_type' => ProductType::DayTrip, 'supplier_id' => $operator?->id]);
+        $seasons->execute($rosario, 'Temporada media', $today->startOfYear(), $today->addMonths(2)->endOfMonth(), ['adult' => 18000000, 'child' => 12000000, 'infant' => 0]);
+        $seasons->execute($rosario, 'Temporada alta', $today->addMonths(3)->startOfMonth(), $today->addMonths(4)->endOfMonth(), ['adult' => 24000000, 'child' => 16000000, 'infant' => 0]);
+        $departures->execute($rosario, $today->addDays(3), '08:00', 30);
+        $departures->execute($rosario, $today->addDays(4), '08:00', 2);
+
+        $city = CatalogProduct::factory()->create(['code' => 'CTG-CITY', 'name' => 'City tour Cartagena', 'product_type' => ProductType::Tour]);
+        $seasons->execute($city, 'Todo el año', $today->startOfYear(), $today->endOfYear()->addYear(), ['adult' => 9000000, 'child' => 6000000]);
+        $departures->execute($city, $today->addDays(2), '15:00', 20);
+
+        CatalogProduct::factory()->create(['code' => 'CTG-AIRPORT', 'name' => 'Traslado aeropuerto - hotel', 'product_type' => ProductType::Transfer, 'duration_minutes' => 30]);
     }
 
     private function crm(User $agent): void

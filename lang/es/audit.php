@@ -21,6 +21,7 @@ return [
         'crm' => 'Clientes',
         'suppliers' => 'Proveedores',
         'pricing' => 'Precios y tasas',
+        'catalog' => 'Catálogo',
     ],
     'filters' => [
         'module' => 'Módulo',
