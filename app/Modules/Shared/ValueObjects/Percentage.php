@@ -17,6 +17,8 @@ final readonly class Percentage
 
     private const FRACTION_SCALE = 4;
 
+    private const DISPLAY_SCALE = 2;
+
     private function __construct(public int $basisPoints) {}
 
     public static function fromBasisPoints(int $basisPoints): self
@@ -42,6 +44,12 @@ final readonly class Percentage
     public function applyTo(Money $amount): Money
     {
         return $amount->multipliedBy($this->toFraction(), RoundingMode::HALF_UP);
+    }
+
+    /** Texto para mostrar: 1250 pb → "12.50". */
+    public function toPercentString(): string
+    {
+        return (string) BigDecimal::of($this->basisPoints)->dividedBy(self::BASIS_POINTS_PER_PERCENT, self::DISPLAY_SCALE, RoundingMode::HALF_UP);
     }
 
     public function isZero(): bool

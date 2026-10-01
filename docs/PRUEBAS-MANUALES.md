@@ -78,3 +78,10 @@ Para el 2FA usa una app de autenticación (Google Authenticator, Microsoft Authe
 - [ ] En "Hotel Caribe Real" agrega una comisión de hoteles del 10 % desde hoy; intenta otra que se cruce → error. Termínala y crea la nueva.
 - [ ] Agrega una cuenta bancaria → aparece enmascarada; con un motivo, "Mostrar número" → aparece y queda en *Auditoría → Accesos a datos sensibles*.
 - [ ] Como **gestor de producto** (crea uno desde Usuarios): administra proveedores pero no ve la sección de cuentas bancarias.
+
+### Fase 2.1 — Pricing
+- [ ] Como **finanzas**: *Tasas de cambio* → "Consultar TRM" trae la TRM del día (requiere internet). Registra una tasa manual USD→COP → prevalece sobre la oficial ese día.
+- [ ] Como **gestor de producto**: *Reglas de precio* muestra el IVA 19 %. Crea un markup general del 10 % y otro del 12 % para hoteles; crea un fee de gestión de $30.000 por reserva.
+- [ ] *Simulador*: neto 1.000.000 COP, hotel, 2 pasajeros → markup 120.000 (gana la regla de hoteles), fee 30.000, IVA 28.500 sobre el ingreso de la agencia, total 1.178.500 y margen 150.000.
+- [ ] Repite con un tour → aplica la regla general del 10 %. Con neto en USD se muestra la tasa usada y su fecha.
+- [ ] Como **asesor.bogota**: el simulador no muestra el margen y no ve *Reglas de precio* (403 si entra por URL).

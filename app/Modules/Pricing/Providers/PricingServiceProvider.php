@@ -6,8 +6,12 @@ namespace App\Modules\Pricing\Providers;
 
 use App\Modules\Pricing\Console\FetchOfficialRateCommand;
 use App\Modules\Pricing\Contracts\ExchangeRates;
+use App\Modules\Pricing\Contracts\PriceCalculator;
 use App\Modules\Pricing\Livewire\ExchangeRatesManager;
+use App\Modules\Pricing\Livewire\PriceSimulator;
+use App\Modules\Pricing\Livewire\PricingRulesManager;
 use App\Modules\Pricing\Services\DatabaseExchangeRates;
+use App\Modules\Pricing\Services\RuleBasedPriceCalculator;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
@@ -18,6 +22,7 @@ final class PricingServiceProvider extends ServiceProvider
     /** @var array<class-string, class-string> */
     public array $singletons = [
         ExchangeRates::class => DatabaseExchangeRates::class,
+        PriceCalculator::class => RuleBasedPriceCalculator::class,
     ];
 
     public function boot(): void
@@ -29,6 +34,8 @@ final class PricingServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'pricing');
 
         Livewire::component('pricing.exchange-rates-manager', ExchangeRatesManager::class);
+        Livewire::component('pricing.rules-manager', PricingRulesManager::class);
+        Livewire::component('pricing.simulator', PriceSimulator::class);
 
         if ($this->app->runningInConsole()) {
             $this->commands([FetchOfficialRateCommand::class]);

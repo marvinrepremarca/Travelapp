@@ -16,6 +16,7 @@ use App\Modules\Identity\Models\User;
 use App\Modules\Organization\Models\AgencyProfile;
 use App\Modules\Organization\Models\Branch;
 use App\Modules\Organization\Services\NitCheckDigit;
+use App\Modules\Pricing\Database\Seeders\TaxReferenceSeeder;
 use App\Modules\Suppliers\Models\Supplier;
 use App\Modules\Workflow\Enums\ApprovalStatus;
 use App\Modules\Workflow\Enums\ApprovalType;
@@ -40,7 +41,7 @@ final class DemoSeeder extends Seeder
             throw new RuntimeException('DemoSeeder solo se ejecuta en local o testing.');
         }
 
-        $this->call(RolesAndPermissionsSeeder::class);
+        $this->call([RolesAndPermissionsSeeder::class, TaxReferenceSeeder::class]);
 
         AgencyProfile::query()->firstOrCreate([], [
             'legal_name' => 'Viajes Demo S.A.S.',

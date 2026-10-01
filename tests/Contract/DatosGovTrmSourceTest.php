@@ -73,7 +73,7 @@ it('translates server errors and timeouts and records the outcome', function (mi
 })->with([
     'server error' => [fn() => Http::response('error', 503), RequestOutcome::ServerError],
     'client error' => [fn() => Http::response('bad', 400), RequestOutcome::ClientError],
-    'timeout' => [fn() => fn() => throw new ConnectionException('timed out'), RequestOutcome::Timeout],
+    'timeout' => [fn(): \Closure => fn() => throw new ConnectionException('timed out'), RequestOutcome::Timeout],
 ]);
 
 it('refuses hosts outside the allow list', function (): void {
