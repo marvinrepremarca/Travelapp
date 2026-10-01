@@ -64,7 +64,7 @@ final readonly class SendQuoteAction
         return $version;
     }
 
-    /** @return array{ulid: string, label: string, title: string, sale_total_minor: int, items: list<array<string, mixed>>} */
+    /** @return array{ulid: string, label: string, title: string, sale_total_minor: int, items: list<array{description: string, product_type: string, service_date: string, nights: int, ...}>} */
     private function optionSnapshot(QuoteOption $option, string $currency): array
     {
         return [

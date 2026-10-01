@@ -18,9 +18,12 @@ use App\Modules\Quotes\Actions\SendQuoteAction;
 use App\Modules\Quotes\Data\QuoteItemData;
 use App\Modules\Quotes\Enums\AcceptanceChannel;
 use App\Modules\Quotes\Enums\QuoteItemKind;
+use App\Modules\Quotes\Enums\QuoteStatus;
 use App\Modules\Quotes\Models\Quote;
 use App\Modules\Quotes\Models\QuoteItem;
 use App\Modules\Quotes\Models\QuoteOption;
+use App\Modules\Quotes\Services\ItineraryBuilder;
+use App\Modules\Quotes\Services\QuoteLinks;
 use App\Modules\Shared\Enums\Permission;
 use App\Modules\Shared\Enums\ProductType;
 use App\Modules\Shared\Exceptions\BusinessRuleException;
@@ -152,14 +155,22 @@ final class QuoteShow extends Component
         $this->quote->refresh();
     }
 
-    public function render(MoneyPresenter $presenter, AppSettings $settings): View
+    public function render(MoneyPresenter $presenter, AppSettings $settings, ItineraryBuilder $itinerary, QuoteLinks $links): View
     {
         $quote = $this->quote->load(['customer:id,ulid,display_name', 'options.items']);
         $editable = $quote->status->isEditable();
+        $activeOption = $quote->options->firstWhere('ulid', $this->optionUlid) ?? $quote->options->first();
 
         return view('quotes::livewire.quote-show', [
             'quote' => $quote,
-            'activeOption' => $quote->options->firstWhere('ulid', $this->optionUlid) ?? $quote->options->first(),
+            'activeOption' => $activeOption,
+            'itinerary' => $itinerary->build($activeOption?->items->map(static fn(QuoteItem $item): array => [
+                'description' => $item->description,
+                'product_type' => $item->product_type->value,
+                'service_date' => $item->service_date->toDateString(),
+                'nights' => $item->nights,
+            ])->all() ?? []),
+            'customerLink' => $quote->status === QuoteStatus::Sent ? $links->customerUrl($quote) : null,
             'versions' => $quote->versions()->get(['id', 'version', 'sent_at', 'valid_until']),
             'presenter' => $presenter,
             'canSeeMargin' => $this->actor()->can(Permission::MarginsView->value) || ! $settings->hideMarginsFromAgents(),

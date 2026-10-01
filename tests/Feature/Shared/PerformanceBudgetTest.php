@@ -77,3 +77,17 @@ it('renders a sent quote within the query budget', function (): void {
     expect(count($queries))->toBeLessThanOrEqual(config()->integer('travel.performance.max_queries_per_screen'))
         ->and(count(array_filter(array_count_values($queries), static fn(int $times): bool => $times > 1)))->toBe(0);
 });
+
+it('renders the customer quote link within the query budget', function (): void {
+    $this->seed(DemoSeeder::class);
+    $quote = App\Modules\Quotes\Models\Quote::query()->where('title', 'Cartagena en familia')->sole();
+    $queries = [];
+    DB::listen(static function (QueryExecuted $query) use (&$queries): void {
+        $queries[] = $query->sql . json_encode($query->bindings);
+    });
+
+    get((string) app(App\Modules\Quotes\Services\QuoteLinks::class)->customerUrl($quote))->assertOk()->assertSee('Hotel Caribe Real');
+
+    expect(count($queries))->toBeLessThanOrEqual(config()->integer('travel.performance.max_queries_per_screen'))
+        ->and(count(array_filter(array_count_values($queries), static fn(int $times): bool => $times > 1)))->toBe(0);
+});
