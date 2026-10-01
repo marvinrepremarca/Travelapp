@@ -57,7 +57,7 @@ final class CatalogIndex extends Component
 
         return view('catalog::livewire.catalog-index', [
             'products' => $products,
-            'types' => CatalogProduct::OWN_PRODUCT_TYPES,
+            'types' => CatalogProduct::CATALOG_TYPES,
             'canManage' => Gate::allows('manage', CatalogProduct::class),
         ])->title(__('catalog.title'))
             ->layoutData(['heading' => __('catalog.title')]);

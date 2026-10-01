@@ -38,8 +38,11 @@ final class CatalogProduct extends Model
     use HasUlids;
     use LogsActivity;
 
-    /** Tipos que la agencia opera como producto propio. */
+    /** Tipos que la agencia opera como producto propio y que pueden formar parte de un paquete. */
     public const OWN_PRODUCT_TYPES = [ProductType::Tour, ProductType::DayTrip, ProductType::Transfer, ProductType::Activity];
+
+    /** Tipos que se pueden crear en el catálogo (los anteriores más el paquete prearmado). */
+    public const CATALOG_TYPES = [...self::OWN_PRODUCT_TYPES, ProductType::Package];
 
     protected $fillable = [
         'code', 'name', 'product_type', 'description', 'destination_country', 'destination_city', 'timezone',
@@ -61,6 +64,17 @@ final class CatalogProduct extends Model
     public function seasons(): HasMany
     {
         return $this->hasMany(CatalogSeason::class, 'product_id');
+    }
+
+    /** @return HasMany<CatalogPackageComponent, $this> */
+    public function components(): HasMany
+    {
+        return $this->hasMany(CatalogPackageComponent::class, 'package_id');
+    }
+
+    public function isPackage(): bool
+    {
+        return $this->product_type === ProductType::Package;
     }
 
     /** @return HasMany<CatalogDeparture, $this> */

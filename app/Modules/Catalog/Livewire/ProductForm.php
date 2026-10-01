@@ -6,6 +6,7 @@ namespace App\Modules\Catalog\Livewire;
 
 use App\Modules\Catalog\Actions\SaveProductAction;
 use App\Modules\Catalog\Data\ProductData;
+use App\Modules\Catalog\Exceptions\CatalogRuleViolation;
 use App\Modules\Catalog\Models\CatalogProduct;
 use App\Modules\Shared\Enums\ProductType;
 use App\Modules\Suppliers\Models\Supplier;
@@ -75,7 +76,7 @@ final class ProductForm extends Component
         $validated = $this->validate([
             'code' => ['required', 'string', 'max:30', 'alpha_dash', Rule::unique('catalog_products', 'code')->ignore($this->productUlid, 'ulid')],
             'name' => ['required', 'string', 'max:255'],
-            'product_type' => ['required', Rule::in(array_map(static fn(ProductType $type): string => $type->value, CatalogProduct::OWN_PRODUCT_TYPES))],
+            'product_type' => ['required', Rule::in(array_map(static fn(ProductType $type): string => $type->value, CatalogProduct::CATALOG_TYPES))],
             'description' => ['nullable', 'string', 'max:5000'],
             'destination_country' => ['required', 'string', 'size:2', 'alpha'],
             'destination_city' => ['required', 'string', 'max:100'],
@@ -85,18 +86,24 @@ final class ProductForm extends Component
             'currency' => ['required', 'string', 'size:3', 'alpha'],
         ], attributes: $this->attributes());
 
-        $saved = $save->execute(new ProductData(
-            code: $validated['code'],
-            name: $validated['name'],
-            productType: ProductType::from($validated['product_type']),
-            destinationCountry: $validated['destination_country'],
-            destinationCity: $validated['destination_city'],
-            timezone: $validated['timezone'],
-            currency: $validated['currency'],
-            durationMinutes: $validated['duration_minutes'] === '' ? null : (int) $validated['duration_minutes'],
-            supplierId: $validated['supplier_id'] === '' ? null : (int) $validated['supplier_id'],
-            description: $validated['description'] ?: null,
-        ), $product);
+        try {
+            $saved = $save->execute(new ProductData(
+                code: $validated['code'],
+                name: $validated['name'],
+                productType: ProductType::from($validated['product_type']),
+                destinationCountry: $validated['destination_country'],
+                destinationCity: $validated['destination_city'],
+                timezone: $validated['timezone'],
+                currency: $validated['currency'],
+                durationMinutes: $validated['duration_minutes'] === '' ? null : (int) $validated['duration_minutes'],
+                supplierId: $validated['supplier_id'] === '' ? null : (int) $validated['supplier_id'],
+                description: $validated['description'] ?: null,
+            ), $product);
+        } catch (CatalogRuleViolation $violation) {
+            $this->addError('product_type', $violation->getMessage());
+
+            return;
+        }
 
         session()->flash('status', __('catalog.saved', ['name' => $saved->name]));
         $this->redirectRoute('catalog.show', $saved, navigate: true);
@@ -107,7 +114,7 @@ final class ProductForm extends Component
         $title = $this->productUlid === null ? __('catalog.create') : __('catalog.edit');
 
         return view('catalog::livewire.product-form', [
-            'types' => CatalogProduct::OWN_PRODUCT_TYPES,
+            'types' => CatalogProduct::CATALOG_TYPES,
             'suppliers' => Supplier::query()->where('is_active', true)->orderBy('trade_name')->pluck('trade_name', 'id')->all(),
         ])->title($title)->layoutData(['heading' => $title]);
     }

@@ -94,3 +94,6 @@ Para el 2FA usa una app de autenticación (Google Authenticator, Microsoft Authe
 - [ ] Como **gerente**: crea un producto (código, tipo, ciudad); intenta un código repetido → error.
 - [ ] Agrega una temporada que se cruce con otra → error; una contigua → se guarda. Deja vacío el neto de niño → aparece "Sin tarifa".
 - [ ] Programa una salida en una fecha pasada → error; la misma fecha y hora dos veces → error. Cierra la venta de una salida y reábrela.
+- [ ] Abre "Cartagena esencial 3 días": itinerario día 1 (traslado + city tour), día 2 (Rosario), día 3 (traslado) y "Neto desde (adulto)" igual a la suma de los netos de adulto más bajos.
+- [ ] Como **gerente**: agrega un componente al paquete; repite el mismo producto el mismo día → error. Quita un componente (pide confirmación).
+- [ ] Edita "City tour Cartagena" y cámbialo a tipo Paquete → error (forma parte de un paquete).

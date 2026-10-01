@@ -9,3 +9,12 @@
 - **Contrato `CatalogInventory`**: apartar y liberar cupos con bloqueo pesimista e idempotencia; **nunca hay sobreventa**.
 - **Contrato `CatalogRates`**: costo neto por temporada y edad, con error explícito si falta temporada o tarifa.
 - Permiso `catalog.manage` para gestor de producto y gerencia; todos los usuarios internos consultan el catálogo.
+
+## Fase 2.2 (parte 2: paquetes prearmados)
+
+### Agregado
+- **Paquetes**: producto de tipo paquete que combina productos propios por día del itinerario (día 1, 2…). No incluye otros paquetes y todos sus componentes cuestan en su moneda.
+- El **costo neto del paquete** suma cada componente en su fecha real y temporada; las edades se toman al inicio del paquete.
+- **Precio "desde"** (neto por adulto): el menor entre las temporadas vigentes o futuras; en un paquete, la suma de sus componentes. Se muestra en la ficha.
+- No se puede cambiar el tipo ni la moneda de un producto que es paquete o componente de uno.
+- Hoteles y vuelos no son producto propio: se combinan con el paquete al cotizar (Fase 2.3).

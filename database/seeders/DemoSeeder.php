@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Modules\Catalog\Actions\AddDepartureAction;
+use App\Modules\Catalog\Actions\AddPackageComponentAction;
 use App\Modules\Catalog\Actions\AddSeasonAction;
 use App\Modules\Catalog\Models\CatalogProduct;
 use App\Modules\Crm\Enums\ConsentChannel;
@@ -125,7 +126,15 @@ final class DemoSeeder extends Seeder
         $seasons->execute($city, 'Todo el año', $today->startOfYear(), $today->endOfYear()->addYear(), ['adult' => 9000000, 'child' => 6000000]);
         $departures->execute($city, $today->addDays(2), '15:00', 20);
 
-        CatalogProduct::factory()->create(['code' => 'CTG-AIRPORT', 'name' => 'Traslado aeropuerto - hotel', 'product_type' => ProductType::Transfer, 'duration_minutes' => 30]);
+        $airport = CatalogProduct::factory()->create(['code' => 'CTG-AIRPORT', 'name' => 'Traslado aeropuerto - hotel', 'product_type' => ProductType::Transfer, 'duration_minutes' => 30]);
+        $seasons->execute($airport, 'Tarifa única', $today->startOfYear(), $today->endOfYear()->addYear(), ['adult' => 4500000, 'child' => 4500000, 'infant' => 0]);
+
+        $package = CatalogProduct::factory()->create(['code' => 'CTG-3D', 'name' => 'Cartagena esencial 3 días', 'product_type' => ProductType::Package, 'duration_minutes' => null]);
+        $components = app(AddPackageComponentAction::class);
+        $components->execute($package, $airport, 0);
+        $components->execute($package, $city, 0);
+        $components->execute($package, $rosario, 1);
+        $components->execute($package, $airport, 2);
     }
 
     private function crm(User $agent): void
