@@ -45,6 +45,8 @@ it('renders every backoffice screen within the query budget', function (string $
     'organization.agency',
     'catalog.index',
     'catalog.create',
+    'quotes.index',
+    'quotes.create',
     'identity.security',
 ]);
 
@@ -61,3 +63,17 @@ it('renders the product and package sheets within the query budget', function (s
     expect(count($queries))->toBeLessThanOrEqual(config()->integer('travel.performance.max_queries_per_screen'))
         ->and(count(array_filter(array_count_values($queries), static fn(int $times): bool => $times > 1)))->toBe(0);
 })->with(['CTG-ROSARIO', 'CTG-3D']);
+
+it('renders a sent quote within the query budget', function (): void {
+    $this->seed(DemoSeeder::class);
+    actingAs(userWithRole(Role::AgencyOwner));
+    $queries = [];
+    DB::listen(static function (QueryExecuted $query) use (&$queries): void {
+        $queries[] = $query->sql . json_encode($query->bindings);
+    });
+
+    get(route('quotes.show', App\Modules\Quotes\Models\Quote::query()->where('title', 'Cartagena en familia')->sole()))->assertOk()->assertSee('Hotel Caribe Real');
+
+    expect(count($queries))->toBeLessThanOrEqual(config()->integer('travel.performance.max_queries_per_screen'))
+        ->and(count(array_filter(array_count_values($queries), static fn(int $times): bool => $times > 1)))->toBe(0);
+});

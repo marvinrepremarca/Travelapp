@@ -34,6 +34,13 @@ return [
 
     'quotes' => [
         'validity_hours' => (int) env('TRAVEL_QUOTE_VALIDITY_HOURS', 72),
+        'number_prefix' => env('TRAVEL_QUOTE_NUMBER_PREFIX', 'COT-'),
+        'number_digits' => (int) env('TRAVEL_QUOTE_NUMBER_DIGITS', 6),
+        'max_options' => (int) env('TRAVEL_QUOTE_MAX_OPTIONS', 5),
+        'max_passengers_per_item' => (int) env('TRAVEL_QUOTE_MAX_PASSENGERS_PER_ITEM', 50),
+        'max_passenger_age' => (int) env('TRAVEL_QUOTE_MAX_PASSENGER_AGE', 120),
+        'max_nights' => (int) env('TRAVEL_QUOTE_MAX_NIGHTS', 90),
+        'per_page' => (int) env('TRAVEL_QUOTES_PER_PAGE', 20),
     ],
 
     'bookings' => [

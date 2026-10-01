@@ -21,7 +21,14 @@ use App\Modules\Organization\Models\AgencyProfile;
 use App\Modules\Organization\Models\Branch;
 use App\Modules\Organization\Services\NitCheckDigit;
 use App\Modules\Pricing\Database\Seeders\TaxReferenceSeeder;
+use App\Modules\Quotes\Actions\AddItemAction;
+use App\Modules\Quotes\Actions\CreateQuoteAction;
+use App\Modules\Quotes\Actions\SendQuoteAction;
+use App\Modules\Quotes\Data\QuoteItemData;
+use App\Modules\Quotes\Enums\QuoteItemKind;
+use App\Modules\Quotes\Models\Quote;
 use App\Modules\Shared\Enums\ProductType;
+use App\Modules\Shared\Enums\SalesChannel;
 use App\Modules\Suppliers\Models\Supplier;
 use App\Modules\Workflow\Enums\ApprovalStatus;
 use App\Modules\Workflow\Enums\ApprovalType;
@@ -29,6 +36,7 @@ use App\Modules\Workflow\Enums\TaskPriority;
 use App\Modules\Workflow\Enums\TaskStatus;
 use App\Modules\Workflow\Models\ApprovalRequest;
 use App\Modules\Workflow\Models\Task;
+use Brick\Money\Money;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Seeder;
 use RuntimeException;
@@ -88,6 +96,7 @@ final class DemoSeeder extends Seeder
         $this->crm($agentBog);
         $this->suppliers();
         $this->catalog();
+        $this->quotes($agentBog);
 
         unset($admin, $finance);
     }
@@ -135,6 +144,37 @@ final class DemoSeeder extends Seeder
         $components->execute($package, $city, 0);
         $components->execute($package, $rosario, 1);
         $components->execute($package, $airport, 2);
+    }
+
+    /** Una cotización enviada con paquete del catálogo y hotel manual, y otra en borrador. */
+    private function quotes(User $agent): void
+    {
+        $customer = Customer::query()->where('display_name', 'Laura Pérez')->first();
+        $package = CatalogProduct::query()->where('code', 'CTG-3D')->first();
+        if (Quote::query()->exists() || ! $customer instanceof Customer || ! $package instanceof CatalogProduct) {
+            return;
+        }
+
+        $create = app(CreateQuoteAction::class);
+        $serviceDate = CarbonImmutable::today()->addDays(20);
+        $quote = $create->execute($agent, $customer, 'Cartagena en familia', config()->string('travel.agency.default_currency'), SalesChannel::Branch);
+        $option = $quote->options()->firstOrFail();
+        $items = app(AddItemAction::class);
+        $items->execute($quote, $option, new QuoteItemData(kind: QuoteItemKind::Catalog, serviceDate: $serviceDate, passengerAges: [38, 8], catalogProductUlid: $package->ulid));
+        $items->execute($quote, $option, new QuoteItemData(
+            kind: QuoteItemKind::Manual,
+            serviceDate: $serviceDate,
+            passengerAges: [38, 8],
+            nights: 3,
+            productType: ProductType::Hotel,
+            description: 'Hotel Caribe Real - 3 noches',
+            manualNet: Money::of('1500000', config()->string('travel.agency.default_currency')),
+            supplierId: Supplier::query()->where('trade_name', 'Hotel Caribe Real')->value('id'),
+            destinationCountry: 'CO',
+        ));
+        app(SendQuoteAction::class)->execute($quote, $agent, CarbonImmutable::now());
+
+        $create->execute($agent, $customer, 'Escapada a San Andrés', config()->string('travel.agency.default_currency'), SalesChannel::WhatsApp);
     }
 
     private function crm(User $agent): void
