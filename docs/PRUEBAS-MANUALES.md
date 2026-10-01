@@ -110,3 +110,9 @@ Para el 2FA usa una app de autenticación (Google Authenticator, Microsoft Authe
 - [ ] En "Cartagena en familia" (enviada) copia el **enlace para el cliente** y ábrelo en una ventana privada: se ven opciones, itinerario por día y total, sin neto ni margen.
 - [ ] Cambia una letra de la firma en la URL → 403. Acepta sin nombre o sin marcar condiciones → errores. Acepta bien → "¡Gracias!"; en el backoffice queda Aceptada por "Enlace del cliente".
 - [ ] En otra cotización: envía, copia el enlace, "Editar nueva versión" y vuelve a abrir el enlace viejo → "Esta versión fue reemplazada".
+
+### Fase 2.4 — Bookings (parte A)
+- [ ] Como **asesor.bogota**: *Expedientes* muestra el de "Cartagena luna de miel" (en gestión): hotel confirmado (HCR-20451) y pasadía por solicitar.
+- [ ] En la pasadía, "Gestionar" → Confirmado: pide código y salida (08:00 con cupos). Confirma → "Cupo apartado" y el expediente pasa a Confirmado; en el catálogo baja el cupo disponible.
+- [ ] Cancela la pasadía con nota → vuelve el cupo. Rechaza el hotel con nota → "Requiere atención"; luego cancélalo → el estado se recalcula.
+- [ ] En una cotización aceptada, "Crear expediente" → resumen y botón; al volver a entrar muestra el enlace al expediente existente. Otro asesor → 404.

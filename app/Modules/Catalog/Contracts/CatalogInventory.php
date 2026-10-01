@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\Catalog\Contracts;
 
+use App\Modules\Catalog\Data\DepartureSlot;
 use App\Modules\Catalog\Exceptions\CatalogRuleViolation;
+use Carbon\CarbonImmutable;
 
 /** Cupos de las salidas del producto propio. Nunca hay sobreventa: sin cupo, la venta se rechaza. */
 interface CatalogInventory
@@ -20,4 +22,11 @@ interface CatalogInventory
 
     /** Devuelve los cupos del apartado a la salida. Liberar dos veces no tiene efecto. */
     public function release(string $holdUlid): void;
+
+    /**
+     * Salidas de un producto en una fecha local del destino, ordenadas por hora.
+     *
+     * @return list<DepartureSlot>
+     */
+    public function departuresOn(string $productUlid, CarbonImmutable $serviceDate): array;
 }

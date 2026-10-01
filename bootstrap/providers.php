@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Modules\Audit\Providers\AuditServiceProvider;
+use App\Modules\Bookings\Providers\BookingsServiceProvider;
 use App\Modules\Catalog\Providers\CatalogServiceProvider;
 use App\Modules\Crm\Providers\CrmServiceProvider;
 use App\Modules\Identity\Providers\IdentityServiceProvider;
@@ -25,5 +26,6 @@ return [
     PricingServiceProvider::class,
     CatalogServiceProvider::class,
     QuotesServiceProvider::class,
+    BookingsServiceProvider::class,
     IntegrationsServiceProvider::class,
 ];

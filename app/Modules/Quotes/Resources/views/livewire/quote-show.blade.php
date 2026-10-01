@@ -19,6 +19,11 @@
             @if ($quote->status === QuoteStatus::Expired)
                 <x-ui.alert :tone="Tone::Warning">{{ __('quotes.expired_notice') }}</x-ui.alert>
             @endif
+            @if ($quote->status === QuoteStatus::Accepted && Route::has('bookings.from-quote'))
+                <div class="flex justify-end">
+                    <x-ui.link-button :href="route('bookings.from-quote', $quote->ulid)">{{ __('bookings.convert.from_quote_link') }}</x-ui.link-button>
+                </div>
+            @endif
             @if ($quote->status === QuoteStatus::Accepted)
                 <x-ui.alert :tone="Tone::Success">
                     {{ __('quotes.accepted_notice', ['label' => $quote->options->firstWhere('id', $quote->accepted_option_id)?->label, 'version' => $quote->accepted_version, 'channel' => $quote->acceptance_channel?->label()]) }}

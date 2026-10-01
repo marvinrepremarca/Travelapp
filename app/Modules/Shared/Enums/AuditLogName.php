@@ -16,6 +16,7 @@ enum AuditLogName: string
     case Pricing = 'pricing';
     case Catalog = 'catalog';
     case Quotes = 'quotes';
+    case Bookings = 'bookings';
 
     public function label(): string
     {

@@ -1,0 +1,71 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'title' => 'Expedientes',
+    'created' => 'Expediente :number creado.',
+    'search_hint' => 'Número, título, cotización o cliente.',
+    'all_statuses' => 'Todos los estados',
+    'empty_title' => 'No hay expedientes',
+    'empty_description' => 'Los expedientes nacen de una cotización aceptada.',
+    'from_quote' => 'De la cotización :number (versión :version)',
+    'total' => 'Total vigente',
+    'margin' => 'Margen',
+    'columns' => [
+        'number' => 'Número',
+        'customer' => 'Cliente',
+        'status' => 'Estado',
+        'total' => 'Total',
+    ],
+    'status' => [
+        'in_progress' => 'En gestión',
+        'confirmed' => 'Confirmado',
+        'needs_attention' => 'Requiere atención',
+        'cancelled' => 'Cancelado',
+    ],
+    'item_status' => [
+        'pending' => 'Por solicitar',
+        'on_hold' => 'En espera del proveedor',
+        'confirmed' => 'Confirmado',
+        'rejected' => 'Rechazado',
+        'cancelled' => 'Cancelado',
+    ],
+    'convert' => [
+        'title' => 'Crear expediente',
+        'intro' => 'Se creará el expediente con los servicios y precios de la opción aceptada. Los precios no se recalculan.',
+        'action' => 'Crear expediente',
+        'from_quote_link' => 'Crear expediente',
+        'view_booking' => 'Ver expediente',
+    ],
+    'items' => [
+        'title' => 'Servicios',
+        'service' => ':date · :nights noches · :passengers pax',
+        'confirmation' => 'Confirmación :code',
+        'departure_held' => 'Cupo apartado en la salida',
+        'manage' => 'Gestionar',
+        'own_product' => 'Producto propio',
+    ],
+    'action_fields' => [
+        'status' => 'Nuevo estado',
+        'confirmation' => 'Código de confirmación del proveedor',
+        'departure' => 'Salida',
+        'note' => 'Nota',
+    ],
+    'actions' => [
+        'title' => 'Gestionar :service',
+        'apply' => 'Guardar estado',
+        'cancel' => 'Cerrar',
+        'no_transitions' => 'Este servicio ya no admite cambios de estado.',
+        'departure_option' => ':time · :available cupos',
+        'departure_closed' => ':time · cerrada',
+        'no_departures' => 'No hay salidas programadas ese día; prográmalas en el catálogo.',
+        'note_hint' => 'Obligatoria para espera, rechazo o cancelación.',
+    ],
+    'errors' => [
+        'already_converted' => 'Esta cotización ya tiene el expediente :number.',
+        'invalid_transition' => 'No se puede pasar de :from a :to.',
+        'departure_required' => 'Elige la salida para apartar el cupo.',
+        'departure_not_available' => 'La salida no corresponde al producto y la fecha del servicio.',
+    ],
+];

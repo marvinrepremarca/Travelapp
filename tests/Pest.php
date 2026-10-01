@@ -25,7 +25,7 @@ pest()->extend(TestCase::class)
     ->in('Feature', 'Contract');
 
 /** Módulos del monolito: la lista es la fuente para los arch tests de límites. */
-const MODULES = ['Shared', 'Organization', 'Identity', 'Audit', 'Workflow', 'Crm', 'Suppliers', 'Pricing', 'Catalog', 'Quotes', 'Integrations'];
+const MODULES = ['Shared', 'Organization', 'Identity', 'Audit', 'Workflow', 'Crm', 'Suppliers', 'Pricing', 'Catalog', 'Quotes', 'Bookings', 'Integrations'];
 
 /** Carpetas que forman la API pública de un módulo (skill modular-architecture). */
 const MODULE_PUBLIC_API = ['Contracts', 'Data', 'Enums', 'Events', 'Models'];

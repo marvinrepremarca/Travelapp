@@ -47,6 +47,7 @@ it('renders every backoffice screen within the query budget', function (string $
     'catalog.create',
     'quotes.index',
     'quotes.create',
+    'bookings.index',
     'identity.security',
 ]);
 
@@ -87,6 +88,20 @@ it('renders the customer quote link within the query budget', function (): void 
     });
 
     get((string) app(App\Modules\Quotes\Services\QuoteLinks::class)->customerUrl($quote))->assertOk()->assertSee('Hotel Caribe Real');
+
+    expect(count($queries))->toBeLessThanOrEqual(config()->integer('travel.performance.max_queries_per_screen'))
+        ->and(count(array_filter(array_count_values($queries), static fn(int $times): bool => $times > 1)))->toBe(0);
+});
+
+it('renders a booking within the query budget', function (): void {
+    $this->seed(DemoSeeder::class);
+    actingAs(userWithRole(Role::AgencyOwner));
+    $queries = [];
+    DB::listen(static function (QueryExecuted $query) use (&$queries): void {
+        $queries[] = $query->sql . json_encode($query->bindings);
+    });
+
+    get(route('bookings.show', App\Modules\Bookings\Models\Booking::query()->sole()))->assertOk()->assertSee('HCR-20451');
 
     expect(count($queries))->toBeLessThanOrEqual(config()->integer('travel.performance.max_queries_per_screen'))
         ->and(count(array_filter(array_count_values($queries), static fn(int $times): bool => $times > 1)))->toBe(0);
