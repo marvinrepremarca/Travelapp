@@ -16,6 +16,7 @@ use App\Modules\Identity\Models\User;
 use App\Modules\Organization\Models\AgencyProfile;
 use App\Modules\Organization\Models\Branch;
 use App\Modules\Organization\Services\NitCheckDigit;
+use App\Modules\Suppliers\Models\Supplier;
 use App\Modules\Workflow\Enums\ApprovalStatus;
 use App\Modules\Workflow\Enums\ApprovalType;
 use App\Modules\Workflow\Enums\TaskPriority;
@@ -78,8 +79,21 @@ final class DemoSeeder extends Seeder
         $this->approval($agentBog, ApprovalType::Refund, $bogota, 'Reembolso por cancelación de tour', 'Cancelado por el proveedor');
 
         $this->crm($agentBog);
+        $this->suppliers();
 
         unset($admin, $finance);
+    }
+
+    private function suppliers(): void
+    {
+        if (Supplier::query()->exists()) {
+            return;
+        }
+
+        Supplier::factory()->create(['trade_name' => 'Hotel Caribe Real', 'legal_name' => 'Hotel Caribe Real S.A.S.']);
+        Supplier::factory()->rntExpiringIn(10)->create(['trade_name' => 'Tours Ciudad Amurallada', 'legal_name' => 'Tours CA S.A.S.']);
+        Supplier::factory()->rntExpiringIn(-5)->create(['trade_name' => 'Transportes Sabana', 'legal_name' => 'Transportes Sabana Ltda.']);
+        Supplier::factory()->foreign()->create(['trade_name' => 'Global Hotels', 'legal_name' => 'Global Hotels Inc.']);
     }
 
     private function crm(User $agent): void

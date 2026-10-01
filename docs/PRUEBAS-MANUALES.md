@@ -70,3 +70,11 @@ Para el 2FA usa una app de autenticación (Google Authenticator, Microsoft Authe
 - [ ] Tomás (8 años) aparece como **Niño** y con alerta de pasaporte por vencer.
 - [ ] *Embudo de ventas*: abre "Familia Gómez", registra una llamada → pasa a Contactado. Márcalo perdido sin motivo → error.
 - [ ] "Carlos Ruiz" (cotizado): márcalo ganado eligiendo a Laura Pérez como cliente.
+
+### Fase 1.6 — Suppliers
+- [ ] Como **asesor.bogota**: *Proveedores* lista 4 proveedores con su situación (Habilitado, RNT por vencer, RNT vencido). No ve "Nuevo proveedor".
+- [ ] Marca "Solo los que requieren atención" → quedan Tours Ciudad Amurallada y Transportes Sabana.
+- [ ] Como **finanzas**: crea un proveedor colombiano turístico sin RNT → error; con RNT → se guarda.
+- [ ] En "Hotel Caribe Real" agrega una comisión de hoteles del 10 % desde hoy; intenta otra que se cruce → error. Termínala y crea la nueva.
+- [ ] Agrega una cuenta bancaria → aparece enmascarada; con un motivo, "Mostrar número" → aparece y queda en *Auditoría → Accesos a datos sensibles*.
+- [ ] Como **gestor de producto** (crea uno desde Usuarios): administra proveedores pero no ve la sección de cuentas bancarias.

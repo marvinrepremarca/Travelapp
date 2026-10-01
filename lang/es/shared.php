@@ -61,6 +61,7 @@ return [
         'finance_access' => 'Acceder a finanzas',
         'pricing_margins_view' => 'Ver márgenes',
         'crm_customers_reassign' => 'Reasignar clientes',
+        'suppliers_manage' => 'Administrar proveedores',
         'workflow_approvals_discounts' => 'Aprobar descuentos',
         'workflow_approvals_refunds' => 'Aprobar reembolsos',
         'workflow_approvals_invoice_voids' => 'Aprobar anulaciones de factura',

@@ -19,6 +19,7 @@ return [
         'security' => 'Seguridad',
         'workflow' => 'Tareas y aprobaciones',
         'crm' => 'Clientes',
+        'suppliers' => 'Proveedores',
     ],
     'filters' => [
         'module' => 'Módulo',
