@@ -12,6 +12,8 @@ php artisan serve
 
 Abrir http://127.0.0.1:8000/travelapp (la carpeta se define con `APP_PATH_PREFIX`; vacía = raíz del dominio). En `.env` local: `QUEUE_CONNECTION=sync` (los correos salen al instante) y `MAIL_MAILER=log` (los correos se escriben en `storage/logs/laravel.log`).
 
+**Rendimiento local (obligatorio para medir):** en `C:\xampp\php\php.ini` deja `zend_extension=opcache`, `opcache.enable=1` y `xdebug.mode=off`; reinicia `php artisan serve`. Con Xdebug en modo `coverage` cada pantalla tarda de 0,4 a 1 s; con OPcache y sin Xdebug, de 50 a 100 ms. La cobertura enciende Xdebug sola (`composer test:coverage`). Si publicas bajo una carpeta en Apache, define `ASSET_URL=/<carpeta>` para que CSS y JS carguen desde ella.
+
 ## Usuarios de demostración
 
 Contraseña de todos: `ViajesDemo2026` (variable `TRAVEL_DEMO_PASSWORD`).

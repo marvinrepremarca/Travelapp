@@ -5,14 +5,8 @@ description: Rendimiento, escalabilidad, caché, concurrencia y observabilidad. 
 
 # Rendimiento, escalabilidad y observabilidad
 
-## Presupuestos (SLO iniciales ⚙)
-| Operación | p95 |
-|---|---|
-| Pantallas de backoffice | < 400 ms servidor |
-| API de lectura | < 300 ms |
-| Búsqueda multi-proveedor | primeros resultados < 3 s, completa < 12 s |
-| Checkout (sin proveedor) | < 500 ms |
-| Disponibilidad | 99.9 % mensual |
+## Presupuestos
+Los requerimientos no funcionales de rendimiento (TTFB, consultas por pantalla, tamaño de assets, búsqueda) están en la regla `.claude/rules/performance.md` y son obligatorios. Disponibilidad: 99,9 % mensual.
 
 ## Reglas
 1. Medir antes de optimizar (Pulse, `EXPLAIN`, Debugbar en local). Nada de optimizaciones especulativas.
@@ -35,7 +29,8 @@ description: Rendimiento, escalabilidad, caché, concurrencia y observabilidad. 
 Antes de temporadas altas o lanzamientos: escenarios de búsqueda y checkout con proveedores simulados (k6 u otra herramienta aprobada), objetivo documentado en el ADR correspondiente.
 
 ## Checklist de cumplimiento
-- [ ] Se midió antes de optimizar (evidencia en el PR).
+- [ ] Se midió antes de optimizar (evidencia en el PR) y se respetan los presupuestos de `performance.md`.
+- [ ] Pantalla nueva agregada a `PerformanceBudgetTest` (consultas ≤ límite, cero repetidas).
 - [ ] Sin N+1; listados paginados; índices verificados.
 - [ ] Caché con TTL desde configuración, invalidación definida y sin datos personales compartidos.
 - [ ] Trabajo pesado en cola; llamadas externas con timeout y paralelizadas cuando aplica.

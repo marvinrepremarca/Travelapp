@@ -6,16 +6,16 @@ namespace App\Modules\Organization\Services;
 
 use App\Modules\Organization\Enums\SettingKey;
 use App\Modules\Organization\Models\Setting;
-use Illuminate\Contracts\Cache\Repository as Cache;
+use Illuminate\Cache\CacheManager;
 use Illuminate\Contracts\Config\Repository as Config;
 
-/** Lee parámetros: valor guardado en `settings` o, si no hay, el default de config/travel.php. Cacheado. */
+/** Lee parámetros: valor guardado en `settings` o, si no hay, el default de config/travel.php. Cacheado y memorizado por request (una sola lectura al almacén de caché). */
 final readonly class SettingsStore
 {
     public const CACHE_KEY = 'organization:settings';
 
     public function __construct(
-        private Cache $cache,
+        private CacheManager $cache,
         private Config $config,
     ) {}
 
@@ -35,14 +35,14 @@ final readonly class SettingsStore
 
     public function flush(): void
     {
-        $this->cache->forget(self::CACHE_KEY);
+        $this->cache->memo()->forget(self::CACHE_KEY);
     }
 
     /** @return array<string, mixed> */
     private function overrides(): array
     {
         /** @var array<string, mixed> */
-        return $this->cache->rememberForever(self::CACHE_KEY, static fn(): array => Setting::query()
+        return $this->cache->memo()->rememberForever(self::CACHE_KEY, static fn(): array => Setting::query()
             ->get()
             ->mapWithKeys(static fn(Setting $setting): array => [$setting->key->value => $setting->value])
             ->all());

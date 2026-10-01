@@ -168,10 +168,11 @@ final class PricingRulesManager extends Component
     public function render(): View
     {
         return view('pricing::livewire.pricing-rules-manager', [
-            'markups' => MarkupRule::query()->orderByDesc('is_active')->orderBy('name')->get(),
-            'fees' => FeeRule::query()->orderByDesc('is_active')->orderBy('name')->get(),
-            'taxes' => TaxRule::query()->orderByDesc('is_active')->orderBy('name')->get(),
-            'suppliers' => Supplier::query()->orderBy('trade_name')->pluck('trade_name', 'id')->all(),
+            // Solo se consulta la pestaña visible.
+            'markups' => $this->tab === self::TAB_MARKUPS ? MarkupRule::query()->orderByDesc('is_active')->orderBy('name')->get() : collect(),
+            'fees' => $this->tab === self::TAB_FEES ? FeeRule::query()->orderByDesc('is_active')->orderBy('name')->get() : collect(),
+            'taxes' => $this->tab === self::TAB_TAXES ? TaxRule::query()->orderByDesc('is_active')->orderBy('name')->get() : collect(),
+            'suppliers' => $this->tab === self::TAB_MARKUPS ? Supplier::query()->orderBy('trade_name')->pluck('trade_name', 'id')->all() : [],
             'productTypes' => ProductType::cases(),
             'channels' => SalesChannel::cases(),
             'kinds' => MarkupKind::cases(),

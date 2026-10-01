@@ -113,6 +113,12 @@ return [
         'requests_per_minute' => (int) env('TRAVEL_HEALTH_REQUESTS_PER_MINUTE', 60),
     ],
 
+    // Presupuestos de rendimiento (regla performance.md); los verifica tests/Feature/Shared/PerformanceBudgetTest.
+    'performance' => [
+        'max_queries_per_screen' => (int) env('TRAVEL_MAX_QUERIES_PER_SCREEN', 15),
+        'max_duplicate_queries_per_screen' => 0,
+    ],
+
     'security' => [
         'two_factor_required_roles' => ['system_admin', 'agency_owner', 'finance'],
     ],

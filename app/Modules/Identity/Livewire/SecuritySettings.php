@@ -63,7 +63,8 @@ final class SecuritySettings extends Component
 
     public function render(): View
     {
-        $user = $this->user()->refresh();
+        // Las acciones de Fortify actualizan esta misma instancia: no hace falta recargarla (ni sus roles).
+        $user = $this->user();
         $pending = $user->two_factor_secret !== null && ! $user->hasTwoFactorEnabled();
 
         return view('identity::livewire.security-settings', [

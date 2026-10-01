@@ -65,6 +65,8 @@ Mapa de módulos: skill `travel-domain` → `references/modules.md`.
 11. **Diseño centralizado**: colores, tipografía, espaciados (margin/padding), radios y sombras solo desde los tokens de diseño (regla `frontend.md`, skill `frontend-ui`).
 12. Cada skill termina con un **checklist de cumplimiento**: recórrelo antes de declarar terminada una tarea que la use.
 
+13. **Rendimiento es requisito**, no mejora: presupuestos de la regla `performance.md` en cada pantalla, endpoint y consulta.
+
 Configuración de Claude: este `CLAUDE.md` (raíz) y `.claude/` con `rules/`, `skills/`, `agents/`, `commands/` y `adr/`.
 
 ## 5. Skills (cárgalas cuando apliquen)
@@ -91,7 +93,7 @@ Configuración de Claude: este `CLAUDE.md` (raíz) y `.claude/` con `rules/`, `s
 - [ ] Cumple el criterio de aceptación y las reglas de `travel-domain`; los casos borde (cancelación, cambio de moneda, zona horaria, disponibilidad agotada, proveedor caído) están cubiertos.
 - [ ] Tests: feature (feliz + 403 + validación + fuera de alcance → 404), unit de reglas de negocio, contract tests con fakes para integraciones. Cobertura ≥ 90 % en `app/Modules`.
 - [ ] `composer check` en verde (Pint, Larastan 8, Pest + arch).
-- [ ] Sin N+1 (`Model::preventLazyLoading()` activo), listados paginados, índices para filtros nuevos.
+- [ ] Rendimiento dentro de los presupuestos de `rules/performance.md` (TTFB < 200 ms, ≤ 15 consultas y cero repetidas por pantalla, verificado en `PerformanceBudgetTest`); sin N+1, listados paginados, índices para filtros nuevos.
 - [ ] Autorización, alcance de visibilidad, validación, auditoría y datos sensibles revisados.
 - [ ] UI: textos en `lang/es`, tokens, estados vacío/carga/error, accesible por teclado, responsive.
 - [ ] Sin strings/números mágicos ni valores quemados (backend y frontend).

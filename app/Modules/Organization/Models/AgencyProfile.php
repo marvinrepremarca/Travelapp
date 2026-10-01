@@ -44,9 +44,10 @@ final class AgencyProfile extends Model
         'address', 'city', 'phone', 'email', 'website', 'logo_path', 'brand_primary_color', 'brand_accent_color',
     ];
 
+    /** Una sola lectura por request: el perfil se consulta desde el layout y desde las pantallas. */
     public static function current(): ?self
     {
-        return self::query()->first();
+        return once(static fn(): ?self => self::query()->first());
     }
 
     public function formattedNit(): string
