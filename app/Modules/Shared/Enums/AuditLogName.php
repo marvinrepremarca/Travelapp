@@ -12,6 +12,7 @@ enum AuditLogName: string
     case Security = 'security';
     case Workflow = 'workflow';
     case Crm = 'crm';
+    case Suppliers = 'suppliers';
 
     public function label(): string
     {

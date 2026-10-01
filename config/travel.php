@@ -82,6 +82,13 @@ return [
         'passport_min_validity_months' => (int) env('TRAVEL_PASSPORT_MIN_VALIDITY_MONTHS', 6),
     ],
 
+    'suppliers' => [
+        'per_page' => (int) env('TRAVEL_SUPPLIERS_PER_PAGE', 20),
+        // Días antes del vencimiento del RNT del proveedor para alertar ⚙.
+        'rnt_expiry_warning_days' => (int) env('TRAVEL_SUPPLIER_RNT_WARNING_DAYS', 30),
+        'max_payment_days' => (int) env('TRAVEL_SUPPLIER_MAX_PAYMENT_DAYS', 180),
+    ],
+
     'privacy' => [
         // Clave HMAC dedicada para buscar datos cifrados (documentos). Nunca reutilizar APP_KEY.
         'hash_key' => (string) env('TRAVEL_PII_HASH_KEY', ''),

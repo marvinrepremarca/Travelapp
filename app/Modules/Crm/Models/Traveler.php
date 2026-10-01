@@ -6,10 +6,10 @@ namespace App\Modules\Crm\Models;
 
 use App\Modules\Crm\Database\Factories\TravelerFactory;
 use App\Modules\Crm\Enums\Gender;
-use App\Modules\Crm\Support\Mask;
 use App\Modules\Shared\Casts\EncryptedDate;
 use App\Modules\Shared\Enums\AuditLogName;
 use App\Modules\Shared\Enums\PassengerType;
+use App\Modules\Shared\Support\Mask;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

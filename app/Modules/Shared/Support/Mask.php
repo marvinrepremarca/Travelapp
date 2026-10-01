@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Crm\Support;
+namespace App\Modules\Shared\Support;
 
 /** Enmascarado por defecto de datos sensibles en la interfaz: AB•••••23. */
 final class Mask
