@@ -113,6 +113,12 @@ return [
         'requests_per_minute' => (int) env('TRAVEL_HEALTH_REQUESTS_PER_MINUTE', 60),
     ],
 
+    'catalog' => [
+        'per_page' => (int) env('TRAVEL_CATALOG_PER_PAGE', 20),
+        'departures_per_page' => (int) env('TRAVEL_CATALOG_DEPARTURES_PER_PAGE', 15),
+        'max_departure_capacity' => (int) env('TRAVEL_CATALOG_MAX_DEPARTURE_CAPACITY', 500),
+    ],
+
     // Presupuestos de rendimiento (regla performance.md); los verifica tests/Feature/Shared/PerformanceBudgetTest.
     'performance' => [
         'max_queries_per_screen' => (int) env('TRAVEL_MAX_QUERIES_PER_SCREEN', 15),

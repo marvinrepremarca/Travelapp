@@ -63,6 +63,7 @@ return [
         'crm_customers_reassign' => 'Reasignar clientes',
         'suppliers_manage' => 'Administrar proveedores',
         'pricing_manage' => 'Administrar reglas de precio',
+        'catalog_manage' => 'Administrar el catálogo de producto propio',
         'workflow_approvals_discounts' => 'Aprobar descuentos',
         'workflow_approvals_refunds' => 'Aprobar reembolsos',
         'workflow_approvals_invoice_voids' => 'Aprobar anulaciones de factura',

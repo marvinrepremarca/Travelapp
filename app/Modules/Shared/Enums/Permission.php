@@ -21,6 +21,7 @@ enum Permission: string
     case CustomersReassign = 'crm.customers.reassign';
     case SuppliersManage = 'suppliers.manage';
     case PricingManage = 'pricing.manage';
+    case CatalogManage = 'catalog.manage';
     case ApprovalsDiscounts = 'workflow.approvals.discounts';
     case ApprovalsRefunds = 'workflow.approvals.refunds';
     case ApprovalsInvoiceVoids = 'workflow.approvals.invoice_voids';
