@@ -70,3 +70,30 @@ function moduleLayer(string $layer): array
 
     return $namespaces === [] ? ['App\\Modules\\__none__'] : $namespaces;
 }
+
+/** Expediente con un hotel cotizado para un adulto y un niño de 8 años, el 2026-11-10. */
+function familyBooking(\App\Modules\Identity\Models\User $agent): \App\Modules\Bookings\Models\Booking
+{
+    $customer = \App\Modules\Crm\Models\Customer::factory()->ownedBy($agent)->create();
+    $quote = app(\App\Modules\Quotes\Actions\CreateQuoteAction::class)->execute($agent, $customer, 'Familia', 'COP', \App\Modules\Shared\Enums\SalesChannel::Branch);
+    $option = $quote->options()->firstOrFail();
+    app(\App\Modules\Quotes\Actions\AddItemAction::class)->execute($quote, $option, new \App\Modules\Quotes\Data\QuoteItemData(
+        kind: \App\Modules\Quotes\Enums\QuoteItemKind::Manual,
+        serviceDate: \Carbon\CarbonImmutable::parse('2026-11-10'),
+        passengerAges: [40, 8],
+        nights: 2,
+        productType: \App\Modules\Shared\Enums\ProductType::Hotel,
+        description: 'Hotel Caribe',
+        manualNet: \Brick\Money\Money::of('500000', 'COP'),
+    ));
+    app(\App\Modules\Quotes\Actions\SendQuoteAction::class)->execute($quote, $agent, \Carbon\CarbonImmutable::now());
+    app(\App\Modules\Quotes\Actions\AcceptQuoteAction::class)->execute($quote, $option->ulid, \App\Modules\Quotes\Enums\AcceptanceChannel::Agent, 'ok', \Carbon\CarbonImmutable::now());
+
+    return app(\App\Modules\Bookings\Actions\CreateBookingFromQuoteAction::class)->execute($quote->ulid, \Carbon\CarbonImmutable::now());
+}
+
+/** Único servicio del expediente de familyBooking(). */
+function hotelOf(\App\Modules\Bookings\Models\Booking $booking): \App\Modules\Bookings\Models\BookingItem
+{
+    return $booking->items()->sole();
+}

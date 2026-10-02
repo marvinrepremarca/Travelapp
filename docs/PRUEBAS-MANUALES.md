@@ -117,3 +117,5 @@ Para el 2FA usa una app de autenticación (Google Authenticator, Microsoft Authe
 - [ ] Cancela la pasadía con nota → vuelve el cupo. Rechaza el hotel con nota → "Requiere atención"; luego cancélalo → el estado se recalcula.
 - [ ] En una cotización aceptada, "Crear expediente" → resumen y botón; al volver a entrar muestra el enlace al expediente existente. Otro asesor → 404.
 - [ ] En un expediente, "Pasajeros" de un servicio: elige viajeros del cliente. Si no coinciden con lo cotizado (p. ej. un niño que cumple 12 antes del viaje) → error explicando la diferencia. Con la composición correcta → se muestran nombre, edad y tipo.
+- [ ] En un servicio del expediente, "Política": escribe `30:0, 15:50, 7:100` → se muestra el resumen. Un tramo de 150 % → error. Marca "No reembolsable" → 100 %.
+- [ ] Con el servicio confirmado, la ficha muestra "Si se cancela hoy: penalidad $…"; al elegir Cancelado aparece el aviso y, al guardar, "Penalidad registrada".
