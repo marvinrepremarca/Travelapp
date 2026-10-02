@@ -16,6 +16,7 @@ paths:
 - Márgenes y rellenos solo con la escala de tokens (`p-md`, `mt-lg`, `gap-sm`, `px-gutter`); tipografía solo con los tokens de texto (`text-body`, `text-heading-2`). Nada de `p-[13px]`, `text-[15px]`, `mt-7` fuera de la escala.
 - **Prohibido:** hexadecimales, `rgb()`, `oklch()`, `px`/`rem` sueltos en vistas o CSS de componentes, `style="..."`, valores arbitrarios de Tailwind (`[...]`) y clases de paleta cruda (`bg-blue-600`).
 - Nombres semánticos (`bg-surface`, `text-danger`, `bg-brand`), no de paleta.
+- **Excepción PDF (ADR-0005):** las plantillas PDF (DomPDF) no usan Tailwind; sus estilos viven solo en `resources/css/pdf.css` con los tokens convertidos a hexadecimal. Cambiar un token implica actualizar también ese archivo.
 </tokens>
 
 <componentes>

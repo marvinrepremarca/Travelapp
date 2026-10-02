@@ -15,7 +15,7 @@ use LogicException;
  * @property int $id
  * @property int $quote_id
  * @property int $version
- * @property array{options: list<array{ulid: string, label: string, title: string, sale_total_minor: int, items: list<array{description: string, product_type: string, service_date: string, nights: int, ...}>}>, currency: string} $snapshot
+ * @property array{options: list<array{ulid: string, label: string, title: string, sale_total_minor: int, items: list<array{description: string, product_type: string, service_date: string, nights: int, passenger_ages: list<int>, sale_amount_minor: int, ...}>}>, currency: string} $snapshot
  * @property CarbonImmutable $sent_at
  * @property CarbonImmutable $valid_until
  * @property int $sent_by

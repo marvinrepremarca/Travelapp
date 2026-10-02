@@ -46,6 +46,11 @@ final class BookingRuleViolation extends BusinessRuleException
         return self::make('passengers_do_not_match', __('bookings.errors.passengers_do_not_match', ['quoted' => $quoted, 'assigned' => $assigned]));
     }
 
+    public static function voucherRequiresConfirmation(): self
+    {
+        return self::make('voucher_requires_confirmation', __('bookings.errors.voucher_requires_confirmation'));
+    }
+
     public function errorCode(): string
     {
         return $this->stableCode;

@@ -6,6 +6,7 @@ use App\Modules\Audit\Providers\AuditServiceProvider;
 use App\Modules\Bookings\Providers\BookingsServiceProvider;
 use App\Modules\Catalog\Providers\CatalogServiceProvider;
 use App\Modules\Crm\Providers\CrmServiceProvider;
+use App\Modules\Documents\Providers\DocumentsServiceProvider;
 use App\Modules\Identity\Providers\IdentityServiceProvider;
 use App\Modules\Integrations\Providers\IntegrationsServiceProvider;
 use App\Modules\Organization\Providers\OrganizationServiceProvider;
@@ -25,6 +26,7 @@ return [
     SuppliersServiceProvider::class,
     PricingServiceProvider::class,
     CatalogServiceProvider::class,
+    DocumentsServiceProvider::class,
     QuotesServiceProvider::class,
     BookingsServiceProvider::class,
     IntegrationsServiceProvider::class,

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Modules\Bookings\Http\Controllers\BookingPdfController;
 use App\Modules\Bookings\Livewire\BookingShow;
 use App\Modules\Bookings\Livewire\BookingsIndex;
 use App\Modules\Bookings\Livewire\ConvertQuote;
@@ -14,4 +15,6 @@ Route::middleware(['web', 'auth'])
         Route::get('/', BookingsIndex::class)->name('index');
         Route::get('/from-quote/{quote}', ConvertQuote::class)->name('from-quote');
         Route::get('/{booking}', BookingShow::class)->name('show');
+        Route::get('/{booking}/itinerary.pdf', [BookingPdfController::class, 'itinerary'])->name('itinerary');
+        Route::get('/{booking}/items/{item}/voucher.pdf', [BookingPdfController::class, 'voucher'])->name('voucher');
     });

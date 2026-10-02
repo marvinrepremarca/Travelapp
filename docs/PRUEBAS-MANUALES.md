@@ -119,3 +119,8 @@ Para el 2FA usa una app de autenticación (Google Authenticator, Microsoft Authe
 - [ ] En un expediente, "Pasajeros" de un servicio: elige viajeros del cliente. Si no coinciden con lo cotizado (p. ej. un niño que cumple 12 antes del viaje) → error explicando la diferencia. Con la composición correcta → se muestran nombre, edad y tipo.
 - [ ] En un servicio del expediente, "Política": escribe `30:0, 15:50, 7:100` → se muestra el resumen. Un tramo de 150 % → error. Marca "No reembolsable" → 100 %.
 - [ ] Con el servicio confirmado, la ficha muestra "Si se cancela hoy: penalidad $…"; al elegir Cancelado aparece el aviso y, al guardar, "Penalidad registrada".
+
+### Fase 2.5 — Documents (PDF)
+- [ ] En una cotización enviada, "Descargar PDF (versión N)": membrete de la agencia, opciones, itinerario y totales, sin neto ni margen. En el enlace del cliente, "Descargar PDF".
+- [ ] En el expediente, "Itinerario PDF": servicios vigentes por día con confirmaciones y pasajeros. En un servicio confirmado, "Voucher" con código y pasajeros. Un servicio sin confirmar no tiene voucher.
+- [ ] Sube un logo en *Datos de la agencia* y vuelve a descargar: aparece el logo y el color de marca.
