@@ -4,27 +4,13 @@ declare(strict_types=1);
 
 use App\Modules\Bookings\Actions\AssignPassengersAction;
 use App\Modules\Bookings\Actions\ChangeItemStatusAction;
-use App\Modules\Bookings\Actions\CreateBookingFromQuoteAction;
 use App\Modules\Bookings\Enums\BookingItemStatus;
 use App\Modules\Bookings\Exceptions\BookingRuleViolation;
 use App\Modules\Bookings\Livewire\BookingShow;
 use App\Modules\Bookings\Models\Booking;
-use App\Modules\Bookings\Models\BookingItem;
-use App\Modules\Crm\Models\Customer;
 use App\Modules\Crm\Models\Traveler;
-use App\Modules\Identity\Models\User;
 use App\Modules\Pricing\Models\MarkupRule;
-use App\Modules\Quotes\Actions\AcceptQuoteAction;
-use App\Modules\Quotes\Actions\AddItemAction;
-use App\Modules\Quotes\Actions\CreateQuoteAction;
-use App\Modules\Quotes\Actions\SendQuoteAction;
-use App\Modules\Quotes\Data\QuoteItemData;
-use App\Modules\Quotes\Enums\AcceptanceChannel;
-use App\Modules\Quotes\Enums\QuoteItemKind;
 use App\Modules\Shared\Enums\PassengerType;
-use App\Modules\Shared\Enums\ProductType;
-use App\Modules\Shared\Enums\SalesChannel;
-use Brick\Money\Money;
 use Carbon\CarbonImmutable;
 use Livewire\Livewire;
 
@@ -35,35 +21,9 @@ beforeEach(function (): void {
     MarkupRule::factory()->percentage(1000)->create();
 });
 
-/** Expediente con un hotel cotizado para un adulto y un niño de 8 años, el 2026-11-10. */
-function familyBooking(User $agent): Booking
-{
-    $customer = Customer::factory()->ownedBy($agent)->create();
-    $quote = app(CreateQuoteAction::class)->execute($agent, $customer, 'Familia', 'COP', SalesChannel::Branch);
-    $option = $quote->options()->firstOrFail();
-    app(AddItemAction::class)->execute($quote, $option, new QuoteItemData(
-        kind: QuoteItemKind::Manual,
-        serviceDate: CarbonImmutable::parse('2026-11-10'),
-        passengerAges: [40, 8],
-        nights: 2,
-        productType: ProductType::Hotel,
-        description: 'Hotel Caribe',
-        manualNet: Money::of('500000', 'COP'),
-    ));
-    app(SendQuoteAction::class)->execute($quote, $agent, CarbonImmutable::now());
-    app(AcceptQuoteAction::class)->execute($quote, $option->ulid, AcceptanceChannel::Agent, 'ok', CarbonImmutable::now());
-
-    return app(CreateBookingFromQuoteAction::class)->execute($quote->ulid, CarbonImmutable::now());
-}
-
 function travelerBorn(Booking $booking, string $name, string $birthDate): Traveler
 {
     return Traveler::factory()->create(['customer_id' => $booking->customer_id, 'first_name' => $name, 'birth_date' => $birthDate]);
-}
-
-function hotelOf(Booking $booking): BookingItem
-{
-    return $booking->items()->sole();
 }
 
 it('assigns travelers whose types at the service date match the quote', function (): void {

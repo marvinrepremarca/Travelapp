@@ -42,6 +42,18 @@
                         @else
                             <p class="text-caption">{{ $line->passengers->map(fn ($passenger) => $passenger->traveler->fullName() . ' (' . __('bookings.passengers.age', ['age' => $passenger->age_at_service, 'type' => $passenger->passenger_type->label()]) . ')')->implode(', ') }}</p>
                         @endif
+                        @if ($line->cancellation_policy)
+                            @php($policySummary = \App\Modules\Bookings\Data\CancellationPolicy::fromArray($line->cancellation_policy))
+                            <p class="text-caption text-text-subtle">
+                                {{ $policySummary->nonRefundable ? __('bookings.policy.non_refundable') : __('bookings.policy.summary', ['tiers' => collect($policySummary->tiers)->map(fn ($tier) => __('bookings.policy.tier', ['days' => $tier['days_before'], 'rate' => \App\Modules\Shared\ValueObjects\Percentage::fromBasisPoints($tier['rate_basis_points'])->toPercentString()]))->implode('; ')]) }}
+                            </p>
+                        @endif
+                        @if ($penalties[$line->ulid])
+                            <p class="text-caption text-warning">{{ __('bookings.policy.penalty_today', ['amount' => $presenter->format($penalties[$line->ulid])]) }}</p>
+                        @endif
+                        @if ($line->penaltyAmount())
+                            <p class="text-caption text-danger">{{ __('bookings.policy.penalty_charged', ['amount' => $presenter->format($line->penaltyAmount())]) }}</p>
+                        @endif
                         @if ($line->status_note)
                             <p class="text-caption text-text-subtle">{{ $line->status_note }}</p>
                         @endif
@@ -53,6 +65,9 @@
                         <x-ui.badge :tone="$line->status->tone()">{{ $line->status->label() }}</x-ui.badge>
                         <span class="font-medium">{{ $presenter->format($line->saleAmount()) }}</span>
                         @unless ($line->status->isClosed())
+                            <x-ui.button variant="ghost" wire:click="editPolicy('{{ $line->ulid }}')">
+                                {{ __('bookings.policy.edit') }}<span class="sr-only"> {{ $line->description }}</span>
+                            </x-ui.button>
                             <x-ui.button variant="ghost" wire:click="editPassengers('{{ $line->ulid }}')">
                                 {{ __('bookings.passengers.assign') }}<span class="sr-only"> {{ $line->description }}</span>
                             </x-ui.button>
@@ -67,6 +82,26 @@
             @endforeach
         </ul>
     </x-ui.card>
+
+    @if ($policyItem)
+        <x-ui.card :title="__('bookings.policy.title', ['service' => $policyItem->description])">
+            <form wire:submit="savePolicy" class="flex flex-col gap-md" novalidate>
+                <label class="flex items-center gap-sm">
+                    <input type="checkbox" wire:model.live="policy.non_refundable">
+                    {{ __('bookings.policy.non_refundable') }}
+                </label>
+                @unless ($policy['non_refundable'])
+                    <x-ui.field :label="__('bookings.policy.tiers')" for="policy.tiers" :hint="__('bookings.policy.tiers_hint')">
+                        <x-ui.input name="policy.tiers" wire:model="policy.tiers" hint />
+                    </x-ui.field>
+                @endunless
+                <div class="flex gap-sm">
+                    <x-ui.button type="submit" wire:loading.attr="disabled" wire:target="savePolicy">{{ __('bookings.policy.save') }}</x-ui.button>
+                    <x-ui.button type="button" variant="ghost" wire:click="$set('policyItemUlid', '')">{{ __('bookings.actions.cancel') }}</x-ui.button>
+                </div>
+            </form>
+        </x-ui.card>
+    @endif
 
     @if ($passengerItem)
         <x-ui.card :title="__('bookings.passengers.title', ['service' => $passengerItem->description])">
@@ -116,6 +151,9 @@
                             @endif
                         </x-ui.field>
                     @endif
+                @endif
+                @if ($action['status'] === BookingItemStatus::Cancelled->value && $penalties[$managed->ulid])
+                    <x-ui.alert :tone="\App\Modules\Shared\Enums\Tone::Warning" class="md:col-span-2">{{ __('bookings.policy.cancel_warning', ['amount' => $presenter->format($penalties[$managed->ulid])]) }}</x-ui.alert>
                 @endif
                 <div class="md:col-span-2">
                     <x-ui.field :label="__('bookings.action_fields.note')" for="action.note" :hint="__('bookings.actions.note_hint')">

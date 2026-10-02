@@ -37,6 +37,8 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property int $sale_amount_minor
  * @property int $margin_amount_minor
  * @property array<string, mixed> $price_breakdown
+ * @property array{non_refundable: bool, tiers: list<array{days_before: int, rate_basis_points: int}>}|null $cancellation_policy
+ * @property int|null $penalty_amount_minor
  * @property BookingItemStatus $status
  * @property string|null $supplier_confirmation
  * @property string|null $status_note
@@ -86,6 +88,11 @@ final class BookingItem extends Model
         return Money::ofMinor($this->sale_amount_minor, $this->saleCurrency());
     }
 
+    public function penaltyAmount(): ?Money
+    {
+        return $this->penalty_amount_minor === null ? null : Money::ofMinor($this->penalty_amount_minor, $this->saleCurrency());
+    }
+
     public function marginAmount(): Money
     {
         return Money::ofMinor($this->margin_amount_minor, $this->saleCurrency());
@@ -94,7 +101,7 @@ final class BookingItem extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['status', 'supplier_confirmation', 'status_note', 'catalog_departure_ulid', 'seat_hold_ulid', 'sale_amount_minor', 'net_amount_minor'])
+            ->logOnly(['status', 'supplier_confirmation', 'status_note', 'catalog_departure_ulid', 'seat_hold_ulid', 'sale_amount_minor', 'net_amount_minor', 'cancellation_policy', 'penalty_amount_minor'])
             ->logOnlyDirty()
             ->useLogName(AuditLogName::Bookings->value);
     }
@@ -111,6 +118,8 @@ final class BookingItem extends Model
             'sale_amount_minor' => 'integer',
             'margin_amount_minor' => 'integer',
             'price_breakdown' => 'array',
+            'cancellation_policy' => 'array',
+            'penalty_amount_minor' => 'integer',
             'status' => BookingItemStatus::class,
             'status_changed_at' => 'immutable_datetime',
         ];
