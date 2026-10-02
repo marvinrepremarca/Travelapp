@@ -31,6 +31,21 @@ final class BookingRuleViolation extends BusinessRuleException
         return self::make('departure_not_available', __('bookings.errors.departure_not_available'));
     }
 
+    public static function itemClosed(): self
+    {
+        return self::make('item_closed', __('bookings.errors.item_closed'));
+    }
+
+    public static function travelerNotOfCustomer(): self
+    {
+        return self::make('traveler_not_of_customer', __('bookings.errors.traveler_not_of_customer'));
+    }
+
+    public static function passengersDoNotMatch(string $quoted, string $assigned): self
+    {
+        return self::make('passengers_do_not_match', __('bookings.errors.passengers_do_not_match', ['quoted' => $quoted, 'assigned' => $assigned]));
+    }
+
     public function errorCode(): string
     {
         return $this->stableCode;

@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Modules\Bookings\Livewire;
 
+use App\Modules\Bookings\Actions\AssignPassengersAction;
 use App\Modules\Bookings\Actions\ChangeItemStatusAction;
 use App\Modules\Bookings\Actions\ConfirmItemAction;
 use App\Modules\Bookings\Enums\BookingItemStatus;
 use App\Modules\Bookings\Models\Booking;
 use App\Modules\Bookings\Models\BookingItem;
+use App\Modules\Bookings\Models\BookingItemPassenger;
 use App\Modules\Catalog\Contracts\CatalogInventory;
+use App\Modules\Crm\Models\Traveler;
 use App\Modules\Identity\Models\User;
 use App\Modules\Organization\Contracts\AppSettings;
 use App\Modules\Shared\Enums\Permission;
@@ -36,6 +39,12 @@ final class BookingShow extends Component
 
     /** @var array<string, string> */
     public array $action = ['status' => '', 'confirmation' => '', 'departure' => '', 'note' => ''];
+
+    /** Servicio al que se le están asignando pasajeros. */
+    public string $passengerItemUlid = '';
+
+    /** @var list<string> */
+    public array $selectedTravelers = [];
 
     public function mount(Booking $booking): void
     {
@@ -78,14 +87,45 @@ final class BookingShow extends Component
         $this->reset('itemUlid', 'action');
     }
 
+    public function editPassengers(string $itemUlid): void
+    {
+        $item = $this->item($itemUlid);
+        $this->passengerItemUlid = $itemUlid;
+        $this->selectedTravelers = array_values($item->passengers()->with('traveler:id,ulid')->get()->map(static fn(BookingItemPassenger $passenger): string => $passenger->traveler->ulid)->all());
+        $this->resetErrorBag();
+    }
+
+    public function savePassengers(AssignPassengersAction $assign): void
+    {
+        Gate::authorize('update', $this->booking);
+        $item = $this->item($this->passengerItemUlid);
+        $this->validate(['selectedTravelers' => ['array'], 'selectedTravelers.*' => ['string']]);
+
+        try {
+            $assign->execute($item, $this->selectedTravelers);
+        } catch (BusinessRuleException $violation) {
+            $this->addError('selectedTravelers', $violation->getMessage());
+
+            return;
+        }
+
+        $this->reset('passengerItemUlid', 'selectedTravelers');
+    }
+
     public function render(MoneyPresenter $presenter, AppSettings $settings, CatalogInventory $inventory): View
     {
-        $booking = $this->booking->load(['customer:id,ulid,display_name', 'items']);
+        $booking = $this->booking->load(['customer:id,ulid,display_name', 'items.passengers.traveler:id,first_name,last_name']);
         $managed = $this->itemUlid === '' ? null : $booking->items->firstWhere('ulid', $this->itemUlid);
+        $passengerItem = $this->passengerItemUlid === '' ? null : $booking->items->firstWhere('ulid', $this->passengerItemUlid);
 
         return view('bookings::livewire.booking-show', [
             'booking' => $booking,
             'managed' => $managed,
+            'passengerItem' => $passengerItem,
+            'travelers' => $passengerItem instanceof BookingItem
+                ? Traveler::query()->where('customer_id', $booking->customer_id)->orderBy('first_name')->get(['id', 'ulid', 'customer_id', 'first_name', 'last_name', 'birth_date'])
+                : collect(),
+            'missingPassengers' => $booking->items->filter(static fn(BookingItem $item): bool => ! $item->status->isClosed() && $item->passengers->isEmpty())->count(),
             'departures' => $managed instanceof BookingItem && $managed->isOwnProduct() ? $inventory->departuresOn((string) $managed->catalog_product_ulid, $managed->service_date) : [],
             'presenter' => $presenter,
             'canSeeMargin' => $this->actor()->can(Permission::MarginsView->value) || ! $settings->hideMarginsFromAgents(),

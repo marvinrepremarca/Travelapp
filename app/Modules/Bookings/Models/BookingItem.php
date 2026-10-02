@@ -59,6 +59,12 @@ final class BookingItem extends Model
         return ['ulid'];
     }
 
+    /** @return \Illuminate\Database\Eloquent\Relations\HasMany<BookingItemPassenger, $this> */
+    public function passengers(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(BookingItemPassenger::class);
+    }
+
     /** @return BelongsTo<Booking, $this> */
     public function booking(): BelongsTo
     {

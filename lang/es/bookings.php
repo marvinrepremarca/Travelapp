@@ -46,6 +46,16 @@ return [
         'manage' => 'Gestionar',
         'own_product' => 'Producto propio',
     ],
+    'passengers' => [
+        'title' => 'Pasajeros de :service',
+        'help' => 'Viajeros del cliente; deben coincidir en número y tipo (por edad a la fecha del servicio) con lo cotizado.',
+        'assign' => 'Pasajeros',
+        'save' => 'Guardar pasajeros',
+        'missing' => 'Sin pasajeros asignados',
+        'age' => ':age años · :type',
+        'none' => 'El cliente no tiene viajeros registrados; agrégalos en su ficha del CRM.',
+        'pending_count' => ':count servicios sin pasajeros',
+    ],
     'action_fields' => [
         'status' => 'Nuevo estado',
         'confirmation' => 'Código de confirmación del proveedor',
@@ -67,5 +77,8 @@ return [
         'invalid_transition' => 'No se puede pasar de :from a :to.',
         'departure_required' => 'Elige la salida para apartar el cupo.',
         'departure_not_available' => 'La salida no corresponde al producto y la fecha del servicio.',
+        'item_closed' => 'El servicio está rechazado o cancelado.',
+        'traveler_not_of_customer' => 'Elige viajeros registrados del cliente.',
+        'passengers_do_not_match' => 'Se cotizó para :quoted y los viajeros elegidos son :assigned (edad a la fecha del servicio).',
     ],
 ];
