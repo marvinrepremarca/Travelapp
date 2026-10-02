@@ -13,6 +13,9 @@
                 <p class="text-text-subtle">{{ __('bookings.from_quote', ['number' => $booking->quote_number, 'version' => $booking->quote_version]) }}</p>
             @endif
             <p class="font-medium">{{ __('bookings.total') }}: {{ $presenter->format($booking->saleTotal()) }}</p>
+            @if ($missingPassengers > 0)
+                <p class="text-caption text-warning">{{ __('bookings.passengers.pending_count', ['count' => $missingPassengers]) }}</p>
+            @endif
         </div>
     </x-ui.card>
 
@@ -32,6 +35,13 @@
                         @if ($line->seat_hold_ulid && $line->status === BookingItemStatus::Confirmed)
                             <p class="text-caption text-success">{{ __('bookings.items.departure_held') }}</p>
                         @endif
+                        @if ($line->passengers->isEmpty())
+                            @unless ($line->status->isClosed())
+                                <p class="text-caption text-warning">{{ __('bookings.passengers.missing') }}</p>
+                            @endunless
+                        @else
+                            <p class="text-caption">{{ $line->passengers->map(fn ($passenger) => $passenger->traveler->fullName() . ' (' . __('bookings.passengers.age', ['age' => $passenger->age_at_service, 'type' => $passenger->passenger_type->label()]) . ')')->implode(', ') }}</p>
+                        @endif
                         @if ($line->status_note)
                             <p class="text-caption text-text-subtle">{{ $line->status_note }}</p>
                         @endif
@@ -42,6 +52,11 @@
                     <div class="flex items-center gap-sm">
                         <x-ui.badge :tone="$line->status->tone()">{{ $line->status->label() }}</x-ui.badge>
                         <span class="font-medium">{{ $presenter->format($line->saleAmount()) }}</span>
+                        @unless ($line->status->isClosed())
+                            <x-ui.button variant="ghost" wire:click="editPassengers('{{ $line->ulid }}')">
+                                {{ __('bookings.passengers.assign') }}<span class="sr-only"> {{ $line->description }}</span>
+                            </x-ui.button>
+                        @endunless
                         @if ($line->status->allowedTransitions() !== [])
                             <x-ui.button variant="ghost" wire:click="manage('{{ $line->ulid }}')">
                                 {{ __('bookings.items.manage') }}<span class="sr-only"> {{ $line->description }}</span>
@@ -52,6 +67,33 @@
             @endforeach
         </ul>
     </x-ui.card>
+
+    @if ($passengerItem)
+        <x-ui.card :title="__('bookings.passengers.title', ['service' => $passengerItem->description])">
+            <form wire:submit="savePassengers" class="flex flex-col gap-md" novalidate>
+                <p class="text-text-subtle">{{ __('bookings.passengers.help') }}</p>
+                @if ($travelers->isEmpty())
+                    <p class="text-caption text-danger">{{ __('bookings.passengers.none') }}</p>
+                @else
+                    <fieldset class="flex flex-col gap-sm">
+                        <legend class="sr-only">{{ __('bookings.passengers.title', ['service' => $passengerItem->description]) }}</legend>
+                        @foreach ($travelers as $traveler)
+                            <label class="flex items-center gap-sm" wire:key="traveler-{{ $traveler->ulid }}">
+                                <input type="checkbox" value="{{ $traveler->ulid }}" wire:model="selectedTravelers">
+                                {{ $traveler->fullName() }}
+                                <span class="text-caption text-text-subtle">{{ __('bookings.passengers.age', ['age' => $traveler->ageAt($passengerItem->service_date), 'type' => $traveler->passengerTypeAt($passengerItem->service_date)->label()]) }}</span>
+                            </label>
+                        @endforeach
+                    </fieldset>
+                @endif
+                @error('selectedTravelers')<p class="text-caption text-danger" role="alert">{{ $message }}</p>@enderror
+                <div class="flex gap-sm">
+                    <x-ui.button type="submit" wire:loading.attr="disabled" wire:target="savePassengers">{{ __('bookings.passengers.save') }}</x-ui.button>
+                    <x-ui.button type="button" variant="ghost" wire:click="$set('passengerItemUlid', '')">{{ __('bookings.actions.cancel') }}</x-ui.button>
+                </div>
+            </form>
+        </x-ui.card>
+    @endif
 
     @if ($managed)
         <x-ui.card :title="__('bookings.actions.title', ['service' => $managed->description])">
