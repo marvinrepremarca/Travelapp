@@ -90,6 +90,16 @@ return [
         'accept' => 'Registrar aceptación',
     ],
     'validity' => 'Vigente hasta :date',
+    'pdf' => [
+        'title' => 'Cotización :number',
+        'filename' => 'cotizacion-:number-v:version.pdf',
+        'prepared_for' => 'Preparada para :customer',
+        'price' => 'Precio',
+        'passengers' => ':count pasajeros',
+        'nights' => ':count noches',
+        'disclaimer' => 'Precios sujetos a disponibilidad al momento de reservar. Las tarifas en moneda extranjera se liquidan a la tasa del día de pago según las condiciones de la agencia.',
+        'download' => 'Descargar PDF (versión :version)',
+    ],
     'itinerary' => [
         'title' => 'Itinerario día a día',
         'day' => 'Día :day · :date',

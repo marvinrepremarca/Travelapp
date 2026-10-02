@@ -6,6 +6,9 @@
     <header class="flex flex-col gap-xs">
         <h1 class="text-heading-1">{{ $quote->title }}</h1>
         <p class="text-text-subtle">{{ __('quotes.public.subtitle', ['number' => $quote->number, 'version' => $sentVersion->version]) }}</p>
+        @if ($pdfUrl)
+            <p><a href="{{ $pdfUrl }}" class="text-brand underline">{{ __('documents.download_pdf') }}</a></p>
+        @endif
         @if ($state === CustomerLinkState::Open)
             <p>{{ __('quotes.validity', ['date' => $sentVersion->valid_until->timezone($timezone)->locale(app()->getLocale())->isoFormat('lll')]) }}</p>
         @endif

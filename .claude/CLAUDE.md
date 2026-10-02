@@ -32,7 +32,7 @@ Sistema de información de **una** agencia de viajes (con sus sucursales, asesor
 | Auth / permisos | Laravel Fortify (2FA) · spatie/laravel-permission |
 | Dinero | brick/money (nunca `float`) |
 | Auditoría | spatie/laravel-activitylog |
-| PDF | spatie/laravel-pdf (vouchers, itinerarios, cotizaciones) |
+| PDF | spatie/laravel-pdf + motor DomPDF (vouchers, itinerarios, cotizaciones; ADR-0005) |
 | Calidad | Pest 3 (+ arch tests), Larastan nivel 8, Pint (PER), Rector |
 | Observabilidad | Logs JSON estructurados, Laravel Pulse, Sentry |
 

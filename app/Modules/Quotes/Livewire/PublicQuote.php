@@ -11,6 +11,7 @@ use App\Modules\Quotes\Enums\QuoteStatus;
 use App\Modules\Quotes\Models\Quote;
 use App\Modules\Quotes\Models\QuoteVersion;
 use App\Modules\Quotes\Services\ItineraryBuilder;
+use App\Modules\Quotes\Services\QuoteLinks;
 use App\Modules\Shared\Exceptions\BusinessRuleException;
 use App\Modules\Shared\Money\MoneyPresenter;
 use Brick\Money\Money;
@@ -72,7 +73,7 @@ final class PublicQuote extends Component
         $this->quote->refresh();
     }
 
-    public function render(MoneyPresenter $presenter, ItineraryBuilder $itinerary): View
+    public function render(MoneyPresenter $presenter, ItineraryBuilder $itinerary, QuoteLinks $links): View
     {
         $quote = $this->quote();
         $version = QuoteVersion::query()->where('quote_id', $quote->id)->where('version', $this->version)->firstOrFail();
@@ -91,6 +92,7 @@ final class PublicQuote extends Component
             'currency' => $currency,
             'presenter' => $presenter,
             'state' => $this->state($quote),
+            'pdfUrl' => $links->customerPdfUrl($quote, $this->version),
             'timezone' => config()->string('travel.agency.timezone'),
         ])->title($quote->title);
     }

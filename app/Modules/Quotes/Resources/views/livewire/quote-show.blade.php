@@ -148,7 +148,10 @@
 
     <x-ui.card :title="__('quotes.versions.title')">
         @forelse ($versions as $version)
-            <p wire:key="version-{{ $version->id }}">{{ __('quotes.versions.row', ['version' => $version->version, 'sent' => $formatInstant($version->sent_at), 'until' => $formatInstant($version->valid_until)]) }}</p>
+            <p wire:key="version-{{ $version->id }}">
+                {{ __('quotes.versions.row', ['version' => $version->version, 'sent' => $formatInstant($version->sent_at), 'until' => $formatInstant($version->valid_until)]) }}
+                · <a href="{{ route('quotes.pdf', [$quote, $version->version]) }}" class="text-brand underline">{{ __('quotes.pdf.download', ['version' => $version->version]) }}</a>
+            </p>
         @empty
             <p class="text-text-subtle">{{ __('quotes.versions.empty') }}</p>
         @endforelse

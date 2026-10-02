@@ -7,3 +7,4 @@
 | [0003](0003-integraciones-puertos-adaptadores.md) | Integraciones con proveedores mediante puertos y adaptadores | Aceptado |
 
 | [0004](0004-facturacion-electronica-preparada.md) | Facturación electrónica preparada, sin integración inicial | Aceptado |
+| [0005](0005-pdf-con-dompdf.md) | Documentos PDF con spatie/laravel-pdf y motor DomPDF | Aceptado |

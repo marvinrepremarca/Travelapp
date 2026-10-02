@@ -13,6 +13,7 @@
                 <p class="text-text-subtle">{{ __('bookings.from_quote', ['number' => $booking->quote_number, 'version' => $booking->quote_version]) }}</p>
             @endif
             <p class="font-medium">{{ __('bookings.total') }}: {{ $presenter->format($booking->saleTotal()) }}</p>
+            <p><a href="{{ route('bookings.itinerary', $booking) }}" class="text-brand underline">{{ __('bookings.pdf.itinerary') }}</a></p>
             @if ($missingPassengers > 0)
                 <p class="text-caption text-warning">{{ __('bookings.passengers.pending_count', ['count' => $missingPassengers]) }}</p>
             @endif
@@ -30,7 +31,11 @@
                             @if ($line->isOwnProduct()) · {{ __('bookings.items.own_product') }} @endif
                         </p>
                         @if ($line->supplier_confirmation)
-                            <p class="text-caption">{{ __('bookings.items.confirmation', ['code' => $line->supplier_confirmation]) }}</p>
+                            <p class="text-caption">{{ __('bookings.items.confirmation', ['code' => $line->supplier_confirmation]) }}
+                                @if ($line->status === BookingItemStatus::Confirmed)
+                                    · <a href="{{ route('bookings.voucher', [$booking, $line->ulid]) }}" class="text-brand underline">{{ __('bookings.pdf.voucher') }}<span class="sr-only"> {{ $line->description }}</span></a>
+                                @endif
+                            </p>
                         @endif
                         @if ($line->seat_hold_ulid && $line->status === BookingItemStatus::Confirmed)
                             <p class="text-caption text-success">{{ __('bookings.items.departure_held') }}</p>
