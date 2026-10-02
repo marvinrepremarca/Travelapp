@@ -135,5 +135,6 @@ return [
         'manual_net_required' => 'Indica el costo neto del proveedor.',
         'last_option' => 'La cotización debe tener al menos una opción.',
         'customer_not_found' => 'Elige un cliente de tu alcance.',
+        'not_accepted' => 'La cotización aún no está aceptada.',
     ],
 ];

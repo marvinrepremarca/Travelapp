@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Catalog\Services;
 
 use App\Modules\Catalog\Contracts\CatalogInventory;
+use App\Modules\Catalog\Data\DepartureSlot;
 use App\Modules\Catalog\Enums\DepartureStatus;
 use App\Modules\Catalog\Enums\SeatHoldStatus;
 use App\Modules\Catalog\Exceptions\CatalogRuleViolation;
@@ -16,6 +17,9 @@ use Illuminate\Support\Facades\DB;
 /** Apartados con bloqueo pesimista de la salida: dos ventas simultáneas nunca superan el cupo. */
 final class EloquentCatalogInventory implements CatalogInventory
 {
+    /** HH:MM de la columna time (que llega como HH:MM:SS). */
+    private const TIME_LENGTH = 5;
+
     public function hold(string $departureUlid, int $seats, string $reference, string $idempotencyKey): string
     {
         return DB::transaction(static function () use ($departureUlid, $seats, $reference, $idempotencyKey): string {
@@ -44,6 +48,22 @@ final class EloquentCatalogInventory implements CatalogInventory
 
             return $hold->ulid;
         });
+    }
+
+    public function departuresOn(string $productUlid, CarbonImmutable $serviceDate): array
+    {
+        return array_values(CatalogDeparture::query()
+            ->whereHas('product', static fn($query) => $query->where('ulid', $productUlid))
+            ->where('service_date', $serviceDate->toDateString())
+            ->orderBy('starts_at')
+            ->get()
+            ->map(static fn(CatalogDeparture $departure): DepartureSlot => new DepartureSlot(
+                $departure->ulid,
+                substr($departure->starts_at, 0, self::TIME_LENGTH),
+                $departure->availableSeats(),
+                $departure->status === DepartureStatus::Open,
+            ))
+            ->all());
     }
 
     public function release(string $holdUlid): void

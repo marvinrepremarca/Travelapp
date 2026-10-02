@@ -45,6 +45,9 @@ return [
     ],
 
     'bookings' => [
+        'number_prefix' => env('TRAVEL_BOOKING_NUMBER_PREFIX', 'EXP-'),
+        'number_digits' => (int) env('TRAVEL_BOOKING_NUMBER_DIGITS', 6),
+        'per_page' => (int) env('TRAVEL_BOOKINGS_PER_PAGE', 20),
         'held_alert_hours' => [48, 24, 4],
         'on_request_response_sla_hours' => (int) env('TRAVEL_ON_REQUEST_SLA_HOURS', 24),
         'require_full_payment_for_non_refundable' => true,

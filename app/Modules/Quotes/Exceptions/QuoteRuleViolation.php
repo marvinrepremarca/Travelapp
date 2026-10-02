@@ -51,6 +51,11 @@ final class QuoteRuleViolation extends BusinessRuleException
         return self::make('last_option', __('quotes.errors.last_option'));
     }
 
+    public static function notAccepted(): self
+    {
+        return self::make('not_accepted', __('quotes.errors.not_accepted'));
+    }
+
     public function errorCode(): string
     {
         return $this->stableCode;

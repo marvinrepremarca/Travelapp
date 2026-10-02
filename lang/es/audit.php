@@ -23,6 +23,7 @@ return [
         'pricing' => 'Precios y tasas',
         'catalog' => 'Catálogo',
         'quotes' => 'Cotizaciones',
+        'bookings' => 'Expedientes',
     ],
     'filters' => [
         'module' => 'Módulo',

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Modules\Bookings\Actions\ConfirmItemAction;
+use App\Modules\Bookings\Actions\CreateBookingFromQuoteAction;
+use App\Modules\Bookings\Models\Booking;
 use App\Modules\Catalog\Actions\AddDepartureAction;
 use App\Modules\Catalog\Actions\AddPackageComponentAction;
 use App\Modules\Catalog\Actions\AddSeasonAction;
@@ -21,10 +24,12 @@ use App\Modules\Organization\Models\AgencyProfile;
 use App\Modules\Organization\Models\Branch;
 use App\Modules\Organization\Services\NitCheckDigit;
 use App\Modules\Pricing\Database\Seeders\TaxReferenceSeeder;
+use App\Modules\Quotes\Actions\AcceptQuoteAction;
 use App\Modules\Quotes\Actions\AddItemAction;
 use App\Modules\Quotes\Actions\CreateQuoteAction;
 use App\Modules\Quotes\Actions\SendQuoteAction;
 use App\Modules\Quotes\Data\QuoteItemData;
+use App\Modules\Quotes\Enums\AcceptanceChannel;
 use App\Modules\Quotes\Enums\QuoteItemKind;
 use App\Modules\Quotes\Models\Quote;
 use App\Modules\Shared\Enums\ProductType;
@@ -97,6 +102,7 @@ final class DemoSeeder extends Seeder
         $this->suppliers();
         $this->catalog();
         $this->quotes($agentBog);
+        $this->bookings($agentBog);
 
         unset($admin, $finance);
     }
@@ -175,6 +181,39 @@ final class DemoSeeder extends Seeder
         app(SendQuoteAction::class)->execute($quote, $agent, CarbonImmutable::now());
 
         $create->execute($agent, $customer, 'Escapada a San Andrés', config()->string('travel.agency.default_currency'), SalesChannel::WhatsApp);
+    }
+
+    /** Un expediente nacido de una cotización aceptada, con el hotel confirmado y el paquete por solicitar. */
+    private function bookings(User $agent): void
+    {
+        $customer = Customer::query()->where('display_name', 'Laura Pérez')->first();
+        $package = CatalogProduct::query()->where('code', 'CTG-3D')->first();
+        if (Booking::query()->exists() || ! $customer instanceof Customer || ! $package instanceof CatalogProduct) {
+            return;
+        }
+
+        $currency = config()->string('travel.agency.default_currency');
+        $serviceDate = CarbonImmutable::today()->addDays(3);
+        $quote = app(CreateQuoteAction::class)->execute($agent, $customer, 'Cartagena luna de miel', $currency, SalesChannel::WhatsApp);
+        $option = $quote->options()->firstOrFail();
+        $items = app(AddItemAction::class);
+        $items->execute($quote, $option, new QuoteItemData(kind: QuoteItemKind::Catalog, serviceDate: $serviceDate, passengerAges: [30, 29], catalogProductUlid: CatalogProduct::query()->where('code', 'CTG-ROSARIO')->value('ulid')));
+        $items->execute($quote, $option, new QuoteItemData(
+            kind: QuoteItemKind::Manual,
+            serviceDate: $serviceDate,
+            passengerAges: [30, 29],
+            nights: 4,
+            productType: ProductType::Hotel,
+            description: 'Hotel Caribe Real - suite',
+            manualNet: Money::of('2800000', $currency),
+            destinationCountry: 'CO',
+        ));
+        app(SendQuoteAction::class)->execute($quote, $agent, CarbonImmutable::now());
+        app(AcceptQuoteAction::class)->execute($quote, $option->ulid, AcceptanceChannel::Agent, 'Aceptó por WhatsApp', CarbonImmutable::now());
+
+        $booking = app(CreateBookingFromQuoteAction::class)->execute($quote->ulid, CarbonImmutable::now());
+        $hotel = $booking->items()->where('product_type', ProductType::Hotel)->firstOrFail();
+        app(ConfirmItemAction::class)->execute($hotel, 'HCR-20451', null, CarbonImmutable::now());
     }
 
     private function crm(User $agent): void

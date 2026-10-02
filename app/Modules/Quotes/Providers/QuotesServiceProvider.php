@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Modules\Quotes\Providers;
 
 use App\Modules\Quotes\Console\ExpireQuotesCommand;
+use App\Modules\Quotes\Contracts\AcceptedQuotes;
 use App\Modules\Quotes\Livewire\PublicQuote;
 use App\Modules\Quotes\Livewire\QuoteCreate;
 use App\Modules\Quotes\Livewire\QuoteShow;
 use App\Modules\Quotes\Livewire\QuotesIndex;
 use App\Modules\Quotes\Models\Quote;
 use App\Modules\Quotes\Policies\QuotePolicy;
+use App\Modules\Quotes\Services\EloquentAcceptedQuotes;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Console\Scheduling\Schedule;
@@ -23,6 +25,11 @@ use Livewire\Livewire;
 final class QuotesServiceProvider extends ServiceProvider
 {
     public const CUSTOMER_LINK_LIMITER = 'quote-customer-link';
+
+    /** @var array<class-string, class-string> */
+    public array $singletons = [
+        AcceptedQuotes::class => EloquentAcceptedQuotes::class,
+    ];
 
     public function boot(): void
     {
