@@ -10,6 +10,7 @@ use App\Modules\Documents\Providers\DocumentsServiceProvider;
 use App\Modules\Identity\Providers\IdentityServiceProvider;
 use App\Modules\Integrations\Providers\IntegrationsServiceProvider;
 use App\Modules\Organization\Providers\OrganizationServiceProvider;
+use App\Modules\Payments\Providers\PaymentsServiceProvider;
 use App\Modules\Pricing\Providers\PricingServiceProvider;
 use App\Modules\Quotes\Providers\QuotesServiceProvider;
 use App\Modules\Search\Providers\SearchServiceProvider;
@@ -31,5 +32,6 @@ return [
     QuotesServiceProvider::class,
     BookingsServiceProvider::class,
     SearchServiceProvider::class,
+    PaymentsServiceProvider::class,
     IntegrationsServiceProvider::class,
 ];

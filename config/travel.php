@@ -132,6 +132,14 @@ return [
         'max_package_days' => (int) env('TRAVEL_CATALOG_MAX_PACKAGE_DAYS', 30),
     ],
 
+    'payments' => [
+        'gateway' => env('TRAVEL_PAYMENT_GATEWAY', 'fake'),
+        // El saldo debe estar pago esta cantidad de días antes del primer servicio.
+        'balance_due_days_before' => (int) env('TRAVEL_BALANCE_DUE_DAYS_BEFORE', 15),
+        'link_ttl_hours' => (int) env('TRAVEL_PAYMENT_LINK_TTL_HOURS', 48),
+        'webhook_requests_per_minute' => (int) env('TRAVEL_PAYMENT_WEBHOOKS_PER_MINUTE', 120),
+    ],
+
     // Búsqueda multi-proveedor (ADR-0006): cambiar de proveedor = cambiar estas listas en .env.
     'search' => [
         'flight_providers' => array_values(array_filter(explode(',', (string) env('TRAVEL_FLIGHT_PROVIDERS', 'fake')))),

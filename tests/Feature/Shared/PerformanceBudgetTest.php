@@ -108,3 +108,17 @@ it('renders a booking within the query budget', function (): void {
     expect(count($queries))->toBeLessThanOrEqual(config()->integer('travel.performance.max_queries_per_screen'))
         ->and(count(array_filter(array_count_values($queries), static fn(int $times): bool => $times > 1)))->toBe(0);
 });
+
+it('renders the booking payments within the query budget', function (): void {
+    $this->seed(DemoSeeder::class);
+    actingAs(userWithRole(Role::AgencyOwner));
+    $queries = [];
+    DB::listen(static function (QueryExecuted $query) use (&$queries): void {
+        $queries[] = $query->sql . json_encode($query->bindings);
+    });
+
+    get(route('payments.booking', App\Modules\Bookings\Models\Booking::query()->value('ulid')))->assertOk()->assertSee('TRX-DEMO-001');
+
+    expect(count($queries))->toBeLessThanOrEqual(config()->integer('travel.performance.max_queries_per_screen'))
+        ->and(count(array_filter(array_count_values($queries), static fn(int $times): bool => $times > 1)))->toBe(0);
+});

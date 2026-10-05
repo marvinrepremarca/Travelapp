@@ -24,6 +24,7 @@ return [
         'catalog' => 'Catálogo',
         'quotes' => 'Cotizaciones',
         'bookings' => 'Expedientes',
+        'payments' => 'Pagos',
     ],
     'filters' => [
         'module' => 'Módulo',

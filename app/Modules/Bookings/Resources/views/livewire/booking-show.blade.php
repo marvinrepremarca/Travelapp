@@ -13,7 +13,12 @@
                 <p class="text-text-subtle">{{ __('bookings.from_quote', ['number' => $booking->quote_number, 'version' => $booking->quote_version]) }}</p>
             @endif
             <p class="font-medium">{{ __('bookings.total') }}: {{ $presenter->format($booking->saleTotal()) }}</p>
-            <p><a href="{{ route('bookings.itinerary', $booking) }}" class="text-brand underline">{{ __('bookings.pdf.itinerary') }}</a></p>
+            <p class="flex flex-wrap gap-md">
+                <a href="{{ route('bookings.itinerary', $booking) }}" class="text-brand underline">{{ __('bookings.pdf.itinerary') }}</a>
+                @if (Route::has('payments.booking'))
+                    <a href="{{ route('payments.booking', $booking->ulid) }}" wire:navigate class="text-brand underline">{{ __('payments.link') }}</a>
+                @endif
+            </p>
             @if ($missingPassengers > 0)
                 <p class="text-caption text-warning">{{ __('bookings.passengers.pending_count', ['count' => $missingPassengers]) }}</p>
             @endif
