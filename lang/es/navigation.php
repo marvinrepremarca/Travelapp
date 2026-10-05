@@ -49,6 +49,7 @@ return [
         'tasks' => ['label' => 'Tareas', 'hint' => 'Pendientes y recordatorios del equipo.'],
         'approvals' => ['label' => 'Aprobaciones', 'hint' => 'Descuentos, reembolsos y otras decisiones que requieren visto bueno.'],
         'audit' => ['label' => 'Auditoría', 'hint' => 'Quién cambió qué y cuándo.'],
+        'profitability' => ['label' => 'Rentabilidad', 'hint' => 'Venta, costo, margen, comisiones y penalidades por expediente, asesor y sucursal.'],
         'security' => ['label' => 'Mi seguridad', 'hint' => 'Tu contraseña y verificación en dos pasos.'],
     ],
     'guide' => [
