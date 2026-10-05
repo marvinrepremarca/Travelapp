@@ -161,7 +161,7 @@ El menú está numerado por etapas; **Inicio** muestra la misma guía con la exp
 - [ ] Como **finanzas** o **gerente**, menú 5.5 *Rentabilidad*: el mes actual muestra el total del período, por asesor, por sucursal y por expediente (venta, costo, margen %, comisión esperada, penalidades y utilidad).
 - [ ] Cambia el mes a uno sin ventas → mensaje vacío. Como dueño, filtra por sucursal. Como **asesor**, la opción no aparece en el menú.
 
-### Autocompletar de lugares y embudo vertical
+### Autocompletar de lugares y embudo kanban
 - [ ] *Buscar vuelos*: escribe "bogo" en Origen → aparece "Bogotá (BOG)"; elige con el mouse o con flechas + Enter. En Destino escribe "cartagena" y busca sin elegir → se reconoce CTG. Escribe "nueva york" sin elegir → pide elegir de la lista (hay 3 aeropuertos).
 - [ ] *Buscar hoteles*: escribe "cartag" en Ciudad y elige "Cartagena, Colombia" → el País se completa solo. Escribe "Villa de Leyva" (sin aeropuerto) y en País "colom" → elige Colombia → la búsqueda funciona.
-- [ ] *Embudo de ventas*: las etapas aparecen una debajo de otra; con más leads que el límite aparece "Ver más en Nuevo".
+- [ ] *Embudo de ventas*: las etapas aparecen lado a lado como tablero kanban (en el celular se desplazan en horizontal); con más leads que el límite aparece "Ver más en Nuevo".

@@ -14,7 +14,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
-/** Embudo: etapas abiertas apiladas en vertical (cada una crece con "ver más") y totales de ganados y perdidos, dentro del alcance. */
+/** Embudo tipo kanban: una columna por etapa abierta (cada una crece con "ver más") y totales de ganados y perdidos, dentro del alcance. */
 #[Layout('components.layouts.backoffice')]
 final class LeadsBoard extends Component
 {
