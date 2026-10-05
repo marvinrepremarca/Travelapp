@@ -48,6 +48,8 @@ it('renders every backoffice screen within the query budget', function (string $
     'quotes.index',
     'quotes.create',
     'bookings.index',
+    'search.flights',
+    'search.hotels',
     'identity.security',
 ]);
 

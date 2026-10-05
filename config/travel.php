@@ -132,6 +132,17 @@ return [
         'max_package_days' => (int) env('TRAVEL_CATALOG_MAX_PACKAGE_DAYS', 30),
     ],
 
+    // Búsqueda multi-proveedor (ADR-0006): cambiar de proveedor = cambiar estas listas en .env.
+    'search' => [
+        'flight_providers' => array_values(array_filter(explode(',', (string) env('TRAVEL_FLIGHT_PROVIDERS', 'fake')))),
+        'hotel_providers' => array_values(array_filter(explode(',', (string) env('TRAVEL_HOTEL_PROVIDERS', 'fake')))),
+        'cache_ttl_seconds' => (int) env('TRAVEL_SEARCH_CACHE_TTL', 600),
+        'breaker_failure_threshold' => (int) env('TRAVEL_SEARCH_BREAKER_FAILURES', 3),
+        'breaker_cooldown_seconds' => (int) env('TRAVEL_SEARCH_BREAKER_COOLDOWN', 120),
+        'max_passengers' => (int) env('TRAVEL_SEARCH_MAX_PASSENGERS', 9),
+        'max_nights' => (int) env('TRAVEL_SEARCH_MAX_NIGHTS', 30),
+    ],
+
     // Presupuestos de rendimiento (regla performance.md); los verifica tests/Feature/Shared/PerformanceBudgetTest.
     'performance' => [
         'max_queries_per_screen' => (int) env('TRAVEL_MAX_QUERIES_PER_SCREEN', 15),
