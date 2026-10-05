@@ -124,3 +124,8 @@ Para el 2FA usa una app de autenticación (Google Authenticator, Microsoft Authe
 - [ ] En una cotización enviada, "Descargar PDF (versión N)": membrete de la agencia, opciones, itinerario y totales, sin neto ni margen. En el enlace del cliente, "Descargar PDF".
 - [ ] En el expediente, "Itinerario PDF": servicios vigentes por día con confirmaciones y pasajeros. En un servicio confirmado, "Voucher" con código y pasajeros. Un servicio sin confirmar no tiene voucher.
 - [ ] Sube un logo en *Datos de la agencia* y vuelve a descargar: aparece el logo y el color de marca.
+
+### Fase 2.6 — Búsqueda (parte A, proveedor Fake)
+- [ ] *Buscar vuelos*: BOG → CTG, fecha futura, edades "35, 33" → 3 opciones con precio de venta (requiere tasa USD→COP del día) y neto. Destino `ERR` → aviso "Resultados parciales" y sin disponibilidad; destino `NON` → sin disponibilidad.
+- [ ] *Buscar hoteles*: Cartagena, CO, 3 noches → 3 hoteles con régimen, cancelación y precio. Ciudad `agotado` → sin disponibilidad.
+- [ ] Cambia `TRAVEL_FLIGHT_PROVIDERS` en `.env` (cuando estén Duffel/LiteAPI) y vuelve a buscar: cambian los proveedores sin tocar el código.

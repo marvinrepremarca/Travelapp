@@ -4,6 +4,8 @@
     $items = [
         ['route' => 'dashboard', 'label' => __('shared.dashboard'), 'permission' => null],
         ['route' => 'crm.leads.index', 'label' => __('crm.leads.title'), 'permission' => null],
+        ['route' => 'search.flights', 'label' => __('search.flights.title'), 'permission' => null],
+        ['route' => 'search.hotels', 'label' => __('search.hotels.title'), 'permission' => null],
         ['route' => 'quotes.index', 'label' => __('quotes.title'), 'permission' => null],
         ['route' => 'bookings.index', 'label' => __('bookings.title'), 'permission' => null],
         ['route' => 'pricing.simulator', 'label' => __('pricing.simulator.title'), 'permission' => null],
