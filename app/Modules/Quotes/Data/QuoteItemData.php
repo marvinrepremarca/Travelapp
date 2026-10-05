@@ -26,5 +26,7 @@ final readonly class QuoteItemData
         public ?Money $manualNet = null,
         public ?int $supplierId = null,
         public ?string $destinationCountry = null,
+        public ?string $providerKey = null,
+        public ?string $providerOfferId = null,
     ) {}
 }

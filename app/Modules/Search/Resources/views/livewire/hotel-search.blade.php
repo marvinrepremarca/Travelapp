@@ -24,6 +24,15 @@
 
     @if ($result)
         <div wire:loading.remove wire:target="search" class="flex flex-col gap-md">
+            @if (session('status'))<x-ui.alert :tone="\App\Modules\Shared\Enums\Tone::Success" role="status">{{ session('status') }}</x-ui.alert>@endif
+            @if ($drafts === [])
+                <p class="text-caption text-text-subtle">{{ __('search.no_drafts') }}</p>
+            @else
+                <x-ui.field :label="__('search.target_quote')" for="targetQuote">
+                    <x-ui.select name="targetQuote" wire:model="targetQuote" :options="$drafts" :placeholder="__('quotes.choose')" />
+                </x-ui.field>
+            @endif
+            @error('targetQuote')<x-ui.alert :tone="\App\Modules\Shared\Enums\Tone::Danger">{{ $message }}</x-ui.alert>@enderror
             @if ($result->unavailableProviders !== [])
                 <x-ui.alert :tone="\App\Modules\Shared\Enums\Tone::Warning">{{ __('search.partial', ['providers' => implode(', ', $result->unavailableProviders)]) }}</x-ui.alert>
             @endif
@@ -55,6 +64,9 @@
                                             <p class="text-caption text-warning">{{ __('search.no_rate') }}</p>
                                         @endif
                                         <p class="text-caption text-text-subtle">{{ trans_choice('search.hotels.nights', $nights, ['count' => $nights]) }} · {{ __('search.net', ['amount' => $presenter->format($offer->totalNet)]) }}</p>
+                                        @if ($drafts !== [])
+                                            <x-ui.button variant="secondary" wire:click="addToQuote('{{ $offer->providerKey . $offer->offerId }}')" wire:loading.attr="disabled">{{ __('search.add_to_quote') }}</x-ui.button>
+                                        @endif
                                     </div>
                                 </div>
                             </x-ui.card>

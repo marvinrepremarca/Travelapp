@@ -35,6 +35,18 @@ final class CheapAirline implements FlightProvider
 
         return [new FlightOffer('cheap', 'c-1', Money::of('99', 'USD'), [], [], false)];
     }
+
+    public function reprice(string $offerId): \Brick\Money\Money
+    {
+        return Money::of('99', 'USD');
+    }
+
+    public function book(App\Modules\Search\Data\ProviderBookingRequest $request): string
+    {
+        return 'CHEAP-1';
+    }
+
+    public function cancel(string $bookingReference): void {}
 }
 
 beforeEach(function (): void {

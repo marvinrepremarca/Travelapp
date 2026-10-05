@@ -146,5 +146,6 @@ return [
         'last_option' => 'La cotización debe tener al menos una opción.',
         'customer_not_found' => 'Elige un cliente de tu alcance.',
         'not_accepted' => 'La cotización aún no está aceptada.',
+        'draft_not_found' => 'Elige una cotización en borrador de tu alcance.',
     ],
 ];

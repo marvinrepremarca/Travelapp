@@ -129,3 +129,6 @@ Para el 2FA usa una app de autenticación (Google Authenticator, Microsoft Authe
 - [ ] *Buscar vuelos*: BOG → CTG, fecha futura, edades "35, 33" → 3 opciones con precio de venta (requiere tasa USD→COP del día) y neto. Destino `ERR` → aviso "Resultados parciales" y sin disponibilidad; destino `NON` → sin disponibilidad.
 - [ ] *Buscar hoteles*: Cartagena, CO, 3 noches → 3 hoteles con régimen, cancelación y precio. Ciudad `agotado` → sin disponibilidad.
 - [ ] Cambia `TRAVEL_FLIGHT_PROVIDERS` en `.env` (cuando estén Duffel/LiteAPI) y vuelve a buscar: cambian los proveedores sin tocar el código.
+- [ ] Con una cotización en borrador, en *Buscar vuelos* elige la cotización y "Agregar a cotización" en una oferta → aparece como servicio con su venta.
+- [ ] Envía, acepta y crea el expediente; asigna el pasajero al vuelo y "Gestionar → Confirmado": no pide código, reserva con el proveedor y muestra la referencia `FAKE-…`.
+- [ ] Repite con destino `PRC`: al confirmar avisa "El proveedor cambió el precio" y el servicio sigue por solicitar.

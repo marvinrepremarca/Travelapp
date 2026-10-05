@@ -7,6 +7,7 @@ namespace App\Modules\Integrations\Adapters\Fake;
 use App\Modules\Search\Contracts\HotelProvider;
 use App\Modules\Search\Data\HotelOffer;
 use App\Modules\Search\Data\HotelSearchCriteria;
+use App\Modules\Search\Data\ProviderBookingRequest;
 use App\Modules\Search\Enums\BoardType;
 use App\Modules\Search\Exceptions\ProviderUnavailable;
 use Brick\Money\Money;
@@ -14,13 +15,16 @@ use Brick\Money\Money;
 /**
  * Proveedor de hoteles simulado, sin red y determinista. Escenarios por ciudad: `error` falla, `agotado` sin cupo.
  */
-final class FakeHotels implements HotelProvider
+final readonly class FakeHotels implements HotelProvider
 {
     public const KEY = 'fake';
 
     public const FAILING_CITY = 'error';
 
     public const SOLD_OUT_CITY = 'agotado';
+
+    /** Ciudad cuyas tarifas cambian de precio al re-cotizar antes de reservar. */
+    public const PRICE_CHANGE_CITY = 'cambio';
 
     private const CURRENCY = 'COP';
 
@@ -33,9 +37,26 @@ final class FakeHotels implements HotelProvider
 
     private const FREE_CANCELLATION_DAYS_BEFORE = 3;
 
+    public function __construct(private FakeBookingDesk $desk) {}
+
     public function key(): string
     {
         return self::KEY;
+    }
+
+    public function reprice(string $offerId): ?Money
+    {
+        return $this->desk->reprice($offerId);
+    }
+
+    public function book(ProviderBookingRequest $request): string
+    {
+        return $this->desk->book($request);
+    }
+
+    public function cancel(string $bookingReference): void
+    {
+        $this->desk->cancel($bookingReference);
     }
 
     public function search(HotelSearchCriteria $criteria): array
@@ -63,6 +84,10 @@ final class FakeHotels implements HotelProvider
                 stars: $stars,
                 freeCancellationUntil: $refundable ? $criteria->checkIn->subDays(self::FREE_CANCELLATION_DAYS_BEFORE) : null,
             );
+        }
+
+        foreach ($offers as $offer) {
+            $this->desk->remember($offer->offerId, $offer->totalNet, $city === self::PRICE_CHANGE_CITY);
         }
 
         return $offers;

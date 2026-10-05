@@ -4,15 +4,22 @@ declare(strict_types=1);
 
 namespace App\Modules\Search\Livewire;
 
+use App\Modules\Identity\Models\User;
+use App\Modules\Quotes\Contracts\SupplierOfferIntake;
+use App\Modules\Quotes\Data\QuoteItemData;
+use App\Modules\Quotes\Enums\QuoteItemKind;
+use App\Modules\Search\Data\FlightOffer;
 use App\Modules\Search\Data\FlightSearchCriteria;
 use App\Modules\Search\Data\SearchResult;
 use App\Modules\Search\Enums\CabinClass;
 use App\Modules\Search\Services\OfferPricing;
 use App\Modules\Search\Services\SearchAggregator;
 use App\Modules\Shared\Enums\ProductType;
+use App\Modules\Shared\Exceptions\BusinessRuleException;
 use App\Modules\Shared\Money\MoneyPresenter;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -28,10 +35,44 @@ final class FlightSearch extends Component
 
     public bool $searched = false;
 
+    /** Cotización en borrador a la que se agregan las ofertas. */
+    public string $targetQuote = '';
+
     public function search(): void
     {
         $this->validate($this->rules(), attributes: $this->attributes());
         $this->searched = true;
+    }
+
+    public function addToQuote(string $offerKey, SearchAggregator $aggregator, SupplierOfferIntake $intake): void
+    {
+        $this->validate($this->rules(), attributes: $this->attributes());
+        $criteria = $this->toCriteria();
+        $offer = collect($aggregator->flights($criteria)->offers)->first(static fn(FlightOffer|\App\Modules\Search\Data\HotelOffer $candidate): bool => $candidate->providerKey . $candidate->offerId === $offerKey);
+        if (! $offer instanceof FlightOffer || $this->targetQuote === '') {
+            $this->addError('targetQuote', __('search.quote_required'));
+
+            return;
+        }
+
+        try {
+            $intake->add($this->targetQuote, $this->actor(), new QuoteItemData(
+                kind: QuoteItemKind::Manual,
+                serviceDate: $criteria->departureDate,
+                passengerAges: $criteria->passengerAges,
+                productType: ProductType::Flight,
+                description: $this->describe($offer),
+                manualNet: $offer->totalNet,
+                providerKey: $offer->providerKey,
+                providerOfferId: $offer->offerId,
+            ));
+        } catch (BusinessRuleException $violation) {
+            $this->addError('targetQuote', $violation->getMessage());
+
+            return;
+        }
+
+        session()->flash('status', __('search.added_to_quote'));
     }
 
     public function render(SearchAggregator $aggregator, OfferPricing $pricing, MoneyPresenter $presenter): View
@@ -42,6 +83,7 @@ final class FlightSearch extends Component
             'result' => $result,
             'prices' => $result instanceof SearchResult ? $this->prices($result, $pricing) : [],
             'cabins' => CabinClass::cases(),
+            'drafts' => app(SupplierOfferIntake::class)->draftsFor($this->actor()),
             'presenter' => $presenter,
         ])->title(__('search.flights.title'))
             ->layoutData(['heading' => __('search.flights.title')]);
@@ -59,6 +101,23 @@ final class FlightSearch extends Component
         }
 
         return $prices;
+    }
+
+    private function describe(FlightOffer $offer): string
+    {
+        $first = $offer->outbound[0] ?? null;
+
+        return __($offer->inbound === [] ? 'search.flights.description_one_way' : 'search.flights.description_round_trip', [
+            'origin' => $first->origin ?? mb_strtoupper($this->criteria['origin']),
+            'destination' => $first->destination ?? mb_strtoupper($this->criteria['destination']),
+            'flight' => $first === null ? '' : $first->carrierName . ' ' . $first->flightNumber,
+        ]);
+    }
+
+    private function actor(): User
+    {
+        /** @var User */
+        return Auth::user();
     }
 
     private function toCriteria(): FlightSearchCriteria

@@ -9,11 +9,9 @@ use App\Modules\Search\Data\HotelSearchCriteria;
 use App\Modules\Search\Exceptions\ProviderUnavailable;
 
 /** Puerto de hoteles (ADR-0006): LiteAPI, Fake y, más adelante, Hotelbeds. */
-interface HotelProvider
+interface HotelProvider extends BookableProvider
 {
     public const TAG = 'search.hotel_providers';
-
-    public function key(): string;
 
     /**
      * @return list<HotelOffer>

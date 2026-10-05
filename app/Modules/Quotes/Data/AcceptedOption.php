@@ -8,7 +8,7 @@ namespace App\Modules\Quotes\Data;
  * Opción aceptada de una cotización, con sus ítems tal como se aceptaron (precios congelados de la versión enviada).
  *
  * @phpstan-type AcceptedItem array{
- *     kind: string, product_type: string, description: string, catalog_product_ulid: string|null, supplier_id: int|null,
+ *     kind: string, product_type: string, description: string, catalog_product_ulid: string|null, supplier_id: int|null, provider_key: string|null, provider_offer_id: string|null,
  *     destination_country: string|null, service_date: string, nights: int, passenger_ages: list<int>,
  *     net_amount_minor: int, net_currency: string, sale_amount_minor: int, margin_amount_minor: int, price_breakdown: array<string, mixed>
  * }

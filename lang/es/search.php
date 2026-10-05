@@ -14,6 +14,11 @@ return [
     'provider' => 'Proveedor: :provider',
     'net' => 'Neto :amount',
     'no_rate' => 'Sin tasa de cambio para calcular la venta',
+    'target_quote' => 'Agregar a la cotización',
+    'no_drafts' => 'No tienes cotizaciones en borrador; crea una para agregar ofertas.',
+    'add_to_quote' => 'Agregar a cotización',
+    'quote_required' => 'Elige una cotización en borrador y vuelve a intentarlo.',
+    'added_to_quote' => 'Oferta agregada a la cotización; su venta la calculan las reglas de precio.',
     'cabin' => [
         'economy' => 'Económica',
         'premium_economy' => 'Económica premium',
@@ -34,6 +39,8 @@ return [
         'outbound' => 'Ida',
         'inbound' => 'Regreso',
         'stops' => '{0} Directo|{1} :count escala|[2,*] :count escalas',
+        'description_one_way' => 'Vuelo :origin → :destination · :flight',
+        'description_round_trip' => 'Vuelo :origin ⇄ :destination · :flight',
         'fields' => [
             'origin' => 'Origen',
             'destination' => 'Destino',
