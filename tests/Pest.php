@@ -72,8 +72,17 @@ function moduleLayer(string $layer): array
 }
 
 /** Expediente con un hotel cotizado para un adulto y un niño de 8 años, el 2026-11-10. */
+/** Abre la caja de la sucursal del usuario (si no está abierta) para poder recibir abonos en efectivo. */
+function openCashFor(\App\Modules\Identity\Models\User $user): void
+{
+    if ($user->branch_id !== null && app(\App\Modules\Finance\Services\CashDesk::class)->openSessionFor($user->branch_id) === null) {
+        app(\App\Modules\Finance\Actions\OpenCashSessionAction::class)->execute($user, $user->branch_id, \Brick\Money\Money::zero('COP'), \Carbon\CarbonImmutable::now());
+    }
+}
+
 function familyBooking(\App\Modules\Identity\Models\User $agent): \App\Modules\Bookings\Models\Booking
 {
+    openCashFor($agent);
     $customer = \App\Modules\Crm\Models\Customer::factory()->ownedBy($agent)->create();
     $quote = app(\App\Modules\Quotes\Actions\CreateQuoteAction::class)->execute($agent, $customer, 'Familia', 'COP', \App\Modules\Shared\Enums\SalesChannel::Branch);
     $option = $quote->options()->firstOrFail();

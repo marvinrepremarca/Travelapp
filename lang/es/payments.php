@@ -7,6 +7,7 @@ return [
     'link' => 'Pagos',
     'view_booking' => 'Ver expediente',
     'link_description' => 'Pago del expediente :number',
+    'cash_income' => 'Abono en efectivo del expediente :number',
     'method' => [
         'online_link' => 'Link de pago en línea',
         'bank_transfer' => 'Transferencia o consignación',

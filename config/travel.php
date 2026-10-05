@@ -136,6 +136,7 @@ return [
         // Proveedores en prepago: se les paga esta cantidad de días antes del servicio.
         'prepaid_days_before_service' => (int) env('TRAVEL_PREPAID_DAYS_BEFORE_SERVICE', 7),
         'per_page' => (int) env('TRAVEL_FINANCE_PER_PAGE', 25),
+        'cash_history_size' => (int) env('TRAVEL_CASH_HISTORY_SIZE', 10),
     ],
 
     'payments' => [

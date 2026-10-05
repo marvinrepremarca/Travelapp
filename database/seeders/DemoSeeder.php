@@ -18,6 +18,7 @@ use App\Modules\Crm\Enums\LeadStatus;
 use App\Modules\Crm\Models\Customer;
 use App\Modules\Crm\Models\Lead;
 use App\Modules\Crm\Models\Traveler;
+use App\Modules\Finance\Actions\OpenCashSessionAction;
 use App\Modules\Identity\Database\Seeders\RolesAndPermissionsSeeder;
 use App\Modules\Identity\Enums\Role;
 use App\Modules\Identity\Models\User;
@@ -221,6 +222,7 @@ final class DemoSeeder extends Seeder
 
         // Abono inicial en efectivo y una transferencia pendiente de validar por finanzas.
         $account = app(BookingAccounts::class)->account($booking->ulid);
+        app(OpenCashSessionAction::class)->execute($agent, (int) $agent->branch_id, Money::of('200000', $currency), CarbonImmutable::now());
         $record = app(RecordPaymentAction::class);
         $record->execute($agent, $account, PaymentMethod::Cash, Money::of('500000', $currency), null, null, CarbonImmutable::now());
         $record->execute($agent, $account, PaymentMethod::BankTransfer, Money::of('800000', $currency), 'TRX-DEMO-001', null, CarbonImmutable::now());
