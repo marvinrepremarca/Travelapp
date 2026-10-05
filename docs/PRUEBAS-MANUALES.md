@@ -132,3 +132,8 @@ Para el 2FA usa una app de autenticación (Google Authenticator, Microsoft Authe
 - [ ] Con una cotización en borrador, en *Buscar vuelos* elige la cotización y "Agregar a cotización" en una oferta → aparece como servicio con su venta.
 - [ ] Envía, acepta y crea el expediente; asigna el pasajero al vuelo y "Gestionar → Confirmado": no pide código, reserva con el proveedor y muestra la referencia `FAKE-…`.
 - [ ] Repite con destino `PRC`: al confirmar avisa "El proveedor cambió el precio" y el servicio sigue por solicitar.
+
+### Fase 3.1 — Payments (parte A)
+- [ ] En el expediente "Cartagena luna de miel", "Pagos": total, pagado (efectivo 500.000), por confirmar (transferencia 800.000) y saldo con fecha límite.
+- [ ] Como **finanzas**: "Validar" la transferencia → pasa a pagado. Como asesor no aparece el botón.
+- [ ] Genera un link de pago por 100.000, ábrelo en otra ventana y "Simular pago aprobado" → al recargar, el abono queda aprobado. Intenta cobrar más del saldo → error.

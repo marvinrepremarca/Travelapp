@@ -1,0 +1,10 @@
+# Changelog — Payments
+
+## Fase 3.1 (parte A: abonos, links de pago y webhooks)
+
+### Agregado
+- **Estado de cuenta del expediente**: total vigente, pagado, por confirmar y saldo en la moneda de venta, con **fecha límite** del saldo (N días ⚙ antes del primer servicio) y aviso de vencido.
+- **Abonos libres** por transferencia (pendiente hasta que **finanzas** la valide) o efectivo (aprobado). Nunca se cobra más del saldo menos lo pendiente.
+- **Links de pago** de la pasarela activa (`TRAVEL_PAYMENT_GATEWAY`; hoy la simulada, PCI DSS SAQ-A: nunca datos de tarjeta), con vencimiento automático.
+- **Webhooks firmados** (HMAC-SHA256), idempotentes por id de evento y procesados en la cola `payments`; un pago resuelto no cambia por eventos tardíos.
+- Los pagos aprobados son inmutables: no se borran ni cambian de monto.

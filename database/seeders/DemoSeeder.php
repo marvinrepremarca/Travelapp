@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Modules\Bookings\Actions\ConfirmItemAction;
 use App\Modules\Bookings\Actions\CreateBookingFromQuoteAction;
+use App\Modules\Bookings\Contracts\BookingAccounts;
 use App\Modules\Bookings\Models\Booking;
 use App\Modules\Catalog\Actions\AddDepartureAction;
 use App\Modules\Catalog\Actions\AddPackageComponentAction;
@@ -23,6 +24,8 @@ use App\Modules\Identity\Models\User;
 use App\Modules\Organization\Models\AgencyProfile;
 use App\Modules\Organization\Models\Branch;
 use App\Modules\Organization\Services\NitCheckDigit;
+use App\Modules\Payments\Actions\RecordPaymentAction;
+use App\Modules\Payments\Enums\PaymentMethod;
 use App\Modules\Pricing\Database\Seeders\TaxReferenceSeeder;
 use App\Modules\Quotes\Actions\AcceptQuoteAction;
 use App\Modules\Quotes\Actions\AddItemAction;
@@ -214,6 +217,12 @@ final class DemoSeeder extends Seeder
         $booking = app(CreateBookingFromQuoteAction::class)->execute($quote->ulid, CarbonImmutable::now());
         $hotel = $booking->items()->where('product_type', ProductType::Hotel)->firstOrFail();
         app(ConfirmItemAction::class)->execute($hotel, 'HCR-20451', null, CarbonImmutable::now());
+
+        // Abono inicial en efectivo y una transferencia pendiente de validar por finanzas.
+        $account = app(BookingAccounts::class)->account($booking->ulid);
+        $record = app(RecordPaymentAction::class);
+        $record->execute($agent, $account, PaymentMethod::Cash, Money::of('500000', $currency), null, null, CarbonImmutable::now());
+        $record->execute($agent, $account, PaymentMethod::BankTransfer, Money::of('800000', $currency), 'TRX-DEMO-001', null, CarbonImmutable::now());
     }
 
     private function crm(User $agent): void

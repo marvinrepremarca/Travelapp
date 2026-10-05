@@ -30,6 +30,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // Pasarelas de pago (Payments). La simulada firma sus webhooks con este secreto.
+    'payments' => [
+        'fake' => [
+            'webhook_secret' => env('FAKE_PAYMENTS_WEBHOOK_SECRET'),
+        ],
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
