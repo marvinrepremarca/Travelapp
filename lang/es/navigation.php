@@ -44,6 +44,7 @@ return [
         'hotels' => ['label' => 'Buscar hoteles', 'hint' => 'Busca en los proveedores conectados y agrega la oferta a una cotización.'],
         'quotes' => ['label' => 'Cotizaciones', 'hint' => 'Opciones para el cliente; se envían, el cliente las acepta y se convierten en expediente.'],
         'bookings' => ['label' => 'Expedientes', 'hint' => 'Confirmar servicios, asignar pasajeros, cobrar (Pagos), cancelar y descargar vouchers.'],
+        'payables' => ['label' => 'Cuentas por pagar', 'hint' => 'Lo que se debe a cada proveedor por servicios confirmados; liquidación con comprobante (finanzas).'],
         'tasks' => ['label' => 'Tareas', 'hint' => 'Pendientes y recordatorios del equipo.'],
         'approvals' => ['label' => 'Aprobaciones', 'hint' => 'Descuentos, reembolsos y otras decisiones que requieren visto bueno.'],
         'audit' => ['label' => 'Auditoría', 'hint' => 'Quién cambió qué y cuándo.'],

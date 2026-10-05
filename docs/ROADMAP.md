@@ -62,7 +62,7 @@ Objetivo: un esqueleto que ya exige la calidad desde el primer commit.
 | # | Módulo | Entregables | Verificación clave |
 |---|---|---|---|
 | 3.1 ✔ | `Payments` | Links de pago tokenizados, abonos/cuotas, reembolsos, webhooks firmados | Tests de firma e idempotencia de webhooks; nunca PAN/CVV |
-| 3.2 | `Finance` | CxC, CxP, liquidación a proveedores, caja por sucursal, conciliación, rentabilidad por expediente | Cuadre de saldos en tests de escenario |
+| 3.2 ◐ | `Finance` | CxC, CxP, liquidación a proveedores, caja por sucursal, conciliación, rentabilidad por expediente | Cuadre de saldos en tests de escenario |
 | 3.3 | `Invoicing` | Facturas internas, notas crédito/débito, mandato vs. ingreso propio, puerto `EInvoicingProvider` (Null) | Tests de numeración consecutiva y resolución |
 | 3.4 | `Compliance` | RNT, pólizas, consentimientos, solicitudes de titulares, calendario de obligaciones | Tests de alertas de vencimiento |
 | 3.5 | `Operations` | Salidas, manifiestos, guías, vehículos, incidencias | Tests de capacidad y cierre de salida |
