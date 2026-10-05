@@ -200,3 +200,21 @@ it('labels lead enums', function (): void {
         ->and(LeadStatus::Quoted->tone()->value)->toBe('warning')
         ->and(LeadRuleViolation::contactRequired()->errorCode())->toBe('invalid_lead');
 });
+
+it('grows each funnel stage with show more', function (): void {
+    config()->set('travel.crm.board_column_size', 2);
+    $agent = agent();
+    Lead::factory()->ownedBy($agent)->count(3)->create();
+    actingAs($agent);
+
+    Livewire::test(LeadsBoard::class)
+        ->assertSee(__('crm.leads.showing', ['shown' => 2, 'total' => 3]))
+        ->assertSee(__('crm.leads.show_more', ['stage' => LeadStatus::New->label()]))
+        ->call('showMore', 'not-a-stage')
+        ->assertSee(__('crm.leads.showing', ['shown' => 2, 'total' => 3]))
+        ->call('showMore', LeadStatus::New->value)
+        ->assertSee(__('crm.leads.showing', ['shown' => 3, 'total' => 3]))
+        ->assertDontSee(__('crm.leads.show_more', ['stage' => LeadStatus::New->label()]))
+        ->set('search', 'x')
+        ->assertSet('pages', []);
+});

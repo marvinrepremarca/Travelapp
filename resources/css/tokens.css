@@ -67,3 +67,8 @@
     --color-text: oklch(95% 0.005 250);
     --color-text-subtle: oklch(75% 0.01 250);
 }
+
+/* Capas (z-index): listas desplegables sobre el contenido */
+:root {
+    --z-index-dropdown: 30;
+}

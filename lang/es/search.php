@@ -35,7 +35,7 @@ return [
     ],
     'flights' => [
         'title' => 'Buscar vuelos',
-        'iata_hint' => 'Código IATA de 3 letras (BOG, CTG, MDE).',
+        'place_hint' => '',
         'outbound' => 'Ida',
         'inbound' => 'Regreso',
         'stops' => '{0} Directo|{1} :count escala|[2,*] :count escalas',
@@ -55,9 +55,10 @@ return [
         'stars' => '{1} :count estrella|[2,*] :count estrellas',
         'nights' => '{1} :count noche|[2,*] :count noches',
         'free_cancellation' => 'Cancelación gratis hasta el :date',
+        'city_hint' => 'Escribe la ciudad; al elegirla de la lista se completa el país.',
         'fields' => [
             'city' => 'Ciudad',
-            'country' => 'País (ISO)',
+            'country' => 'País',
             'check_in' => 'Entrada',
             'check_out' => 'Salida',
             'ages' => 'Edades de los huéspedes',
@@ -68,5 +69,8 @@ return [
     ],
     'errors' => [
         'provider_unavailable' => 'El proveedor :provider no está disponible en este momento.',
+    ],
+    'places' => [
+        'choose_from_list' => 'No reconocemos ese lugar: elígelo de la lista de sugerencias.',
     ],
 ];

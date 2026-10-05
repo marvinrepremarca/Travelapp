@@ -12,7 +12,10 @@ use App\Modules\Search\Data\FlightOffer;
 use App\Modules\Search\Data\FlightSearchCriteria;
 use App\Modules\Search\Data\SearchResult;
 use App\Modules\Search\Enums\CabinClass;
+use App\Modules\Search\Enums\PlaceKind;
+use App\Modules\Search\Livewire\Concerns\LooksUpPlaces;
 use App\Modules\Search\Services\OfferPricing;
+use App\Modules\Search\Services\PlaceDirectory;
 use App\Modules\Search\Services\SearchAggregator;
 use App\Modules\Shared\Enums\ProductType;
 use App\Modules\Shared\Exceptions\BusinessRuleException;
@@ -28,6 +31,8 @@ use Livewire\Component;
 #[Layout('components.layouts.backoffice')]
 final class FlightSearch extends Component
 {
+    use LooksUpPlaces;
+
     private const AGES_SEPARATOR = ',';
 
     /** @var array<string, string> */
@@ -38,9 +43,10 @@ final class FlightSearch extends Component
     /** Cotización en borrador a la que se agregan las ofertas. */
     public string $targetQuote = '';
 
-    public function search(): void
+    public function search(PlaceDirectory $places): void
     {
-        $this->validate($this->rules(), attributes: $this->attributes());
+        $this->resolvePlaces($places);
+        $this->validate($this->rules(), $this->placeMessages(), $this->attributes());
         $this->searched = true;
     }
 
@@ -75,11 +81,12 @@ final class FlightSearch extends Component
         session()->flash('status', __('search.added_to_quote'));
     }
 
-    public function render(SearchAggregator $aggregator, OfferPricing $pricing, MoneyPresenter $presenter): View
+    public function render(SearchAggregator $aggregator, OfferPricing $pricing, MoneyPresenter $presenter, PlaceDirectory $places): View
     {
         $result = $this->searched ? $aggregator->flights($this->toCriteria()) : null;
 
         return view('search::livewire.flight-search', [
+            'suggestions' => $this->placeSuggestions($places),
             'result' => $result,
             'prices' => $result instanceof SearchResult ? $this->prices($result, $pricing) : [],
             'cabins' => CabinClass::cases(),
@@ -112,6 +119,11 @@ final class FlightSearch extends Component
             'destination' => $first->destination ?? mb_strtoupper($this->criteria['destination']),
             'flight' => $first === null ? '' : $first->carrierName . ' ' . $first->flightNumber,
         ]);
+    }
+
+    protected function placeFields(): array
+    {
+        return ['origin' => PlaceKind::Airport, 'destination' => PlaceKind::Airport];
     }
 
     private function actor(): User

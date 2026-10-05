@@ -10,26 +10,37 @@
         </div>
     </div>
 
-    <div class="grid gap-md md:grid-cols-3" wire:loading.class="opacity-50" wire:target="search">
+    <div class="flex flex-col gap-lg" wire:loading.class="opacity-50" wire:target="search,showMore">
         @foreach ($columns as $column)
-            <section aria-labelledby="column-{{ $column['status']->value }}" class="flex flex-col gap-sm rounded-card bg-muted p-md" wire:key="column-{{ $column['status']->value }}">
-                <h2 id="column-{{ $column['status']->value }}" class="flex items-center justify-between text-heading-3 font-semibold">
+            <section aria-labelledby="stage-{{ $column['status']->value }}" class="flex flex-col gap-sm rounded-card bg-muted p-md" wire:key="stage-{{ $column['status']->value }}">
+                <h2 id="stage-{{ $column['status']->value }}" class="flex items-center gap-sm text-heading-3 font-semibold">
                     {{ $column['status']->label() }}
                     <x-ui.badge :tone="$column['status']->tone()">{{ $column['total'] }}</x-ui.badge>
                 </h2>
-                @forelse ($column['leads'] as $lead)
-                    <a href="{{ route('crm.leads.show', $lead) }}" wire:navigate wire:key="lead-{{ $lead->ulid }}"
-                       class="flex flex-col gap-xs rounded-control border border-border bg-surface p-sm hover:bg-canvas">
-                        <span class="font-medium">{{ $lead->contact_name }}</span>
-                        <span class="text-caption text-text-subtle">
-                            {{ $lead->destination ?? __('crm.leads.no_destination') }}
-                            @if ($lead->travel_start) · {{ $lead->travel_start->locale(app()->getLocale())->isoFormat('ll') }} @endif
-                            · {{ $lead->channel->label() }}
-                        </span>
-                    </a>
-                @empty
+                @if ($column['leads']->isEmpty())
                     <p class="text-caption text-text-subtle">{{ __('crm.leads.empty_column') }}</p>
-                @endforelse
+                @else
+                    <ul class="flex flex-col divide-y divide-border rounded-control border border-border bg-surface">
+                        @foreach ($column['leads'] as $lead)
+                            <li wire:key="lead-{{ $lead->ulid }}">
+                                <a href="{{ route('crm.leads.show', $lead) }}" wire:navigate class="grid gap-xs p-sm hover:bg-canvas md:grid-cols-4 md:items-center md:gap-md">
+                                    <span class="font-medium">{{ $lead->contact_name }}</span>
+                                    <span class="text-caption text-text-subtle md:text-body"><span class="sr-only">{{ __('crm.leads.destination') }}: </span>{{ $lead->destination ?? __('crm.leads.no_destination') }}</span>
+                                    <span class="text-caption text-text-subtle"><span class="sr-only">{{ __('crm.leads.travel_start') }}: </span>{{ $lead->travel_start?->locale(app()->getLocale())->isoFormat('ll') ?? '—' }}</span>
+                                    <span class="text-caption text-text-subtle"><span class="sr-only">{{ __('crm.leads.channel') }}: </span>{{ $lead->channel->label() }}</span>
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                    <div class="flex flex-wrap items-center justify-between gap-sm">
+                        <span class="text-caption text-text-subtle">{{ __('crm.leads.showing', ['shown' => $column['leads']->count(), 'total' => $column['total']]) }}</span>
+                        @if ($column['leads']->count() < $column['total'])
+                            <x-ui.button type="button" variant="secondary" wire:click="showMore('{{ $column['status']->value }}')" wire:loading.attr="disabled" wire:target="showMore">
+                                {{ __('crm.leads.show_more', ['stage' => $column['status']->label()]) }}
+                            </x-ui.button>
+                        @endif
+                    </div>
+                @endif
             </section>
         @endforeach
     </div>

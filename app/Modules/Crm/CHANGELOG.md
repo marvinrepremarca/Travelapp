@@ -8,3 +8,8 @@
 - **Datos sensibles** (documento, fecha de nacimiento, pasaporte) enmascarados; mostrarlos exige el permiso `crm.sensitive_data.view` y un motivo, y queda en la auditoría.
 - **Pasajeros** del cliente con fecha de nacimiento y pasaporte cifrados, nombre en formato aerolínea, tipo de pasajero por edad a la fecha del servicio y alerta de vigencia mínima del pasaporte (6 meses ⚙).
 - **Embudo de leads:** Nuevo → Contactado → Cotizado → Ganado / Perdido; perder exige motivo; ganar exige un cliente y emite `LeadWon`; el primer contacto registrado pasa el lead a "Contactado"; seguimiento de interacciones.
+
+## Embudo vertical
+
+### Cambiado
+- El **embudo de ventas** muestra las etapas (Nuevo, Contactado, Cotizado) una debajo de otra, con los leads en filas (contacto, destino, fecha de viaje, canal), "Mostrando N de M" y **Ver más** por etapa para listas largas.

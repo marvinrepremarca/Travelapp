@@ -1,11 +1,11 @@
 <div class="flex flex-col gap-lg">
     <x-ui.card>
         <form wire:submit="search" class="grid gap-md md:grid-cols-3 md:items-end" novalidate>
-            <x-ui.field :label="__('search.flights.fields.origin')" for="criteria.origin" :hint="__('search.flights.iata_hint')">
-                <x-ui.input name="criteria.origin" wire:model="criteria.origin" maxlength="3" hint required />
+            <x-ui.field :label="__('search.flights.fields.origin')" for="criteria.origin" :hint="__('search.flights.place_hint')">
+                <x-ui.combobox name="criteria.origin" model="lookup.origin" field="origin" :options="$suggestions['origin']" hint required />
             </x-ui.field>
             <x-ui.field :label="__('search.flights.fields.destination')" for="criteria.destination">
-                <x-ui.input name="criteria.destination" wire:model="criteria.destination" maxlength="3" required />
+                <x-ui.combobox name="criteria.destination" model="lookup.destination" field="destination" :options="$suggestions['destination']" required />
             </x-ui.field>
             <x-ui.field :label="__('search.flights.fields.cabin')" for="criteria.cabin">
                 <x-ui.select name="criteria.cabin" wire:model="criteria.cabin" :options="collect($cabins)->mapWithKeys(fn ($cabin) => [$cabin->value => $cabin->label()])->all()" />

@@ -11,7 +11,10 @@ use App\Modules\Quotes\Enums\QuoteItemKind;
 use App\Modules\Search\Data\HotelOffer;
 use App\Modules\Search\Data\HotelSearchCriteria;
 use App\Modules\Search\Data\SearchResult;
+use App\Modules\Search\Enums\PlaceKind;
+use App\Modules\Search\Livewire\Concerns\LooksUpPlaces;
 use App\Modules\Search\Services\OfferPricing;
+use App\Modules\Search\Services\PlaceDirectory;
 use App\Modules\Search\Services\SearchAggregator;
 use App\Modules\Shared\Enums\ProductType;
 use App\Modules\Shared\Exceptions\BusinessRuleException;
@@ -26,6 +29,8 @@ use Livewire\Component;
 #[Layout('components.layouts.backoffice')]
 final class HotelSearch extends Component
 {
+    use LooksUpPlaces;
+
     private const AGES_SEPARATOR = ',';
 
     /** @var array<string, string> */
@@ -37,7 +42,7 @@ final class HotelSearch extends Component
 
     public function addToQuote(string $offerKey, SearchAggregator $aggregator, SupplierOfferIntake $intake): void
     {
-        $this->search();
+        $this->search(app(PlaceDirectory::class));
         $criteria = $this->toCriteria();
         $offer = collect($aggregator->hotels($criteria)->offers)->first(static fn(\App\Modules\Search\Data\FlightOffer|HotelOffer $candidate): bool => $candidate->providerKey . $candidate->offerId === $offerKey);
         if (! $offer instanceof HotelOffer || $this->targetQuote === '') {
@@ -68,8 +73,9 @@ final class HotelSearch extends Component
         session()->flash('status', __('search.added_to_quote'));
     }
 
-    public function search(): void
+    public function search(PlaceDirectory $places): void
     {
+        $this->resolvePlaces($places);
         $maxGuests = config()->integer('travel.search.max_passengers');
         $this->validate([
             'criteria.city' => ['required', 'string', 'max:100'],
@@ -77,15 +83,16 @@ final class HotelSearch extends Component
             'criteria.check_in' => ['required', 'date', 'after_or_equal:today'],
             'criteria.check_out' => ['required', 'date', 'after:criteria.check_in', 'before_or_equal:' . CarbonImmutable::parse($this->criteria['check_in'] ?: 'today')->addDays(config()->integer('travel.search.max_nights'))->toDateString()],
             'criteria.ages' => ['required', 'string', 'regex:/^\s*\d{1,3}(\s*,\s*\d{1,3}){0,' . ($maxGuests - 1) . '}\s*$/'],
-        ], attributes: $this->attributes());
+        ], $this->placeMessages(), $this->attributes());
         $this->searched = true;
     }
 
-    public function render(SearchAggregator $aggregator, OfferPricing $pricing, MoneyPresenter $presenter): View
+    public function render(SearchAggregator $aggregator, OfferPricing $pricing, MoneyPresenter $presenter, PlaceDirectory $places): View
     {
         $result = $this->searched ? $aggregator->hotels($this->toCriteria()) : null;
 
         return view('search::livewire.hotel-search', [
+            'suggestions' => $this->placeSuggestions($places),
             'result' => $result,
             'prices' => $result instanceof SearchResult ? $this->prices($result, $pricing) : [],
             'nights' => $this->searched ? $this->toCriteria()->nights() : 0,
@@ -107,6 +114,11 @@ final class HotelSearch extends Component
         }
 
         return $prices;
+    }
+
+    protected function placeFields(): array
+    {
+        return ['city' => PlaceKind::City, 'country' => PlaceKind::Country];
     }
 
     private function actor(): User
