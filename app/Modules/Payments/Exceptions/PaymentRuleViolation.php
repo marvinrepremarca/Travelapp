@@ -40,6 +40,16 @@ final class PaymentRuleViolation extends BusinessRuleException
         return self::make('nothing_to_collect', __('payments.errors.nothing_to_collect'));
     }
 
+    public static function exceedsRefundable(string $refundable): self
+    {
+        return self::make('exceeds_refundable', __('payments.errors.exceeds_refundable', ['refundable' => $refundable]));
+    }
+
+    public static function refundNotApproved(): self
+    {
+        return self::make('refund_not_approved', __('payments.errors.refund_not_approved'));
+    }
+
     public function errorCode(): string
     {
         return $this->stableCode;

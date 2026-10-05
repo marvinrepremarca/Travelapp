@@ -13,7 +13,13 @@
                 <div><dt class="text-caption text-text-subtle">{{ __('payments.summary.pending') }}</dt><dd class="font-medium">{{ $presenter->format($summary->pending) }}</dd></div>
                 <div><dt class="text-caption text-text-subtle">{{ __('payments.summary.balance') }}</dt><dd class="text-heading-3 font-semibold">{{ $presenter->format($summary->balance) }}</dd></div>
             </dl>
-            @if ($summary->dueDate)
+            @if ($summary->refunded->isPositive())
+                <p class="text-caption text-text-subtle">{{ __('payments.summary.refunded') }}: {{ $presenter->format($summary->refunded) }}</p>
+            @endif
+            @if ($summary->balance->isNegative())
+                <p class="font-medium text-warning">{{ __('payments.summary.in_favor', ['amount' => $presenter->format($summary->balance->negated())]) }}</p>
+            @endif
+            @if ($summary->dueDate && $summary->balance->isPositive())
                 <p @class(['text-danger font-medium' => $summary->isOverdue, 'text-text-subtle' => ! $summary->isOverdue])>
                     {{ $summary->isOverdue ? __('payments.summary.overdue', ['date' => $summary->dueDate->locale(app()->getLocale())->isoFormat('ll')]) : __('payments.summary.due', ['date' => $summary->dueDate->locale(app()->getLocale())->isoFormat('ll')]) }}
                 </p>
@@ -78,5 +84,42 @@
                 @endforeach
             </ul>
         @endif
+    </x-ui.card>
+
+    <x-ui.card :title="__('payments.refunds.title')">
+        <div class="flex flex-col gap-md">
+            @if ($summary->refundable()->isPositive())
+                <p>{{ __('payments.refunds.refundable', ['amount' => $presenter->format($summary->refundable())]) }}</p>
+                <form wire:submit="requestRefund" class="grid gap-md md:grid-cols-3 md:items-end" novalidate>
+                    <x-ui.field :label="__('payments.refunds.amount')" for="refund.amount"><x-ui.input name="refund.amount" type="number" min="0" step="any" wire:model="refund.amount" required /></x-ui.field>
+                    <x-ui.field :label="__('payments.refunds.reason')" for="refund.reason"><x-ui.input name="refund.reason" wire:model="refund.reason" required /></x-ui.field>
+                    <x-ui.button type="submit" wire:loading.attr="disabled" wire:target="requestRefund">{{ __('payments.refunds.request') }}</x-ui.button>
+                </form>
+            @else
+                <p class="text-text-subtle">{{ __('payments.refunds.none_refundable') }}</p>
+            @endif
+            @error('payoutReference')<x-ui.alert :tone="Tone::Danger">{{ $message }}</x-ui.alert>@enderror
+            @if ($refunds->isEmpty())
+                <p class="text-caption text-text-subtle">{{ __('payments.refunds.empty') }}</p>
+            @else
+                <ul class="flex flex-col divide-y divide-border">
+                    @foreach ($refunds as $item)
+                        <li class="flex flex-wrap items-start justify-between gap-sm py-sm" wire:key="refund-{{ $item->ulid }}">
+                            <div>
+                                <p class="font-medium">{{ $presenter->format($item->amount()) }}</p>
+                                <p class="text-caption text-text-subtle">{{ $item->reason }}@if ($item->payout_reference) · {{ __('payments.list.reference', ['reference' => $item->payout_reference]) }}@endif</p>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-sm">
+                                <x-ui.badge :tone="$item->status->tone()">{{ $item->status->label() }}</x-ui.badge>
+                                @if ($canValidate && $item->status === \App\Modules\Payments\Enums\RefundStatus::Approved)
+                                    <x-ui.input name="payoutReference" wire:model="payoutReference" :aria-label="__('payments.refunds.payout_reference')" :placeholder="__('payments.refunds.payout_reference')" />
+                                    <x-ui.button variant="secondary" wire:click="payRefund('{{ $item->ulid }}')" wire:loading.attr="disabled">{{ __('payments.refunds.pay') }}</x-ui.button>
+                                @endif
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+        </div>
     </x-ui.card>
 </div>

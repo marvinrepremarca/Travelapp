@@ -137,3 +137,5 @@ Para el 2FA usa una app de autenticación (Google Authenticator, Microsoft Authe
 - [ ] En el expediente "Cartagena luna de miel", "Pagos": total, pagado (efectivo 500.000), por confirmar (transferencia 800.000) y saldo con fecha límite.
 - [ ] Como **finanzas**: "Validar" la transferencia → pasa a pagado. Como asesor no aparece el botón.
 - [ ] Genera un link de pago por 100.000, ábrelo en otra ventana y "Simular pago aprobado" → al recargar, el abono queda aprobado. Intenta cobrar más del saldo → error.
+- [ ] Cancela un servicio pagado con política de penalidad: en "Pagos" aparece el saldo a favor y "Se puede devolver hasta…". Solicita un reembolso → queda "Solicitado".
+- [ ] Como **finanzas**, en *Aprobaciones* aprueba el reembolso; en "Pagos" registra el comprobante → "Pagado al cliente" y el saldo queda en cero.
