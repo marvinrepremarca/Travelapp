@@ -50,6 +50,7 @@ it('renders every backoffice screen within the query budget', function (string $
     'bookings.index',
     'finance.payables',
     'finance.cash',
+    'finance.profitability',
     'search.flights',
     'search.hotels',
     'identity.security',

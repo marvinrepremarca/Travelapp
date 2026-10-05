@@ -156,3 +156,7 @@ El menú está numerado por etapas; **Inicio** muestra la misma guía con la exp
 - [ ] Selecciona obligaciones de un proveedor, escribe el comprobante y "Registrar pago" → pasan a "Pagada".
 - [ ] Menú 4.3 *Caja de la sucursal* (asesor.bogota): caja abierta con base 200.000. Registra un abono en efectivo en un expediente → aparece como entrada. Registra una salida.
 - [ ] Cierra con un valor contado distinto al esperado → el cierre muestra la diferencia. Intenta un abono en efectivo con la caja cerrada → error "No hay caja abierta".
+
+### Fase 3.2 — Finance (parte C: rentabilidad)
+- [ ] Como **finanzas** o **gerente**, menú 5.5 *Rentabilidad*: el mes actual muestra el total del período, por asesor, por sucursal y por expediente (venta, costo, margen %, comisión esperada, penalidades y utilidad).
+- [ ] Cambia el mes a uno sin ventas → mensaje vacío. Como dueño, filtra por sucursal. Como **asesor**, la opción no aparece en el menú.

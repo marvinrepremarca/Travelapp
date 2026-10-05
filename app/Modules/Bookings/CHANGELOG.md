@@ -22,3 +22,8 @@
 - **Política por servicio**: tramos "con N días o menos de anticipación se cobra X %" del precio de venta, o no reembolsable (100 %). Se edita en el expediente y queda auditada.
 - **Penalidad al cancelar** un servicio confirmado con política: se calcula con los días de calendario entre hoy (zona de la agencia) y la fecha del servicio, y se registra en el servicio. El reembolso lo gestionará Finanzas.
 - La ficha muestra la política, la penalidad si se cancelara hoy, el aviso antes de cancelar y la penalidad registrada.
+
+## Fase 3.2 (rentabilidad)
+
+### Agregado
+- Contrato `BookingProfitLines`: venta vigente, costo y penalidades por expediente, proveedor y tipo de producto, para la rentabilidad de Finance. Índice por fecha de creación del expediente.

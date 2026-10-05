@@ -13,3 +13,10 @@
 ### Agregado
 - **Caja por sucursal**: apertura con base (una sola abierta por sucursal), entradas automáticas por **abonos en efectivo** (contrato `CashRegister`; sin caja abierta no se recibe efectivo), salidas con descripción y **cierre con arqueo** que registra esperado, contado y diferencia (sobrante o faltante).
 - Movimientos y cajas inmutables y auditados; historial de cierres. Quien tiene alcance total puede operar la caja de cualquier sucursal.
+
+## Fase 3.2 (parte C: rentabilidad por expediente)
+
+### Agregado
+- **Rentabilidad** (menú 5.5, permiso de ver márgenes): por expediente vendido en el mes, venta vigente, costo (neto con la tasa congelada al cotizar), margen y % sobre la venta, **comisión esperada** del proveedor (pactada a la fecha de venta, sobre tarifa pública o neto), **penalidades** y utilidad.
+- Totales **por asesor**, **por sucursal** y del período, separados por moneda y filtrados por el alcance de quien consulta. Los servicios cancelados o rechazados solo aportan sus penalidades.
+- Contrato `BookingProfitLines` en Bookings (una consulta agrupada) e índice `bookings.created_at`.

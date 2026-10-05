@@ -51,6 +51,7 @@ final class MainMenu
             ['approvals', 'workflow.approvals', null],
             ['audit', 'audit.index', Permission::AuditView],
             ['security', 'identity.security', null],
+            ['profitability', 'finance.profitability', Permission::MarginsView],
         ],
     ];
 

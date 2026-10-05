@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Modules\Bookings\Providers;
 
 use App\Modules\Bookings\Contracts\BookingAccounts;
+use App\Modules\Bookings\Contracts\BookingProfitLines;
 use App\Modules\Bookings\Livewire\BookingShow;
 use App\Modules\Bookings\Livewire\BookingsIndex;
 use App\Modules\Bookings\Livewire\ConvertQuote;
 use App\Modules\Bookings\Models\Booking;
 use App\Modules\Bookings\Policies\BookingPolicy;
 use App\Modules\Bookings\Services\EloquentBookingAccounts;
+use App\Modules\Bookings\Services\EloquentBookingProfitLines;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -21,6 +23,7 @@ final class BookingsServiceProvider extends ServiceProvider
     /** @var array<class-string, class-string> */
     public array $singletons = [
         BookingAccounts::class => EloquentBookingAccounts::class,
+        BookingProfitLines::class => EloquentBookingProfitLines::class,
     ];
 
     public function boot(): void

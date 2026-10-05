@@ -11,6 +11,7 @@ use App\Modules\Finance\Listeners\RegisterSupplierPayable;
 use App\Modules\Finance\Listeners\VoidSupplierPayable;
 use App\Modules\Finance\Livewire\CashRegisterScreen;
 use App\Modules\Finance\Livewire\PayablesIndex;
+use App\Modules\Finance\Livewire\ProfitabilityScreen;
 use App\Modules\Finance\Services\CashDesk;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Support\Facades\Event;
@@ -34,6 +35,7 @@ final class FinanceServiceProvider extends ServiceProvider
 
         Livewire::component('finance.payables', PayablesIndex::class);
         Livewire::component('finance.cash', CashRegisterScreen::class);
+        Livewire::component('finance.profitability', ProfitabilityScreen::class);
 
         // Las obligaciones con proveedores siguen la vida de los servicios del expediente.
         Event::listen(BookingItemConfirmed::class, RegisterSupplierPayable::class);
