@@ -7,6 +7,7 @@ namespace App\Modules\Suppliers\Services;
 use App\Modules\Shared\Enums\ProductType;
 use App\Modules\Suppliers\Contracts\SupplierDirectory;
 use App\Modules\Suppliers\Data\CommissionTerm;
+use App\Modules\Suppliers\Data\SupplierPaymentTerms;
 use App\Modules\Suppliers\Enums\SupplierStanding;
 use App\Modules\Suppliers\Models\Supplier;
 use App\Modules\Suppliers\Models\SupplierCommission;
@@ -21,6 +22,13 @@ final class EloquentSupplierDirectory implements SupplierDirectory
         return $supplier === null
             ? SupplierStanding::Inactive
             : $supplier->standingOn($date, config()->integer('travel.suppliers.rnt_expiry_warning_days'));
+    }
+
+    public function paymentTermsOf(int $supplierId): ?SupplierPaymentTerms
+    {
+        $supplier = Supplier::query()->withTrashed()->find($supplierId);
+
+        return $supplier === null ? null : new SupplierPaymentTerms($supplier->id, $supplier->trade_name, $supplier->payment_terms, $supplier->payment_days, $supplier->payment_currency);
     }
 
     public function commissionFor(int $supplierId, ProductType $productType, CarbonImmutable $date): ?CommissionTerm

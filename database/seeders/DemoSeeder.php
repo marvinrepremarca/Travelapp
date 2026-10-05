@@ -209,6 +209,7 @@ final class DemoSeeder extends Seeder
             productType: ProductType::Hotel,
             description: 'Hotel Caribe Real - suite',
             manualNet: Money::of('2800000', $currency),
+            supplierId: Supplier::query()->where('trade_name', 'Hotel Caribe Real')->value('id'),
             destinationCountry: 'CO',
         ));
         app(SendQuoteAction::class)->execute($quote, $agent, CarbonImmutable::now());

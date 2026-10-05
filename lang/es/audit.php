@@ -25,6 +25,7 @@ return [
         'quotes' => 'Cotizaciones',
         'bookings' => 'Expedientes',
         'payments' => 'Pagos',
+        'finance' => 'Finanzas',
     ],
     'filters' => [
         'module' => 'Módulo',

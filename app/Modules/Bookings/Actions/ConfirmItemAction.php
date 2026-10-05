@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Bookings\Actions;
 
 use App\Modules\Bookings\Enums\BookingItemStatus;
+use App\Modules\Bookings\Events\BookingItemConfirmed;
 use App\Modules\Bookings\Exceptions\BookingRuleViolation;
 use App\Modules\Bookings\Models\BookingItem;
 use App\Modules\Bookings\Services\BookingItemWorkflow;
@@ -53,6 +54,20 @@ final readonly class ConfirmItemAction
             $item->provider_booking_reference = $providerReference;
             $item->supplier_confirmation = $confirmationCode !== null && $confirmationCode !== '' ? $confirmationCode : $providerReference;
             $this->workflow->transition($item, BookingItemStatus::Confirmed, null, $now);
+            $booking = $item->booking()->firstOrFail();
+
+            BookingItemConfirmed::dispatch(
+                $item->ulid,
+                $booking->ulid,
+                (string) $booking->number,
+                $booking->owner_id,
+                $booking->branch_id,
+                $item->supplier_id,
+                $item->description,
+                $item->net_amount_minor,
+                $item->net_currency,
+                $item->service_date,
+            );
 
             return $item;
         });

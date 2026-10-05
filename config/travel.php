@@ -132,6 +132,12 @@ return [
         'max_package_days' => (int) env('TRAVEL_CATALOG_MAX_PACKAGE_DAYS', 30),
     ],
 
+    'finance' => [
+        // Proveedores en prepago: se les paga esta cantidad de días antes del servicio.
+        'prepaid_days_before_service' => (int) env('TRAVEL_PREPAID_DAYS_BEFORE_SERVICE', 7),
+        'per_page' => (int) env('TRAVEL_FINANCE_PER_PAGE', 25),
+    ],
+
     'payments' => [
         'gateway' => env('TRAVEL_PAYMENT_GATEWAY', 'fake'),
         // El saldo debe estar pago esta cantidad de días antes del primer servicio.

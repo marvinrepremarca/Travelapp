@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Bookings\Actions;
 
 use App\Modules\Bookings\Enums\BookingItemStatus;
+use App\Modules\Bookings\Events\BookingItemCancelled;
 use App\Modules\Bookings\Exceptions\BookingRuleViolation;
 use App\Modules\Bookings\Models\BookingItem;
 use App\Modules\Bookings\Services\BookingItemWorkflow;
@@ -50,6 +51,10 @@ final readonly class ChangeItemStatusAction
 
             if ($next === BookingItemStatus::Cancelled && $holdUlid !== null) {
                 $this->inventory->release($holdUlid);
+            }
+
+            if ($next === BookingItemStatus::Cancelled) {
+                BookingItemCancelled::dispatch($item->ulid);
             }
 
             return $item;

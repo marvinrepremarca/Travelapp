@@ -43,6 +43,7 @@ final class MainMenu
         ],
         'operations' => [
             ['bookings', 'bookings.index', null],
+            ['payables', 'finance.payables', Permission::FinanceAccess],
         ],
         'control' => [
             ['tasks', 'workflow.tasks', null],
