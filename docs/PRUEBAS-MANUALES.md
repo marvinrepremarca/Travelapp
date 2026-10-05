@@ -154,3 +154,5 @@ El menú está numerado por etapas; **Inicio** muestra la misma guía con la exp
 - [ ] Como **finanzas**, menú 4.2 *Cuentas por pagar*: aparece "Hotel Caribe Real" con el neto del hotel confirmado y su vencimiento según el crédito del proveedor.
 - [ ] Confirma otro servicio con proveedor y vuelve: aparece su obligación. Cancela un servicio pendiente de pago → queda "Anulada".
 - [ ] Selecciona obligaciones de un proveedor, escribe el comprobante y "Registrar pago" → pasan a "Pagada".
+- [ ] Menú 4.3 *Caja de la sucursal* (asesor.bogota): caja abierta con base 200.000. Registra un abono en efectivo en un expediente → aparece como entrada. Registra una salida.
+- [ ] Cierra con un valor contado distinto al esperado → el cierre muestra la diferencia. Intenta un abono en efectivo con la caja cerrada → error "No hay caja abierta".

@@ -30,6 +30,16 @@ final class FinanceRuleViolation extends BusinessRuleException
         return self::make('cash_session_closed', __('finance.errors.cash_session_closed'));
     }
 
+    public static function cashCurrencyMismatch(string $currency): self
+    {
+        return self::make('cash_currency_mismatch', __('finance.errors.cash_currency_mismatch', ['currency' => $currency]));
+    }
+
+    public static function userWithoutBranch(): self
+    {
+        return self::make('user_without_branch', __('finance.errors.user_without_branch'));
+    }
+
     public function errorCode(): string
     {
         return $this->stableCode;

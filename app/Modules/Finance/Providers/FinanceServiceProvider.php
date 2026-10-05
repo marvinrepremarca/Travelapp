@@ -6,9 +6,12 @@ namespace App\Modules\Finance\Providers;
 
 use App\Modules\Bookings\Events\BookingItemCancelled;
 use App\Modules\Bookings\Events\BookingItemConfirmed;
+use App\Modules\Finance\Contracts\CashRegister;
 use App\Modules\Finance\Listeners\RegisterSupplierPayable;
 use App\Modules\Finance\Listeners\VoidSupplierPayable;
+use App\Modules\Finance\Livewire\CashRegisterScreen;
 use App\Modules\Finance\Livewire\PayablesIndex;
+use App\Modules\Finance\Services\CashDesk;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -16,6 +19,11 @@ use Livewire\Livewire;
 
 final class FinanceServiceProvider extends ServiceProvider
 {
+    /** @var array<class-string, class-string> */
+    public array $singletons = [
+        CashRegister::class => CashDesk::class,
+    ];
+
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
@@ -25,6 +33,7 @@ final class FinanceServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'finance');
 
         Livewire::component('finance.payables', PayablesIndex::class);
+        Livewire::component('finance.cash', CashRegisterScreen::class);
 
         // Las obligaciones con proveedores siguen la vida de los servicios del expediente.
         Event::listen(BookingItemConfirmed::class, RegisterSupplierPayable::class);

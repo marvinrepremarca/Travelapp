@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Payments\Actions;
 
 use App\Modules\Bookings\Data\BookingAccount;
+use App\Modules\Finance\Contracts\CashRegister;
 use App\Modules\Identity\Models\User;
 use App\Modules\Payments\Enums\PaymentMethod;
 use App\Modules\Payments\Enums\PaymentStatus;
@@ -26,6 +27,7 @@ final readonly class RecordPaymentAction
     public function __construct(
         private PaymentLedger $ledger,
         private MoneyPresenter $presenter,
+        private CashRegister $cash,
     ) {}
 
     public function execute(User $actor, BookingAccount $account, PaymentMethod $method, Money $amount, ?string $reference, ?string $note, CarbonImmutable $now): Payment
@@ -50,6 +52,11 @@ final readonly class RecordPaymentAction
             $payment->idempotency_key = (string) Str::ulid();
             $payment->approved_at = $method->initialStatus() === PaymentStatus::Approved ? $now : null;
             $payment->save();
+
+            // El efectivo entra a la caja abierta de la sucursal de quien lo recibe; sin caja abierta no se recibe.
+            if ($method === PaymentMethod::Cash) {
+                $this->cash->recordPaymentIncome($actor, $amount, __('payments.cash_income', ['number' => $account->number]), $payment->ulid);
+            }
 
             return $payment;
         });
