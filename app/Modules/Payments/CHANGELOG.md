@@ -8,3 +8,9 @@
 - **Links de pago** de la pasarela activa (`TRAVEL_PAYMENT_GATEWAY`; hoy la simulada, PCI DSS SAQ-A: nunca datos de tarjeta), con vencimiento automático.
 - **Webhooks firmados** (HMAC-SHA256), idempotentes por id de evento y procesados en la cola `payments`; un pago resuelto no cambia por eventos tardíos.
 - Los pagos aprobados son inmutables: no se borran ni cambian de monto.
+
+## Fase 3.1 (parte B: reembolsos)
+
+### Agregado
+- El estado de cuenta incluye **penalidades** (lo que el cliente debe tras cancelar) y **reembolsos**; un saldo negativo es saldo a favor del cliente.
+- **Reembolsos**: el asesor solicita hasta lo pagado de más (descontando servicios vigentes, penalidades y reembolsos en curso); la solicitud crea una **aprobación de finanzas** en Workflow y la decisión llega por el evento `ApprovalResolved`. Finanzas registra el pago del reembolso con su comprobante. Los reembolsos no se borran y quedan auditados.

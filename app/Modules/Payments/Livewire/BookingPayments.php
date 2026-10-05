@@ -8,10 +8,13 @@ use App\Modules\Bookings\Contracts\BookingAccounts;
 use App\Modules\Bookings\Data\BookingAccount;
 use App\Modules\Identity\Models\User;
 use App\Modules\Payments\Actions\CreatePaymentLinkAction;
+use App\Modules\Payments\Actions\PayRefundAction;
 use App\Modules\Payments\Actions\RecordPaymentAction;
+use App\Modules\Payments\Actions\RequestRefundAction;
 use App\Modules\Payments\Actions\ValidateTransferAction;
 use App\Modules\Payments\Enums\PaymentMethod;
 use App\Modules\Payments\Models\Payment;
+use App\Modules\Payments\Models\Refund;
 use App\Modules\Payments\Services\PaymentLedger;
 use App\Modules\Shared\Enums\Permission;
 use App\Modules\Shared\Exceptions\BusinessRuleException;
@@ -36,6 +39,11 @@ final class BookingPayments extends Component
 
     /** @var array<string, string> */
     public array $form = ['method' => 'bank_transfer', 'amount' => '', 'reference' => '', 'note' => ''];
+
+    /** @var array<string, string> */
+    public array $refund = ['amount' => '', 'reason' => ''];
+
+    public string $payoutReference = '';
 
     public function mount(string $booking): void
     {
@@ -83,6 +91,43 @@ final class BookingPayments extends Component
         }
     }
 
+    public function requestRefund(RequestRefundAction $request): void
+    {
+        $account = $this->account();
+        $data = $this->validate([
+            'refund.amount' => ['required', 'numeric', 'gt:0', 'decimal:0,2'],
+            'refund.reason' => ['required', 'string', 'max:2000'],
+        ], attributes: ['refund.amount' => __('payments.refunds.amount'), 'refund.reason' => __('payments.refunds.reason')])['refund'];
+
+        try {
+            $request->execute($this->actor(), $account, Money::of((string) $data['amount'], $account->saleTotal->getCurrency()), (string) $data['reason'], CarbonImmutable::now());
+        } catch (BusinessRuleException $violation) {
+            $this->addError('refund.amount', $violation->getMessage());
+
+            return;
+        }
+
+        $this->reset('refund');
+    }
+
+    public function payRefund(string $refundUlid, PayRefundAction $pay): void
+    {
+        abort_unless($this->actor()->can(Permission::FinanceAccess->value), 403);
+        $this->account();
+        $refund = Refund::query()->where('booking_ulid', $this->bookingUlid)->where('ulid', $refundUlid)->first() ?? abort(404);
+        $this->validate(['payoutReference' => ['required', 'string', 'max:100']], attributes: ['payoutReference' => __('payments.refunds.payout_reference')]);
+
+        try {
+            $pay->execute($this->actor(), $refund, $this->payoutReference, CarbonImmutable::now());
+        } catch (BusinessRuleException $violation) {
+            $this->addError('payoutReference', $violation->getMessage());
+
+            return;
+        }
+
+        $this->reset('payoutReference');
+    }
+
     public function render(PaymentLedger $ledger, MoneyPresenter $presenter): View
     {
         $account = $this->account();
@@ -91,6 +136,7 @@ final class BookingPayments extends Component
             'account' => $account,
             'summary' => $ledger->summary($account, CarbonImmutable::now()),
             'payments' => Payment::query()->where('booking_ulid', $account->ulid)->latest('id')->get(),
+            'refunds' => Refund::query()->where('booking_ulid', $account->ulid)->latest('id')->get(),
             'methods' => PaymentMethod::cases(),
             'canValidate' => $this->actor()->can(Permission::FinanceAccess->value),
             'presenter' => $presenter,
