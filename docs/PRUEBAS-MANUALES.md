@@ -31,6 +31,16 @@ Contraseña de todos: `ViajesDemo2026` (variable `TRAVEL_DEMO_PASSWORD`).
 
 Para el 2FA usa una app de autenticación (Google Authenticator, Microsoft Authenticator, Authy).
 
+## Orden recomendado para probar (igual al menú)
+
+El menú está numerado por etapas; **Inicio** muestra la misma guía con la explicación de cada paso.
+
+1. **Configurar la agencia** (como *gerente*): 1.1 Datos de la agencia → 1.2 Sucursales → 1.3 Usuarios y roles → 1.4 Parámetros → 1.5 Festivos.
+2. **Proveedores y precios**: 2.1 Proveedores → 2.2 Tasas de cambio (registra la TRM del día) → 2.3 Reglas de precio → 2.4 Catálogo propio → 2.5 Simulador.
+3. **Vender** (como *asesor*): 3.1 Clientes y viajeros → 3.2 Oportunidades → 3.3/3.4 Buscar vuelos u hoteles → 3.5 Cotizaciones (enviar y aceptar).
+4. **Reservar, cobrar y operar**: 4.1 Expedientes → confirmar servicios, asignar pasajeros, *Pagos*, vouchers e itinerario.
+5. **Seguimiento**: Tareas, Aprobaciones (finanzas aprueba reembolsos), Auditoría.
+
 ## Guion por fase
 
 ### Fase 0 — Base
