@@ -8,6 +8,7 @@ use App\Modules\Bookings\Enums\BookingItemStatus;
 use App\Modules\Bookings\Exceptions\BookingRuleViolation;
 use App\Modules\Bookings\Models\BookingItem;
 use App\Modules\Bookings\Services\BookingItemWorkflow;
+use App\Modules\Bookings\Services\ProviderReservations;
 use App\Modules\Catalog\Contracts\CatalogInventory;
 use App\Modules\Catalog\Data\DepartureSlot;
 use Carbon\CarbonImmutable;
@@ -24,11 +25,22 @@ final readonly class ConfirmItemAction
     public function __construct(
         private BookingItemWorkflow $workflow,
         private CatalogInventory $inventory,
+        private ProviderReservations $providers,
     ) {}
 
-    public function execute(BookingItem $item, string $confirmationCode, ?string $departureUlid, CarbonImmutable $now): BookingItem
+    public function execute(BookingItem $item, ?string $confirmationCode, ?string $departureUlid, CarbonImmutable $now): BookingItem
     {
-        return DB::transaction(function () use ($item, $confirmationCode, $departureUlid, $now): BookingItem {
+        if (! $item->status->canTransitionTo(BookingItemStatus::Confirmed)) {
+            throw BookingRuleViolation::invalidTransition($item->status, BookingItemStatus::Confirmed);
+        }
+
+        // Proveedor integrado: re-cotiza y reserva ANTES de abrir la transacción (nunca HTTP dentro de una transacción).
+        $providerReference = $item->isFromProvider() ? $this->providers->reserve($item) : null;
+        if ($providerReference === null && ($confirmationCode === null || $confirmationCode === '')) {
+            throw BookingRuleViolation::confirmationCodeRequired();
+        }
+
+        return DB::transaction(function () use ($item, $confirmationCode, $departureUlid, $now, $providerReference): BookingItem {
             $item = BookingItem::query()->whereKey($item->id)->lockForUpdate()->firstOrFail();
             if (! $item->status->canTransitionTo(BookingItemStatus::Confirmed)) {
                 throw BookingRuleViolation::invalidTransition($item->status, BookingItemStatus::Confirmed);
@@ -38,7 +50,8 @@ final readonly class ConfirmItemAction
                 $this->holdSeats($item, $departureUlid);
             }
 
-            $item->supplier_confirmation = $confirmationCode;
+            $item->provider_booking_reference = $providerReference;
+            $item->supplier_confirmation = $confirmationCode !== null && $confirmationCode !== '' ? $confirmationCode : $providerReference;
             $this->workflow->transition($item, BookingItemStatus::Confirmed, null, $now);
 
             return $item;

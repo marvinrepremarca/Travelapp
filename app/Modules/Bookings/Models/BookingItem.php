@@ -29,6 +29,9 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property string|null $seat_hold_ulid
  * @property int|null $supplier_id
  * @property string|null $destination_country
+ * @property string|null $provider_key
+ * @property string|null $provider_offer_id
+ * @property string|null $provider_booking_reference
  * @property CarbonImmutable $service_date
  * @property int $nights
  * @property list<int> $passenger_ages
@@ -51,7 +54,7 @@ final class BookingItem extends Model
     use LogsActivity;
 
     protected $fillable = [
-        'booking_id', 'kind', 'product_type', 'description', 'catalog_product_ulid', 'supplier_id', 'destination_country',
+        'booking_id', 'kind', 'product_type', 'description', 'catalog_product_ulid', 'supplier_id', 'provider_key', 'provider_offer_id', 'destination_country',
         'service_date', 'nights', 'passenger_ages',
     ];
 
@@ -71,6 +74,12 @@ final class BookingItem extends Model
     public function booking(): BelongsTo
     {
         return $this->belongsTo(Booking::class);
+    }
+
+    /** Servicio de un proveedor integrado: se re-cotiza, reserva y cancela por el puerto de Search. */
+    public function isFromProvider(): bool
+    {
+        return $this->provider_key !== null && $this->provider_offer_id !== null;
     }
 
     public function isOwnProduct(): bool

@@ -8,6 +8,7 @@ use App\Modules\Search\Contracts\FlightProvider;
 use App\Modules\Search\Data\FlightOffer;
 use App\Modules\Search\Data\FlightSearchCriteria;
 use App\Modules\Search\Data\FlightSegment;
+use App\Modules\Search\Data\ProviderBookingRequest;
 use App\Modules\Search\Exceptions\ProviderUnavailable;
 use Brick\Money\Money;
 use Carbon\CarbonImmutable;
@@ -16,13 +17,16 @@ use Carbon\CarbonImmutable;
  * Proveedor de vuelos simulado, sin red y determinista (mismos criterios = mismas ofertas). Sirve para pruebas,
  * demo y para seguir trabajando si los proveedores reales fallan. Escenarios por destino: `ERR` falla, `NON` sin cupo.
  */
-final class FakeFlights implements FlightProvider
+final readonly class FakeFlights implements FlightProvider
 {
     public const KEY = 'fake';
 
     public const FAILING_DESTINATION = 'ERR';
 
     public const SOLD_OUT_DESTINATION = 'NON';
+
+    /** Destino cuyas ofertas cambian de precio al re-cotizar antes de reservar. */
+    public const PRICE_CHANGE_DESTINATION = 'PRC';
 
     private const CURRENCY = 'USD';
 
@@ -43,9 +47,26 @@ final class FakeFlights implements FlightProvider
 
     private const LOCAL_DATETIME_FORMAT = 'Y-m-d\TH:i';
 
+    public function __construct(private FakeBookingDesk $desk) {}
+
     public function key(): string
     {
         return self::KEY;
+    }
+
+    public function reprice(string $offerId): ?Money
+    {
+        return $this->desk->reprice($offerId);
+    }
+
+    public function book(ProviderBookingRequest $request): string
+    {
+        return $this->desk->book($request);
+    }
+
+    public function cancel(string $bookingReference): void
+    {
+        $this->desk->cancel($bookingReference);
     }
 
     public function search(FlightSearchCriteria $criteria): array
@@ -70,6 +91,10 @@ final class FakeFlights implements FlightProvider
                 inbound: $criteria->returnDate instanceof \Carbon\CarbonImmutable ? [$this->segment($criteria->destination, $criteria->origin, $criteria->returnDate->toDateString(), $time, $index)] : [],
                 refundable: $index > 0,
             );
+        }
+
+        foreach ($offers as $offer) {
+            $this->desk->remember($offer->offerId, $offer->totalNet, $destination === self::PRICE_CHANGE_DESTINATION);
         }
 
         return $offers;

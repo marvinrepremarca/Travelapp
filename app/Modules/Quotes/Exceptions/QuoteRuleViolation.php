@@ -56,6 +56,11 @@ final class QuoteRuleViolation extends BusinessRuleException
         return self::make('not_accepted', __('quotes.errors.not_accepted'));
     }
 
+    public static function draftNotFound(): self
+    {
+        return self::make('draft_not_found', __('quotes.errors.draft_not_found'));
+    }
+
     public function errorCode(): string
     {
         return $this->stableCode;

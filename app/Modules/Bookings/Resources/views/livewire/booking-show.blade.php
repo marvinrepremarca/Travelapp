@@ -29,6 +29,7 @@
                         <p class="text-caption text-text-subtle">
                             {{ $line->product_type->label() }} · {{ __('bookings.items.service', ['date' => $formatDate($line->service_date), 'nights' => $line->nights, 'passengers' => count($line->passenger_ages)]) }}
                             @if ($line->isOwnProduct()) · {{ __('bookings.items.own_product') }} @endif
+                            @if ($line->isFromProvider()) · {{ __('bookings.items.from_provider', ['provider' => $line->provider_key]) }} @endif
                         </p>
                         @if ($line->supplier_confirmation)
                             <p class="text-caption">{{ __('bookings.items.confirmation', ['code' => $line->supplier_confirmation]) }}
@@ -142,7 +143,9 @@
                     <x-ui.select name="action.status" wire:model.live="action.status" :placeholder="__('quotes.choose')"
                         :options="collect($managed->status->allowedTransitions())->mapWithKeys(fn ($status) => [$status->value => $status->label()])->all()" />
                 </x-ui.field>
-                @if ($action['status'] === BookingItemStatus::Confirmed->value)
+                @if ($action['status'] === BookingItemStatus::Confirmed->value && $managed->isFromProvider())
+                    <p class="text-caption text-text-subtle md:col-span-2">{{ __('bookings.items.provider_auto') }}</p>
+                @elseif ($action['status'] === BookingItemStatus::Confirmed->value)
                     <x-ui.field :label="__('bookings.action_fields.confirmation')" for="action.confirmation">
                         <x-ui.input name="action.confirmation" wire:model="action.confirmation" />
                     </x-ui.field>

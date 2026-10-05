@@ -43,6 +43,8 @@ final class EloquentAcceptedQuotes implements AcceptedQuotes
                 'description' => $item->description,
                 'catalog_product_ulid' => $item->catalog_product_id === null ? null : (string) $productUlids->get($item->catalog_product_id),
                 'supplier_id' => $item->supplier_id,
+                'provider_key' => $item->provider_key,
+                'provider_offer_id' => $item->provider_offer_id,
                 'destination_country' => $item->destination_country,
                 'service_date' => $item->service_date->toDateString(),
                 'nights' => $item->nights,

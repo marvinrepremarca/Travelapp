@@ -85,14 +85,14 @@ final class BookingShow extends Component
 
         $data = $this->validate([
             'action.status' => ['required', Rule::in(array_map(static fn(BookingItemStatus $status): string => $status->value, $item->status->allowedTransitions()))],
-            'action.confirmation' => [$isConfirm ? 'required' : 'nullable', 'string', 'max:100'],
+            'action.confirmation' => [$isConfirm && ! $item->isFromProvider() ? 'required' : 'nullable', 'string', 'max:100'],
             'action.departure' => [$isConfirm && $item->isOwnProduct() ? 'required' : 'nullable', 'string'],
             'action.note' => [$isConfirm ? 'nullable' : 'required', 'string', 'max:2000'],
         ], attributes: $this->prefixed())['action'];
 
         try {
             $isConfirm
-                ? $confirm->execute($item, (string) $data['confirmation'], $data['departure'] ?: null, CarbonImmutable::now())
+                ? $confirm->execute($item, ($data['confirmation'] ?? '') ?: null, $data['departure'] ?: null, CarbonImmutable::now())
                 : $change->execute($item, BookingItemStatus::from($data['status']), (string) $data['note'], CarbonImmutable::now());
         } catch (BusinessRuleException $violation) {
             $this->addError('action.status', $violation->getMessage());

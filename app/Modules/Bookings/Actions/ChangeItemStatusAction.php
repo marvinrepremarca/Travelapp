@@ -9,6 +9,7 @@ use App\Modules\Bookings\Exceptions\BookingRuleViolation;
 use App\Modules\Bookings\Models\BookingItem;
 use App\Modules\Bookings\Services\BookingItemWorkflow;
 use App\Modules\Bookings\Services\CancellationPenaltyCalculator;
+use App\Modules\Bookings\Services\ProviderReservations;
 use App\Modules\Catalog\Contracts\CatalogInventory;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
@@ -24,12 +25,18 @@ final readonly class ChangeItemStatusAction
         private BookingItemWorkflow $workflow,
         private CatalogInventory $inventory,
         private CancellationPenaltyCalculator $penalties,
+        private ProviderReservations $providers,
     ) {}
 
     public function execute(BookingItem $item, BookingItemStatus $next, string $note, CarbonImmutable $now): BookingItem
     {
         if ($next === BookingItemStatus::Confirmed || $next === BookingItemStatus::Pending) {
             throw BookingRuleViolation::invalidTransition($item->status, $next);
+        }
+
+        if ($next === BookingItemStatus::Cancelled && $item->status === BookingItemStatus::Confirmed) {
+            // Primero con el proveedor y fuera de la transacción: si falla, el servicio sigue confirmado.
+            $this->providers->cancel($item);
         }
 
         return DB::transaction(function () use ($item, $next, $note, $now): BookingItem {

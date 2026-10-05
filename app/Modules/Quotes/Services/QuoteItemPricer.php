@@ -73,6 +73,8 @@ final readonly class QuoteItemPricer
             manualNet: $item->kind === QuoteItemKind::Manual ? $item->netAmount() : null,
             supplierId: $item->supplier_id,
             destinationCountry: $item->destination_country,
+            providerKey: $item->provider_key,
+            providerOfferId: $item->provider_offer_id,
         ), $quote);
     }
 
@@ -86,6 +88,8 @@ final readonly class QuoteItemPricer
             'product_type' => $product->product_type,
             'description' => $product->name,
             'supplier_id' => $product->supplier_id,
+            'provider_key' => null,
+            'provider_offer_id' => null,
             'destination_country' => $product->destination_country,
         ]);
 
@@ -99,6 +103,8 @@ final readonly class QuoteItemPricer
             'product_type' => $data->productType,
             'description' => $data->description,
             'supplier_id' => $data->supplierId,
+            'provider_key' => $data->providerKey,
+            'provider_offer_id' => $data->providerOfferId,
             'destination_country' => $data->destinationCountry === null ? null : mb_strtoupper($data->destinationCountry),
         ]);
 

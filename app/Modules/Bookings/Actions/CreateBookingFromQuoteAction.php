@@ -56,6 +56,8 @@ final readonly class CreateBookingFromQuoteAction
                     'description' => $data['description'],
                     'catalog_product_ulid' => $data['catalog_product_ulid'],
                     'supplier_id' => $data['supplier_id'],
+                    'provider_key' => $data['provider_key'],
+                    'provider_offer_id' => $data['provider_offer_id'],
                     'destination_country' => $data['destination_country'],
                     'service_date' => $data['service_date'],
                     'nights' => $data['nights'],

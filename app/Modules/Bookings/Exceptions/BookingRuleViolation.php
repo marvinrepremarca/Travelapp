@@ -6,6 +6,8 @@ namespace App\Modules\Bookings\Exceptions;
 
 use App\Modules\Bookings\Enums\BookingItemStatus;
 use App\Modules\Shared\Exceptions\BusinessRuleException;
+use App\Modules\Shared\Money\MoneyPresenter;
+use Brick\Money\Money;
 
 final class BookingRuleViolation extends BusinessRuleException
 {
@@ -49,6 +51,28 @@ final class BookingRuleViolation extends BusinessRuleException
     public static function voucherRequiresConfirmation(): self
     {
         return self::make('voucher_requires_confirmation', __('bookings.errors.voucher_requires_confirmation'));
+    }
+
+    public static function passengersRequiredForProvider(): self
+    {
+        return self::make('passengers_required_for_provider', __('bookings.errors.passengers_required_for_provider'));
+    }
+
+    public static function offerNoLongerAvailable(): self
+    {
+        return self::make('offer_no_longer_available', __('bookings.errors.offer_no_longer_available'));
+    }
+
+    public static function providerPriceChanged(Money $quoted, Money $current): self
+    {
+        $presenter = app(MoneyPresenter::class);
+
+        return self::make('provider_price_changed', __('bookings.errors.provider_price_changed', ['quoted' => $presenter->format($quoted), 'current' => $presenter->format($current)]));
+    }
+
+    public static function confirmationCodeRequired(): self
+    {
+        return self::make('confirmation_code_required', __('bookings.errors.confirmation_code_required'));
     }
 
     public function errorCode(): string

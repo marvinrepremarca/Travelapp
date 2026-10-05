@@ -27,6 +27,8 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property int|null $catalog_product_id
  * @property int|null $supplier_id
  * @property string|null $destination_country
+ * @property string|null $provider_key
+ * @property string|null $provider_offer_id
  * @property CarbonImmutable $service_date
  * @property int $nights
  * @property list<int> $passenger_ages
@@ -43,7 +45,7 @@ final class QuoteItem extends Model
     use LogsActivity;
 
     protected $fillable = [
-        'option_id', 'kind', 'product_type', 'description', 'catalog_product_id', 'supplier_id', 'destination_country',
+        'option_id', 'kind', 'product_type', 'description', 'catalog_product_id', 'supplier_id', 'provider_key', 'provider_offer_id', 'destination_country',
         'service_date', 'nights', 'passenger_ages',
     ];
 
