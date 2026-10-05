@@ -54,7 +54,7 @@ Objetivo: un esqueleto que ya exige la calidad desde el primer commit.
 | 2.2 ✔ | `Catalog` | Producto propio (tours, pasadías, traslados, paquetes), temporadas, tarifas, cupos | Tests de cupo agotado y concurrencia (locks) |
 | 2.3 ✔ | `Quotes` | Cotización versionada multi-opción, itinerario día a día, envío y aceptación en línea | Tests de versión inmutable y vencimiento configurable |
 | 2.4 ✔ | `Bookings` | Expediente, ítems, pasajeros por ítem, máquina de estados, plazos, cancelaciones con penalidad, saga con compensación (proveedores manuales primero) | Tests de transiciones válidas/ inválidas, idempotencia, compensación |
-| 2.5 | `Documents` | Vouchers, itinerarios y cotizaciones en PDF con la marca de la agencia | Snapshot tests del contenido del PDF |
+| 2.5 ✔ | `Documents` | Vouchers, itinerarios y cotizaciones en PDF con la marca de la agencia | Snapshot tests del contenido del PDF |
 | 2.6 | `Integrations` + `Search` | Puerto por producto + adaptador **Amadeus vuelos y hoteles** (sandbox), búsqueda unificada con caché, circuit breaker | Contract tests con fixtures grabados; proveedor caído → degradación controlada |
 
 ### Fase 3 — Cobrar, facturar y operar · `v0.4.0`

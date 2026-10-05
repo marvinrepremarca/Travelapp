@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Organization\Providers;
 
+use App\Modules\Organization\Contracts\AgencyLetterhead;
 use App\Modules\Organization\Contracts\AppSettings;
 use App\Modules\Organization\Contracts\HolidayCalendar;
 use App\Modules\Organization\Livewire\AgencyProfileForm;
@@ -15,6 +16,7 @@ use App\Modules\Organization\Models\Branch;
 use App\Modules\Organization\Policies\BranchPolicy;
 use App\Modules\Organization\Services\AgencyHolidayCalendar;
 use App\Modules\Organization\Services\DatabaseAppSettings;
+use App\Modules\Organization\Services\ProfileLetterhead;
 use App\Modules\Organization\View\BrandingComposer;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Support\Facades\Gate;
@@ -27,6 +29,7 @@ final class OrganizationServiceProvider extends ServiceProvider
     /** @var array<class-string, class-string> */
     public array $singletons = [
         AppSettings::class => DatabaseAppSettings::class,
+        AgencyLetterhead::class => ProfileLetterhead::class,
         HolidayCalendar::class => AgencyHolidayCalendar::class,
     ];
 
