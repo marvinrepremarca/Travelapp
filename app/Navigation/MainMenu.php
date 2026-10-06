@@ -51,6 +51,9 @@ final class MainMenu
             ['invoicing', 'invoicing.index', Permission::FinanceAccess],
         ],
         'control' => [
+            ['advisor_dashboard', 'reports.advisor', null],
+            ['management_dashboard', 'reports.management', Permission::MarginsView],
+            ['finance_dashboard', 'reports.finance', Permission::FinanceAccess],
             ['tasks', 'workflow.tasks', null],
             ['approvals', 'workflow.approvals', null],
             ['audit', 'audit.index', Permission::AuditView],

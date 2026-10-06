@@ -188,6 +188,19 @@ return [
         'balance_reminder_time' => env('TRAVEL_BALANCE_REMINDER_TIME', '09:00'),
     ],
 
+    'reports' => [
+        'month_label_format' => 'F Y',
+        'list_size' => (int) env('TRAVEL_REPORTS_LIST_SIZE', 8),
+        'top_size' => (int) env('TRAVEL_REPORTS_TOP_SIZE', 10),
+        // "Vence pronto" en cartera y cuentas por pagar.
+        'due_soon_days' => (int) env('TRAVEL_REPORTS_DUE_SOON_DAYS', 7),
+        'expiring_quote_days' => (int) env('TRAVEL_REPORTS_EXPIRING_QUOTE_DAYS', 3),
+        'upcoming_trip_days' => (int) env('TRAVEL_REPORTS_UPCOMING_TRIP_DAYS', 14),
+        // Expedientes vigentes que se revisan para la cartera (protege el tiempo de la pantalla).
+        'receivables_scan_limit' => (int) env('TRAVEL_REPORTS_RECEIVABLES_LIMIT', 500),
+        'export_max_rows' => (int) env('TRAVEL_REPORTS_EXPORT_MAX_ROWS', 5000),
+    ],
+
     'payments' => [
         'gateway' => env('TRAVEL_PAYMENT_GATEWAY', 'fake'),
         // El saldo debe estar pago esta cantidad de días antes del primer servicio.

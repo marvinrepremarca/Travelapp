@@ -194,3 +194,9 @@ El menú está numerado por etapas; **Inicio** muestra la misma guía con la exp
 - [ ] Genera un link de pago y registra un abono en efectivo → llegan el link y el comprobante. Una transferencia llega solo cuando finanzas la valida.
 - [ ] Responde desde el simulador al aviso → el mensaje aparece en *Conversaciones WhatsApp* del asesor responsable.
 - [ ] Un cliente sin consentimiento no recibe avisos.
+
+### Fase 3.8 — Reports (tableros)
+- [ ] Como **gerente**, menú *Tablero de gerencia*: ventas, margen, expedientes y conversión del mes con variación contra el anterior, gráfico de ventas por día, embudo y desgloses por sucursal, asesor y producto. Cambia el mes. Cada tarjeta lleva a su listado ("Ver detalle").
+- [ ] Exporta "ventas por asesor" a CSV y ábrelo en Excel. Como **asesor**, el tablero de gerencia responde 403.
+- [ ] Como **asesor**, *Mi tablero*: mis ventas y conversión, cotizaciones por vencer, leads por atender y próximos viajes (sin margen si no tiene permiso).
+- [ ] Como **finanzas**, *Tablero de finanzas*: cartera vencida / por vencer / posterior, cuentas por pagar, cajas abiertas con el efectivo esperado y facturación del mes.

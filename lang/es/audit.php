@@ -28,6 +28,7 @@ return [
         'finance' => 'Finanzas',
         'invoicing' => 'Facturación',
         'communications' => 'Comunicaciones',
+        'reports' => 'Reportes',
     ],
     'filters' => [
         'module' => 'Módulo',
