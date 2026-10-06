@@ -27,17 +27,19 @@ final class QuoteCreate extends Component
 
     public string $customerSearch = '';
 
+    #[Url(except: '')]
     public string $title = '';
 
     public string $sale_currency = '';
 
+    #[Url(as: 'channel', except: '')]
     public string $sales_channel = '';
 
     public function mount(): void
     {
         Gate::authorize('create', Quote::class);
         $this->sale_currency = config()->string('travel.agency.default_currency');
-        $this->sales_channel = SalesChannel::Branch->value;
+        $this->sales_channel = (SalesChannel::tryFrom($this->sales_channel) ?? SalesChannel::Branch)->value;
     }
 
     public function chooseCustomer(string $ulid): void

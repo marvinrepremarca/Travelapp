@@ -157,6 +157,8 @@ return [
         'won_count' => 'Ganados: :count',
         'lost_count' => 'Perdidos: :count',
         'empty_column' => 'Sin leads en esta etapa.',
+        'quote_title' => 'Viaje a :destination',
+        'quote_title_generic' => 'Viaje de :name',
         'showing' => 'Mostrando :shown de :total',
         'show_more' => 'Ver más en :stage',
         'travel_start' => 'Viaje',

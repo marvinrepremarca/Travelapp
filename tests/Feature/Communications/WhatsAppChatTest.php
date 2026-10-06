@@ -204,3 +204,43 @@ it('labels communication enums', function (): void {
         expect($case->label())->not->toStartWith('communications.');
     }
 });
+
+it('goes from the chat to a quote creating the customer from the lead', function (): void {
+    $advisor = agent();
+    actingAs($advisor);
+    customerSays('Hola', 'Laura Pérez', 'Cartagena', '10/11/2026', 'no', '2');
+    $ulid = conversation()->ulid;
+
+    Livewire::test(ConversationsInbox::class)
+        ->call('select', $ulid)
+        ->call('quote')
+        ->assertHasErrors('conversation')
+        ->call('take')
+        ->call('quote')
+        ->assertRedirect(route('crm.customers.create', ['lead' => conversation()->lead_ulid]));
+
+    $lead = Lead::query()->where('ulid', conversation()->lead_ulid)->sole();
+    Livewire::withQueryParams(['lead' => $lead->ulid])->test(App\Modules\Crm\Livewire\CustomerForm::class)
+        ->assertSet('first_name', 'Laura')
+        ->assertSet('last_name', 'Pérez')
+        ->assertSet('phone', '+573005551234')
+        ->set('document_number', '1020304050')
+        ->set('consent_data_processing', true)
+        ->call('save')
+        ->assertHasNoErrors()
+        ->assertRedirectContains('title=Viaje%20a%20Cartagena');
+
+    $customer = App\Modules\Crm\Models\Customer::query()->where('id', $lead->fresh()?->customer_id)->sole();
+    Livewire::test(ConversationsInbox::class)
+        ->call('select', $ulid)
+        ->call('quote')
+        ->assertRedirect(route('quotes.create', ['customer' => $customer->ulid, 'title' => 'Viaje a Cartagena', 'channel' => SalesChannel::WhatsApp->value]));
+
+    Livewire::withQueryParams(['customer' => $customer->ulid, 'title' => 'Viaje a Cartagena', 'channel' => 'whatsapp'])
+        ->test(App\Modules\Quotes\Livewire\QuoteCreate::class)
+        ->assertSet('title', 'Viaje a Cartagena')
+        ->assertSet('sales_channel', 'whatsapp')
+        ->call('save')
+        ->assertHasNoErrors();
+    expect(App\Modules\Quotes\Models\Quote::query()->sole()->customer_id)->toBe($customer->id);
+});

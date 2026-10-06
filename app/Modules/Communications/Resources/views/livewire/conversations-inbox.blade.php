@@ -50,6 +50,9 @@
                         @if ($selected->owner_id === null && $selected->status->isOpen())
                             <x-ui.button type="button" wire:click="take" wire:loading.attr="disabled" wire:target="take">{{ __('communications.take') }}</x-ui.button>
                         @endif
+                        @if ($selected->lead_ulid && $selected->owner_id === $actor->id && $selected->status->isOpen())
+                            <x-ui.button type="button" wire:click="quote" wire:loading.attr="disabled" wire:target="quote">{{ __('communications.quote') }}</x-ui.button>
+                        @endif
                         @if ($selected->lead_ulid)
                             <x-ui.link-button variant="secondary" :href="route('crm.leads.show', $selected->lead_ulid)">{{ __('communications.open_lead') }}</x-ui.link-button>
                         @endif

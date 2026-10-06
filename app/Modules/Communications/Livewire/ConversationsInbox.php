@@ -11,7 +11,9 @@ use App\Modules\Communications\Enums\BotStep;
 use App\Modules\Communications\Enums\ConversationStatus;
 use App\Modules\Communications\Models\Conversation;
 use App\Modules\Communications\Services\PhoneNumbers;
+use App\Modules\Crm\Contracts\LeadIntake;
 use App\Modules\Identity\Models\User;
+use App\Modules\Shared\Enums\SalesChannel;
 use App\Modules\Shared\Exceptions\BusinessRuleException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
@@ -65,6 +67,31 @@ final class ConversationsInbox extends Component
             $send->execute($this->actor(), $this->selected()->ulid, $this->reply);
             $this->reset('reply');
         });
+    }
+
+    /** Del chat a la cotización: con cliente vinculado va directo; si no, se crea el cliente desde el lead. */
+    public function quote(LeadIntake $leads): void
+    {
+        $conversation = $this->selected();
+        if ($conversation->owner_id !== $this->actor()->id || $conversation->lead_ulid === null) {
+            $this->addError('conversation', __('communications.errors.take_first'));
+
+            return;
+        }
+
+        $customerUlid = $leads->customerOf($conversation->lead_ulid);
+        if ($customerUlid === null) {
+            $this->redirectRoute('crm.customers.create', ['lead' => $conversation->lead_ulid], navigate: true);
+
+            return;
+        }
+
+        $destination = $conversation->bot_data[BotStep::Destination->value] ?? null;
+        $this->redirectRoute('quotes.create', [
+            'customer' => $customerUlid,
+            'title' => is_string($destination) && $destination !== '' ? __('crm.leads.quote_title', ['destination' => $destination]) : __('crm.leads.quote_title_generic', ['name' => (string) $conversation->contact_name]),
+            'channel' => SalesChannel::WhatsApp->value,
+        ], navigate: true);
     }
 
     public function close(CloseConversationAction $close): void

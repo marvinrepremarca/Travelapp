@@ -13,6 +13,7 @@ use App\Modules\Crm\Enums\CustomerType;
 use App\Modules\Crm\Enums\DocumentType;
 use App\Modules\Crm\Exceptions\CustomerRuleViolation;
 use App\Modules\Crm\Models\Customer;
+use App\Modules\Crm\Models\Lead;
 use App\Modules\Identity\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 #[Layout('components.layouts.backoffice')]
@@ -62,9 +64,15 @@ final class CustomerForm extends Component
 
     public bool $possibleDuplicate = false;
 
+    /** Lead de origen: prellena el formulario y, al guardar, se vincula y se sigue a la cotización. */
+    #[Url(as: 'lead', except: '')]
+    public string $fromLead = '';
+
     public function mount(?Customer $customer = null): void
     {
         if (! $customer?->exists) {
+            $this->prefillFromLead();
+
             return;
         }
 
@@ -142,6 +150,15 @@ final class CustomerForm extends Component
         }
 
         session()->flash('status', __($isEditing ? 'crm.customers.saved' : 'crm.customers.created', ['name' => $saved->display_name]));
+        $lead = $isEditing ? null : $this->sourceLead();
+        if ($lead instanceof Lead) {
+            $lead->customer_id = $saved->id;
+            $lead->save();
+            $this->redirectRoute('quotes.create', ['customer' => $saved->ulid, 'title' => $lead->quoteTitle(), 'channel' => $lead->channel->value], navigate: true);
+
+            return;
+        }
+
         $this->redirectRoute('crm.customers.show', $saved, navigate: true);
     }
 
@@ -200,5 +217,31 @@ final class CustomerForm extends Component
     {
         /** @var User */
         return Auth::user();
+    }
+
+    private function prefillFromLead(): void
+    {
+        $lead = $this->sourceLead();
+        if (! $lead instanceof Lead) {
+            $this->fromLead = '';
+
+            return;
+        }
+
+        [$first, $last] = array_pad(explode(' ', trim($lead->contact_name), 2), 2, '');
+        $this->fill(['first_name' => $first, 'last_name' => $last, 'phone' => (string) $lead->phone, 'email' => (string) $lead->email]);
+    }
+
+    /** Solo un lead visible para el usuario y que aún no tiene cliente. */
+    private function sourceLead(): ?Lead
+    {
+        if ($this->fromLead === '') {
+            return null;
+        }
+
+        /** @var \App\Modules\Identity\Models\User $user */
+        $user = Auth::user();
+
+        return Lead::query()->visibleTo($user)->where('ulid', $this->fromLead)->whereNull('customer_id')->first();
     }
 }
