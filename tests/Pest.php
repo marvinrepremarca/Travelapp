@@ -106,3 +106,17 @@ function hotelOf(\App\Modules\Bookings\Models\Booking $booking): \App\Modules\Bo
 {
     return $booking->items()->sole();
 }
+
+/** Expediente de familyBooking() con el hotel confirmado; pagado en su totalidad (en efectivo) si se pide. */
+function confirmedFamilyBooking(?\App\Modules\Identity\Models\User $agent = null, bool $paid = true): \App\Modules\Bookings\Models\Booking
+{
+    $booking = familyBooking($agent ?? agent());
+    app(\App\Modules\Bookings\Actions\ConfirmItemAction::class)->execute(hotelOf($booking), 'HCR-1', null, \Carbon\CarbonImmutable::now());
+    if ($paid) {
+        $owner = \App\Modules\Identity\Models\User::query()->findOrFail($booking->owner_id);
+        $account = app(\App\Modules\Bookings\Contracts\BookingAccounts::class)->account($booking->ulid);
+        app(\App\Modules\Payments\Actions\RecordPaymentAction::class)->execute($owner, $account, \App\Modules\Payments\Enums\PaymentMethod::Cash, $account->saleTotal, null, null, \Carbon\CarbonImmutable::now());
+    }
+
+    return $booking->fresh() ?? $booking;
+}

@@ -99,7 +99,7 @@
             "Composer\\Config::disableProcessTimeout",
             "@php artisan config:clear --ansi",
             "@putenv XDEBUG_MODE=coverage",
-            "pest --coverage --min=90"
+            "pest --parallel --coverage --min=90"
         ],
         "check": [
             "@lint:check",

@@ -2,10 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Modules\Bookings\Actions\ConfirmItemAction;
 use App\Modules\Bookings\Contracts\BookingAccounts;
 use App\Modules\Bookings\Models\Booking;
-use App\Modules\Identity\Models\User;
 use App\Modules\Invoicing\Actions\IssueBookingInvoiceAction;
 use App\Modules\Invoicing\Enums\EInvoiceStatus;
 use App\Modules\Invoicing\Enums\InvoiceLineKind;
@@ -15,8 +13,6 @@ use App\Modules\Invoicing\Exceptions\InvoicingRuleViolation;
 use App\Modules\Invoicing\Livewire\InvoiceShow;
 use App\Modules\Invoicing\Livewire\InvoicesIndex;
 use App\Modules\Invoicing\Models\Invoice;
-use App\Modules\Payments\Actions\RecordPaymentAction;
-use App\Modules\Payments\Enums\PaymentMethod;
 use App\Modules\Pricing\Database\Seeders\TaxReferenceSeeder;
 use App\Modules\Pricing\Models\MarkupRule;
 use App\Modules\Shared\Money\MoneyPresenter;
@@ -33,20 +29,6 @@ beforeEach(function (): void {
     MarkupRule::factory()->percentage(1000)->create();
     $this->seed(TaxReferenceSeeder::class);
 });
-
-/** Expediente de familia (neto 500.000 + markup 10 % + IVA 19 % del markup) confirmado; pagado si se pide. */
-function confirmedFamilyBooking(?User $agent = null, bool $paid = true): Booking
-{
-    $booking = familyBooking($agent ?? agent());
-    app(ConfirmItemAction::class)->execute(hotelOf($booking), 'HCR-1', null, CarbonImmutable::now());
-    if ($paid) {
-        $owner = User::query()->findOrFail($booking->owner_id);
-        $account = app(BookingAccounts::class)->account($booking->ulid);
-        app(RecordPaymentAction::class)->execute($owner, $account, PaymentMethod::Cash, $account->saleTotal, null, null, CarbonImmutable::now());
-    }
-
-    return $booking->fresh() ?? $booking;
-}
 
 function issueFor(Booking $booking): Invoice
 {
