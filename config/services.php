@@ -31,6 +31,12 @@ return [
     ],
 
     // Pasarelas de pago (Payments). La simulada firma sus webhooks con este secreto.
+    'whatsapp' => [
+        'fake' => [
+            'webhook_secret' => env('FAKE_WHATSAPP_WEBHOOK_SECRET'),
+        ],
+    ],
+
     'payments' => [
         'fake' => [
             'webhook_secret' => env('FAKE_PAYMENTS_WEBHOOK_SECRET'),

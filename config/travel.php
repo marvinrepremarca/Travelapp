@@ -163,6 +163,25 @@ return [
         'per_page' => (int) env('TRAVEL_INVOICING_PER_PAGE', 25),
     ],
 
+    'communications' => [
+        // Canal de WhatsApp activo (cambiar de proveedor = cambiar .env).
+        'whatsapp_channel' => env('TRAVEL_WHATSAPP_CHANNEL', 'fake_whatsapp'),
+        'default_country_code' => env('TRAVEL_WHATSAPP_COUNTRY_CODE', '+57'),
+        'bot_date_format' => 'd/m/Y',
+        // Palabras con las que el cliente pide un asesor o indica viaje solo de ida (sin tildes, minúsculas).
+        'agent_words' => ['asesor', 'agente', 'humano', 'persona'],
+        'one_way_words' => ['no', 'solo ida', 'ninguno'],
+        'max_message_length' => (int) env('TRAVEL_WHATSAPP_MAX_LENGTH', 1000),
+        'send_tries' => (int) env('TRAVEL_WHATSAPP_SEND_TRIES', 5),
+        'send_backoff_seconds' => [10, 60, 300, 900],
+        'webhook_requests_per_minute' => (int) env('TRAVEL_WHATSAPP_WEBHOOKS_PER_MINUTE', 240),
+        'inbox_size' => (int) env('TRAVEL_WHATSAPP_INBOX_SIZE', 50),
+        'inbox_poll_seconds' => (int) env('TRAVEL_WHATSAPP_POLL_SECONDS', 5),
+        'simulator_enabled' => (bool) env('TRAVEL_WHATSAPP_SIMULATOR', true),
+        'simulator_default_phone' => env('TRAVEL_WHATSAPP_SIMULATOR_PHONE', '+57 300 123 4567'),
+        'simulator_history' => (int) env('TRAVEL_WHATSAPP_SIMULATOR_HISTORY', 50),
+    ],
+
     'payments' => [
         'gateway' => env('TRAVEL_PAYMENT_GATEWAY', 'fake'),
         // El saldo debe estar pago esta cantidad de días antes del primer servicio.

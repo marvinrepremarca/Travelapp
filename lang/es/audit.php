@@ -27,6 +27,7 @@ return [
         'payments' => 'Pagos',
         'finance' => 'Finanzas',
         'invoicing' => 'Facturación',
+        'communications' => 'Comunicaciones',
     ],
     'filters' => [
         'module' => 'Módulo',

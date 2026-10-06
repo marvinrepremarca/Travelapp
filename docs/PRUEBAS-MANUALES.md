@@ -182,3 +182,9 @@ El menú está numerado por etapas; **Inicio** muestra la misma guía con la exp
 - [ ] En una factura emitida, *Solicitar nota crédito*: pide más de lo que queda en una línea → error con el saldo disponible. Pide un valor válido con motivo → queda "Pendiente de aprobación".
 - [ ] Menú 5.2 *Aprobaciones*: aprueba la nota crédito → se emite NC-n y el *Neto con notas* de la factura baja. Rechaza otra → queda "Rechazada" sin nota.
 - [ ] *Emitir nota débito* con un cargo de ingreso propio y uno de recaudo para terceros → ND-n con IVA solo en el ingreso propio.
+
+### Fase 3.6 — Communications (parte A: chat de WhatsApp para cotizar)
+- [ ] Abre `/integrations/whatsapp-simulator` (simulador de la demo) y escribe "Hola": el bot saluda y pregunta el nombre. Responde nombre, destino, fecha de salida (dd/mm/aaaa), regreso (o "no") y número de viajeros → el bot envía el resumen.
+- [ ] Prueba una fecha inválida o pasada → el bot la vuelve a pedir. Escribe "asesor" en cualquier paso → pasa a un asesor.
+- [ ] Como **asesor**, menú *Conversaciones WhatsApp* → "Por atender": abre la conversación, revisa lo que recogió el bot y "Tomar conversación" → se crea el lead (canal WhatsApp) y el cliente recibe el aviso. Responde: el mensaje aparece en el simulador.
+- [ ] Cierra la conversación y vuelve a escribir desde el simulador → empieza una nueva con el bot.

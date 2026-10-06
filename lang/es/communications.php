@@ -1,0 +1,82 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'inbox_title' => 'Conversaciones de WhatsApp',
+    'filter' => 'Filtrar conversaciones',
+    'filters' => [
+        'waiting' => 'Por atender',
+        'mine' => 'Mías',
+        'open' => 'Abiertas',
+        'closed' => 'Cerradas',
+    ],
+    'status' => [
+        'bot' => 'Con el bot',
+        'waiting_agent' => 'Espera asesor',
+        'with_agent' => 'Con asesor',
+        'closed' => 'Cerrada',
+    ],
+    'author' => [
+        'customer' => 'Cliente',
+        'bot' => 'Bot',
+        'agent' => 'Asesor',
+        'system' => 'Sistema',
+    ],
+    'message_status' => [
+        'received' => 'Recibido',
+        'queued' => 'En cola',
+        'sent' => 'Enviado',
+        'failed' => 'No se pudo enviar',
+    ],
+    'empty' => 'No hay conversaciones aquí.',
+    'empty_hint' => 'Cuando un cliente escribe al WhatsApp de la agencia, el bot recoge su solicitud y la conversación aparece en "Por atender".',
+    'select_title' => 'Elige una conversación',
+    'select_hint' => 'Verás lo que el bot recogió y podrás tomarla para responder y cotizar.',
+    'unknown_contact' => 'Contacto de WhatsApp',
+    'masked_phone' => 'Tel. terminado en :last',
+    'messages' => 'Mensajes',
+    'take' => 'Tomar conversación',
+    'take_hint' => 'Toma la conversación para responder: se creará el lead con los datos del bot.',
+    'open_lead' => 'Ver lead',
+    'close' => 'Cerrar',
+    'confirm_close' => '¿Cerrar la conversación? Si el cliente vuelve a escribir, empezará una nueva con el bot.',
+    'reply' => 'Respuesta',
+    'send' => 'Enviar',
+    'agent_joined' => 'Hola, soy :agent, asesor de la agencia. Ya tengo tu solicitud y te ayudo con la cotización.',
+    'lead_notes' => 'Solicitud recibida por WhatsApp a través del bot guiado.',
+    'bot' => [
+        'welcome' => '¡Hola! Soy el asistente de la agencia. Te hago unas preguntas para preparar tu cotización. Si en cualquier momento quieres hablar con un asesor, escribe "asesor".',
+        'ask' => [
+            'name' => '¿Cuál es tu nombre?',
+            'destination' => '¿A qué destino quieres viajar?',
+            'departure' => '¿Qué día quieres salir? Escríbelo como día/mes/año.',
+            'return' => '¿Qué día regresas? (día/mes/año, o escribe "no" si es solo ida)',
+            'travelers' => '¿Cuántas personas viajan?',
+            'done' => '',
+        ],
+        'invalid' => [
+            'text' => 'No recibí tu respuesta.',
+            'date' => 'No entendí la fecha o ya pasó. Por ejemplo: :example.',
+            'return' => 'La fecha de regreso debe ser igual o posterior a la de salida.',
+            'travelers' => 'Escribe un número de viajeros entre 1 y :max.',
+        ],
+        'one_way' => 'Solo ida',
+        'summary' => "¡Gracias, :name! Resumen de tu solicitud:\n• Destino: :destination\n• Salida: :departure\n• Regreso: :return\n• Viajeros: :travelers\nUn asesor te escribirá en breve con tu cotización.",
+        'handoff' => 'Listo, te comunico con un asesor. En breve te escribirá.',
+        'field' => [
+            'name' => 'Nombre',
+            'destination' => 'Destino',
+            'departure' => 'Salida',
+            'return' => 'Regreso',
+            'travelers' => 'Viajeros',
+        ],
+    ],
+    'errors' => [
+        'already_taken' => 'Otro asesor ya tomó esta conversación.',
+        'not_yours' => 'Esta conversación está a cargo de otro asesor.',
+        'closed' => 'La conversación está cerrada.',
+        'invalid_inbound' => 'Mensaje entrante rechazado (:reason).',
+        'hash_key_missing' => 'Falta configurar TRAVEL_PII_HASH_KEY.',
+    ],
+];
