@@ -156,7 +156,7 @@ return [
             'credit_note' => env('TRAVEL_CREDIT_NOTE_PREFIX', 'NC-'),
             'debit_note' => env('TRAVEL_DEBIT_NOTE_PREFIX', 'ND-'),
         ],
-        'e_invoicing_provider' => env('TRAVEL_E_INVOICING_PROVIDER', 'null'),
+        'e_invoicing_provider' => env('TRAVEL_E_INVOICING_PROVIDER', 'internal'),
         'submit_tries' => (int) env('TRAVEL_E_INVOICING_TRIES', 5),
         'submit_backoff_seconds' => [30, 120, 600, 1800],
         'ready_candidates_limit' => (int) env('TRAVEL_INVOICING_READY_LIMIT', 100),

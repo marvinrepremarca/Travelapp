@@ -12,7 +12,7 @@ use App\Modules\Invoicing\Enums\EInvoiceStatus;
 /** Sin facturación electrónica: los documentos quedan como facturas internas. */
 final class NullEInvoicingProvider implements EInvoicingProvider
 {
-    public const KEY = 'null';
+    public const KEY = 'internal';
 
     public function key(): string
     {
