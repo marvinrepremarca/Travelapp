@@ -16,3 +16,8 @@
 - Solo a clientes con teléfono y consentimiento vigente de tratamiento de datos (contrato `CustomerContacts` de CRM). Un aviso por evento (clave de deduplicación): reintentos y el proceso diario no repiten mensajes.
 - El aviso va en la conversación abierta del cliente o abre una a cargo del asesor responsable, para que la respuesta del cliente le llegue a él.
 - Eventos nuevos `PaymentLinkCreated` y `PaymentReceived` (Payments) y contratos `SentQuotes` (Quotes), `UpcomingBalances` (Payments) y `BookingAccounts::startingOn` (Bookings).
+
+## Cotizar desde el chat
+
+### Agregado
+- Botón **Cotizar** en la conversación (asesor a cargo): si el lead ya tiene cliente abre la nueva cotización con cliente, título ("Viaje a :destino") y canal WhatsApp; si no, abre el formulario de cliente prellenado con los datos del lead y, al guardarlo, vincula el cliente al lead y sigue a la cotización.

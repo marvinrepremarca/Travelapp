@@ -11,4 +11,7 @@ use App\Modules\Identity\Models\User;
 interface LeadIntake
 {
     public function register(LeadData $data, User $owner): string;
+
+    /** ULID del cliente vinculado al lead; null si aún no tiene. */
+    public function customerOf(string $leadUlid): ?string;
 }

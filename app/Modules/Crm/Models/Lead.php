@@ -60,6 +60,12 @@ final class Lead extends Model
         return ['ulid'];
     }
 
+    /** Título sugerido para la cotización que nace de este lead. */
+    public function quoteTitle(): string
+    {
+        return $this->destination === null || $this->destination === '' ? __('crm.leads.quote_title_generic', ['name' => $this->contact_name]) : __('crm.leads.quote_title', ['destination' => $this->destination]);
+    }
+
     public function getRouteKeyName(): string
     {
         return 'ulid';
