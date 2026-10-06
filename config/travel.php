@@ -165,7 +165,8 @@ return [
     ],
 
     'security' => [
-        'two_factor_required_roles' => ['system_admin', 'agency_owner', 'finance'],
+        // Roles con 2FA obligatorio (lista separada por comas). Vacío solo en local/pruebas manuales; en producción nunca.
+        'two_factor_required_roles' => array_values(array_filter(array_map(trim(...), explode(',', (string) env('TRAVEL_TWO_FACTOR_REQUIRED_ROLES', 'system_admin,agency_owner,finance'))))),
     ],
 
 ];
