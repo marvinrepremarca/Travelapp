@@ -8,6 +8,8 @@ use App\Modules\Integrations\Adapters\DatosGov\DatosGovTrmSource;
 use App\Modules\Integrations\Adapters\Fake\FakeFlights;
 use App\Modules\Integrations\Adapters\Fake\FakeHotels;
 use App\Modules\Integrations\Adapters\FakePayments\FakePaymentGateway;
+use App\Modules\Integrations\Adapters\Null\NullEInvoicingProvider;
+use App\Modules\Invoicing\Contracts\EInvoicingProvider;
 use App\Modules\Payments\Contracts\PaymentGateway;
 use App\Modules\Pricing\Contracts\OfficialExchangeRateSource;
 use App\Modules\Search\Contracts\FlightProvider;
@@ -29,6 +31,7 @@ final class IntegrationsServiceProvider extends ServiceProvider
         $this->app->tag([FakeFlights::class], FlightProvider::TAG);
         $this->app->tag([FakeHotels::class], HotelProvider::TAG);
         $this->app->tag([FakePaymentGateway::class], PaymentGateway::TAG);
+        $this->app->tag([NullEInvoicingProvider::class], EInvoicingProvider::TAG);
     }
 
     public function boot(): void

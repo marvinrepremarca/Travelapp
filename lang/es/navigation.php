@@ -47,6 +47,7 @@ return [
         'payables' => ['label' => 'Cuentas por pagar', 'hint' => 'Lo que se debe a cada proveedor por servicios confirmados; liquidación con comprobante (finanzas).'],
         'bank_accounts' => ['label' => 'Cuentas bancarias', 'hint' => 'Cuentas de la agencia y el formato del extracto CSV de cada banco (finanzas).'],
         'reconciliation' => ['label' => 'Conciliación bancaria', 'hint' => 'Carga el extracto del banco y cruza cada movimiento con abonos, pagos a proveedores y consignaciones.'],
+        'invoicing' => ['label' => 'Facturación', 'hint' => 'Factura los expedientes confirmados y pagados: recaudo para terceros e ingreso propio con IVA.'],
         'cash' => ['label' => 'Caja de la sucursal', 'hint' => 'Abre la caja cada día con la base; los abonos en efectivo entran solos; cierra con el arqueo.'],
         'tasks' => ['label' => 'Tareas', 'hint' => 'Pendientes y recordatorios del equipo.'],
         'approvals' => ['label' => 'Aprobaciones', 'hint' => 'Descuentos, reembolsos y otras decisiones que requieren visto bueno.'],

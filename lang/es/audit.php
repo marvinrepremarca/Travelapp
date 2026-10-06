@@ -26,6 +26,7 @@ return [
         'bookings' => 'Expedientes',
         'payments' => 'Pagos',
         'finance' => 'Finanzas',
+        'invoicing' => 'Facturación',
     ],
     'filters' => [
         'module' => 'Módulo',

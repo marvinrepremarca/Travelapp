@@ -117,4 +117,5 @@ return [
         'traveler_not_of_customer' => 'Elige viajeros registrados del cliente.',
         'passengers_do_not_match' => 'Se cotizó para :quoted y los viajeros elegidos son :assigned (edad a la fecha del servicio).',
     ],
+    'invoice_penalty' => 'Penalidad por cancelación · :service',
 ];
