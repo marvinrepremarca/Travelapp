@@ -6,11 +6,13 @@ namespace App\Modules\Pricing\Providers;
 
 use App\Modules\Pricing\Console\FetchOfficialRateCommand;
 use App\Modules\Pricing\Contracts\ExchangeRates;
+use App\Modules\Pricing\Contracts\IncomeTaxes;
 use App\Modules\Pricing\Contracts\PriceCalculator;
 use App\Modules\Pricing\Livewire\ExchangeRatesManager;
 use App\Modules\Pricing\Livewire\PriceSimulator;
 use App\Modules\Pricing\Livewire\PricingRulesManager;
 use App\Modules\Pricing\Services\DatabaseExchangeRates;
+use App\Modules\Pricing\Services\RuleBasedIncomeTaxes;
 use App\Modules\Pricing\Services\RuleBasedPriceCalculator;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Console\Scheduling\Schedule;
@@ -23,6 +25,7 @@ final class PricingServiceProvider extends ServiceProvider
     public array $singletons = [
         ExchangeRates::class => DatabaseExchangeRates::class,
         PriceCalculator::class => RuleBasedPriceCalculator::class,
+        IncomeTaxes::class => RuleBasedIncomeTaxes::class,
     ];
 
     public function boot(): void

@@ -177,3 +177,8 @@ El menú está numerado por etapas; **Inicio** muestra la misma guía con la exp
 - [ ] "Emitir factura" → se abre la factura FV-n con dos líneas por servicio: *Recaudo para terceros* (neto del proveedor, sin IVA) e *Ingreso propio* (markup/fee con su IVA). El total coincide con lo vendido.
 - [ ] El documento del cliente aparece enmascarado ("terminado en …"). Intentar facturar de nuevo el expediente → "ya tiene factura".
 - [ ] *Documentos emitidos*: busca por número, expediente o cliente y filtra por tipo.
+
+### Fase 3.3 — Invoicing (parte B: notas)
+- [ ] En una factura emitida, *Solicitar nota crédito*: pide más de lo que queda en una línea → error con el saldo disponible. Pide un valor válido con motivo → queda "Pendiente de aprobación".
+- [ ] Menú 5.2 *Aprobaciones*: aprueba la nota crédito → se emite NC-n y el *Neto con notas* de la factura baja. Rechaza otra → queda "Rechazada" sin nota.
+- [ ] *Emitir nota débito* con un cargo de ingreso propio y uno de recaudo para terceros → ND-n con IVA solo en el ingreso propio.

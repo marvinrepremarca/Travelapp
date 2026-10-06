@@ -16,6 +16,7 @@ use LogicException;
  * @property int $invoice_id
  * @property int $position
  * @property string|null $booking_item_ulid
+ * @property int|null $source_line_id
  * @property string $description
  * @property ProductType|null $product_type
  * @property InvoiceLineKind $kind
@@ -24,7 +25,7 @@ use LogicException;
  */
 final class InvoiceLine extends Model
 {
-    protected $fillable = ['invoice_id', 'position', 'booking_item_ulid', 'description', 'product_type', 'kind', 'amount_minor', 'tax_minor'];
+    protected $fillable = ['invoice_id', 'position', 'booking_item_ulid', 'source_line_id', 'description', 'product_type', 'kind', 'amount_minor', 'tax_minor'];
 
     protected static function booted(): void
     {
