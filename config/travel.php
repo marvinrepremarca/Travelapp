@@ -149,6 +149,20 @@ return [
         ],
     ],
 
+    'invoicing' => [
+        // Prefijos del consecutivo interno por tipo de documento (la resolución DIAN llega con la facturación electrónica).
+        'prefixes' => [
+            'invoice' => env('TRAVEL_INVOICE_PREFIX', 'FV-'),
+            'credit_note' => env('TRAVEL_CREDIT_NOTE_PREFIX', 'NC-'),
+            'debit_note' => env('TRAVEL_DEBIT_NOTE_PREFIX', 'ND-'),
+        ],
+        'e_invoicing_provider' => env('TRAVEL_E_INVOICING_PROVIDER', 'null'),
+        'submit_tries' => (int) env('TRAVEL_E_INVOICING_TRIES', 5),
+        'submit_backoff_seconds' => [30, 120, 600, 1800],
+        'ready_candidates_limit' => (int) env('TRAVEL_INVOICING_READY_LIMIT', 100),
+        'per_page' => (int) env('TRAVEL_INVOICING_PER_PAGE', 25),
+    ],
+
     'payments' => [
         'gateway' => env('TRAVEL_PAYMENT_GATEWAY', 'fake'),
         // El saldo debe estar pago esta cantidad de días antes del primer servicio.

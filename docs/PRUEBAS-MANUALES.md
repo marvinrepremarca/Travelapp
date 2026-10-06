@@ -171,3 +171,9 @@ El menú está numerado por etapas; **Inicio** muestra la misma guía con la exp
 - [ ] Valida la transferencia TRX-DEMO-001 del expediente demo y abre 4.4 *Conciliación bancaria*: la línea de 800.000 sugiere el abono → "Conciliar". La comisión GMF no tiene contrapartida → escribe una nota e "Ignorar".
 - [ ] Carga otra vez el mismo CSV → "Este extracto ya se cargó". Carga un CSV con una fecha en otro formato → error con el número de fila y no se carga nada.
 - [ ] En la caja, registra una salida tipo "Consignación al banco" → aparece en *Movimientos del sistema sin reflejo en el banco*.
+
+### Fase 3.3 — Invoicing (parte A: facturas)
+- [ ] Como **finanzas**, menú 4.5 *Facturación* → *Listos para facturar*: aparece un expediente solo cuando todos sus servicios están confirmados y el cliente pagó el total.
+- [ ] "Emitir factura" → se abre la factura FV-n con dos líneas por servicio: *Recaudo para terceros* (neto del proveedor, sin IVA) e *Ingreso propio* (markup/fee con su IVA). El total coincide con lo vendido.
+- [ ] El documento del cliente aparece enmascarado ("terminado en …"). Intentar facturar de nuevo el expediente → "ya tiene factura".
+- [ ] *Documentos emitidos*: busca por número, expediente o cliente y filtra por tipo.

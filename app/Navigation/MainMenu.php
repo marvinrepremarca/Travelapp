@@ -47,6 +47,7 @@ final class MainMenu
             ['payables', 'finance.payables', Permission::FinanceAccess],
             ['cash', 'finance.cash', null],
             ['reconciliation', 'finance.reconciliation', Permission::FinanceAccess],
+            ['invoicing', 'invoicing.index', Permission::FinanceAccess],
         ],
         'control' => [
             ['tasks', 'workflow.tasks', null],
