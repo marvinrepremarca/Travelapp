@@ -55,6 +55,8 @@ it('renders every backoffice screen within the query budget', function (string $
     'finance.bank-accounts.create',
     'finance.reconciliation',
     'invoicing.index',
+    'communications.inbox',
+    'integrations.whatsapp-simulator',
     'search.flights',
     'search.hotels',
     'identity.security',

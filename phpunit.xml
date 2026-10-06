@@ -27,11 +27,12 @@
         </exclude>
     </source>
     <php>
-        <ini name="memory_limit" value="1G"/>
+        <ini name="memory_limit" value="2G"/>
         <env name="APP_ENV" value="testing"/>
         <env name="APP_LOCALE" value="es"/>
         <env name="APP_TIMEZONE" value="UTC"/>
         <env name="APP_PATH_PREFIX" value="travelapp"/>
+        <env name="FAKE_WHATSAPP_WEBHOOK_SECRET" value="test-whatsapp-secret-only-for-tests"/>
         <env name="FAKE_PAYMENTS_WEBHOOK_SECRET" value="test-webhook-secret-only-for-tests"/>
         <env name="TRAVEL_TWO_FACTOR_REQUIRED_ROLES" value="system_admin,agency_owner,finance"/>
         <env name="TRAVEL_PII_HASH_KEY" value="testing-only-hash-key-not-for-production"/>

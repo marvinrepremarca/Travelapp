@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Modules\Audit\Providers\AuditServiceProvider;
 use App\Modules\Bookings\Providers\BookingsServiceProvider;
 use App\Modules\Catalog\Providers\CatalogServiceProvider;
+use App\Modules\Communications\Providers\CommunicationsServiceProvider;
 use App\Modules\Crm\Providers\CrmServiceProvider;
 use App\Modules\Documents\Providers\DocumentsServiceProvider;
 use App\Modules\Finance\Providers\FinanceServiceProvider;
@@ -37,5 +38,6 @@ return [
     PaymentsServiceProvider::class,
     FinanceServiceProvider::class,
     InvoicingServiceProvider::class,
+    CommunicationsServiceProvider::class,
     IntegrationsServiceProvider::class,
 ];

@@ -38,6 +38,7 @@ final class MainMenu
         'sales' => [
             ['customers', 'crm.customers.index', null],
             ['leads', 'crm.leads.index', null],
+            ['whatsapp', 'communications.inbox', null],
             ['flights', 'search.flights', null],
             ['hotels', 'search.hotels', null],
             ['quotes', 'quotes.index', null],

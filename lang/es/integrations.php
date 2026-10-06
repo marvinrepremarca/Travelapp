@@ -16,4 +16,14 @@ return [
         'request_failed' => 'El servicio externo :provider no respondió correctamente.',
         'host_not_allowed' => 'El host :host no está autorizado para llamadas externas.',
     ],
+    'whatsapp' => [
+        'title' => 'Simulador de WhatsApp (demo)',
+        'hint' => 'Escribe como si fueras el cliente. Cada mensaje llega al sistema por el mismo webhook firmado que usaría WhatsApp real; las respuestas del bot y del asesor aparecen aquí.',
+        'phone' => 'Teléfono del cliente',
+        'name' => 'Nombre en WhatsApp',
+        'text' => 'Mensaje',
+        'send' => 'Enviar',
+        'chat' => 'Chat',
+        'empty' => 'Escribe "Hola" para empezar a cotizar con el bot.',
+    ],
 ];
