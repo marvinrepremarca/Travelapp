@@ -30,6 +30,26 @@ final class InvoicingRuleViolation extends BusinessRuleException
         return self::make('nothing_to_invoice', __('invoicing.errors.nothing_to_invoice'));
     }
 
+    public static function notAnInvoice(): self
+    {
+        return self::make('not_an_invoice', __('invoicing.errors.not_an_invoice'));
+    }
+
+    public static function creditExceedsLine(string $line, string $remaining): self
+    {
+        return self::make('credit_exceeds_line', __('invoicing.errors.credit_exceeds_line', ['line' => $line, 'remaining' => $remaining]));
+    }
+
+    public static function nothingToCredit(): self
+    {
+        return self::make('nothing_to_credit', __('invoicing.errors.nothing_to_credit'));
+    }
+
+    public static function invalidCharge(): self
+    {
+        return self::make('invalid_charge', __('invoicing.errors.invalid_charge'));
+    }
+
     public function errorCode(): string
     {
         return $this->stableCode;

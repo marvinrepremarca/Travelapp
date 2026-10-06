@@ -19,7 +19,7 @@ return [
     'approval_type' => [
         'discount' => 'Descuento',
         'refund' => 'Reembolso',
-        'invoice_void' => 'Anulación de factura',
+        'invoice_void' => 'Nota crédito / anulación de factura',
         'confirmed_price_change' => 'Cambio de precio confirmado',
         'personal_data_export' => 'Exportación de datos personales',
     ],
