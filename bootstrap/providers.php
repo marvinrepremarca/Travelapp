@@ -16,6 +16,7 @@ use App\Modules\Organization\Providers\OrganizationServiceProvider;
 use App\Modules\Payments\Providers\PaymentsServiceProvider;
 use App\Modules\Pricing\Providers\PricingServiceProvider;
 use App\Modules\Quotes\Providers\QuotesServiceProvider;
+use App\Modules\Reports\Providers\ReportsServiceProvider;
 use App\Modules\Search\Providers\SearchServiceProvider;
 use App\Modules\Suppliers\Providers\SuppliersServiceProvider;
 use App\Modules\Workflow\Providers\WorkflowServiceProvider;
@@ -39,5 +40,6 @@ return [
     FinanceServiceProvider::class,
     InvoicingServiceProvider::class,
     CommunicationsServiceProvider::class,
+    ReportsServiceProvider::class,
     IntegrationsServiceProvider::class,
 ];
