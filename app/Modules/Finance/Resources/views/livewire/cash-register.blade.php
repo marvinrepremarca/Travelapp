@@ -33,9 +33,9 @@
                 <ul class="mt-md flex flex-col divide-y divide-border">
                     @foreach ($session->movements as $movement)
                         <li class="flex justify-between gap-sm py-xs" wire:key="movement-{{ $movement->ulid }}">
-                            <span>{{ $movement->description }} <span class="text-caption text-text-subtle">· {{ $at($movement->recorded_at) }}</span></span>
-                            <span @class(['font-medium', 'text-success' => $movement->type === CashMovementType::Income, 'text-danger' => $movement->type === CashMovementType::Expense])>
-                                {{ $movement->type === CashMovementType::Expense ? '−' : '+' }} {{ $presenter->format($session->money($movement->amount_minor)) }}
+                            <span>{{ $movement->description }} <span class="text-caption text-text-subtle">{{ $movement->type->label() }} ·· {{ $at($movement->recorded_at) }}</span></span>
+                            <span @class(['font-medium', 'text-success' => $movement->type === CashMovementType::Income, 'text-danger' => $movement->type !== CashMovementType::Income])>
+                                {{ $movement->type === CashMovementType::Income ? '+' : '−' }} {{ $presenter->format($session->money($movement->amount_minor)) }}
                             </span>
                         </li>
                     @endforeach
@@ -44,7 +44,8 @@
         </x-ui.card>
 
         <x-ui.card :title="__('finance.cash.expense_title')">
-            <form wire:submit="expense" class="grid gap-md md:grid-cols-3 md:items-end" novalidate>
+            <form wire:submit="expense" class="grid gap-md md:grid-cols-4 md:items-end" novalidate>
+                <x-ui.field :label="__('finance.cash.expense_type')" for="form.expense_type"><x-ui.select name="form.expense_type" wire:model="form.expense_type" :options="collect($outflows)->mapWithKeys(fn ($type) => [$type->value => $type->label()])->all()" /></x-ui.field>
                 <x-ui.field :label="__('finance.cash.amount')" for="form.expense_amount"><x-ui.input name="form.expense_amount" type="number" min="0" step="any" wire:model="form.expense_amount" /></x-ui.field>
                 <x-ui.field :label="__('finance.cash.description')" for="form.expense_description"><x-ui.input name="form.expense_description" wire:model="form.expense_description" /></x-ui.field>
                 <x-ui.button type="submit" variant="secondary" wire:loading.attr="disabled" wire:target="expense">{{ __('finance.cash.record_expense') }}</x-ui.button>

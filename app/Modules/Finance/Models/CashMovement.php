@@ -9,6 +9,7 @@ use App\Modules\Shared\Enums\AuditLogName;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use LogicException;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -25,6 +26,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property string|null $payment_ulid
  * @property int $recorded_by
  * @property CarbonImmutable $recorded_at
+ * @property-read CashSession $session
  */
 final class CashMovement extends Model
 {
@@ -43,6 +45,12 @@ final class CashMovement extends Model
     public function uniqueIds(): array
     {
         return ['ulid'];
+    }
+
+    /** @return BelongsTo<CashSession, $this> */
+    public function session(): BelongsTo
+    {
+        return $this->belongsTo(CashSession::class, 'cash_session_id');
     }
 
     public function getActivitylogOptions(): LogOptions

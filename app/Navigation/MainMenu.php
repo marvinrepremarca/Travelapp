@@ -26,6 +26,7 @@ final class MainMenu
             ['users', 'identity.users.index', Permission::UsersView],
             ['settings', 'organization.settings', Permission::OrganizationManage],
             ['holidays', 'organization.holidays', Permission::OrganizationManage],
+            ['bank_accounts', 'finance.bank-accounts', Permission::FinanceAccess],
         ],
         'products' => [
             ['suppliers', 'suppliers.index', null],
@@ -45,6 +46,7 @@ final class MainMenu
             ['bookings', 'bookings.index', null],
             ['payables', 'finance.payables', Permission::FinanceAccess],
             ['cash', 'finance.cash', null],
+            ['reconciliation', 'finance.reconciliation', Permission::FinanceAccess],
         ],
         'control' => [
             ['tasks', 'workflow.tasks', null],

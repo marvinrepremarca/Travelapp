@@ -18,7 +18,12 @@ use App\Modules\Crm\Enums\LeadStatus;
 use App\Modules\Crm\Models\Customer;
 use App\Modules\Crm\Models\Lead;
 use App\Modules\Crm\Models\Traveler;
+use App\Modules\Finance\Actions\ImportBankStatementAction;
 use App\Modules\Finance\Actions\OpenCashSessionAction;
+use App\Modules\Finance\Actions\SaveBankAccountAction;
+use App\Modules\Finance\Data\BankAccountData;
+use App\Modules\Finance\Data\StatementFormat;
+use App\Modules\Finance\Models\AgencyBankAccount;
 use App\Modules\Identity\Database\Seeders\RolesAndPermissionsSeeder;
 use App\Modules\Identity\Enums\Role;
 use App\Modules\Identity\Models\User;
@@ -107,8 +112,9 @@ final class DemoSeeder extends Seeder
         $this->catalog();
         $this->quotes($agentBog);
         $this->bookings($agentBog);
+        $this->bank($finance);
 
-        unset($admin, $finance);
+        unset($admin);
     }
 
     private function suppliers(): void
@@ -226,6 +232,22 @@ final class DemoSeeder extends Seeder
         $record = app(RecordPaymentAction::class);
         $record->execute($agent, $account, PaymentMethod::Cash, Money::of('500000', $currency), null, null, CarbonImmutable::now());
         $record->execute($agent, $account, PaymentMethod::BankTransfer, Money::of('800000', $currency), 'TRX-DEMO-001', null, CarbonImmutable::now());
+    }
+
+    /** Cuenta bancaria con un extracto: la transferencia demo (al validarla) y una comisión del banco por conciliar. */
+    private function bank(User $finance): void
+    {
+        if (AgencyBankAccount::query()->exists()) {
+            return;
+        }
+
+        $account = app(SaveBankAccountAction::class)->execute(new BankAccountData('Corriente principal', 'Banco Demo', '4321', config()->string('travel.agency.default_currency'), true, StatementFormat::fromArray([
+            'delimiter' => ';', 'date_format' => 'd/m/Y', 'decimal_separator' => ',', 'header_row' => 1,
+            'date_column' => 'Fecha', 'description_column' => 'Descripción', 'reference_column' => 'Referencia', 'amount_column' => 'Valor',
+        ])));
+        $today = CarbonImmutable::now()->format('d/m/Y');
+        $csv = "Fecha;Descripción;Referencia;Valor\n{$today};Transferencia recibida;TRX-DEMO-001;800.000\n{$today};GMF 4x1000;;-3.200\n";
+        app(ImportBankStatementAction::class)->execute($finance, $account, 'extracto-demo.csv', $csv, CarbonImmutable::now());
     }
 
     private function crm(User $agent): void

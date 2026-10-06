@@ -45,6 +45,8 @@ return [
         'quotes' => ['label' => 'Cotizaciones', 'hint' => 'Opciones para el cliente; se envían, el cliente las acepta y se convierten en expediente.'],
         'bookings' => ['label' => 'Expedientes', 'hint' => 'Confirmar servicios, asignar pasajeros, cobrar (Pagos), cancelar y descargar vouchers.'],
         'payables' => ['label' => 'Cuentas por pagar', 'hint' => 'Lo que se debe a cada proveedor por servicios confirmados; liquidación con comprobante (finanzas).'],
+        'bank_accounts' => ['label' => 'Cuentas bancarias', 'hint' => 'Cuentas de la agencia y el formato del extracto CSV de cada banco (finanzas).'],
+        'reconciliation' => ['label' => 'Conciliación bancaria', 'hint' => 'Carga el extracto del banco y cruza cada movimiento con abonos, pagos a proveedores y consignaciones.'],
         'cash' => ['label' => 'Caja de la sucursal', 'hint' => 'Abre la caja cada día con la base; los abonos en efectivo entran solos; cierra con el arqueo.'],
         'tasks' => ['label' => 'Tareas', 'hint' => 'Pendientes y recordatorios del equipo.'],
         'approvals' => ['label' => 'Aprobaciones', 'hint' => 'Descuentos, reembolsos y otras decisiones que requieren visto bueno.'],

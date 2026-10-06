@@ -35,6 +35,41 @@ final class FinanceRuleViolation extends BusinessRuleException
         return self::make('cash_currency_mismatch', __('finance.errors.cash_currency_mismatch', ['currency' => $currency]));
     }
 
+    public static function statementEmpty(): self
+    {
+        return self::make('statement_empty', __('finance.errors.statement_empty'));
+    }
+
+    public static function statementColumnsMissing(string $columns): self
+    {
+        return self::make('statement_columns_missing', __('finance.errors.statement_columns_missing', ['columns' => $columns]));
+    }
+
+    public static function statementRowInvalid(int $row): self
+    {
+        return self::make('statement_row_invalid', __('finance.errors.statement_row_invalid', ['row' => $row]));
+    }
+
+    public static function statementAlreadyImported(): self
+    {
+        return self::make('statement_already_imported', __('finance.errors.statement_already_imported'));
+    }
+
+    public static function lineNotPending(): self
+    {
+        return self::make('line_not_pending', __('finance.errors.line_not_pending'));
+    }
+
+    public static function matchNotValid(): self
+    {
+        return self::make('match_not_valid', __('finance.errors.match_not_valid'));
+    }
+
+    public static function bankAccountInactive(): self
+    {
+        return self::make('bank_account_inactive', __('finance.errors.bank_account_inactive'));
+    }
+
     public static function userWithoutBranch(): self
     {
         return self::make('user_without_branch', __('finance.errors.user_without_branch'));

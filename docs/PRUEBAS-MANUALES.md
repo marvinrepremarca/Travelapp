@@ -165,3 +165,9 @@ El menú está numerado por etapas; **Inicio** muestra la misma guía con la exp
 - [ ] *Buscar vuelos*: escribe "bogo" en Origen → aparece "Bogotá (BOG)"; elige con el mouse o con flechas + Enter. En Destino escribe "cartagena" y busca sin elegir → se reconoce CTG. Escribe "nueva york" sin elegir → pide elegir de la lista (hay 3 aeropuertos).
 - [ ] *Buscar hoteles*: escribe "cartag" en Ciudad y elige "Cartagena, Colombia" → el País se completa solo. Escribe "Villa de Leyva" (sin aeropuerto) y en País "colom" → elige Colombia → la búsqueda funciona.
 - [ ] *Embudo de ventas*: las etapas aparecen lado a lado como tablero kanban (en el celular se desplazan en horizontal); con más leads que el límite aparece "Ver más en Nuevo".
+
+### Fase 3.2 — Finance (parte D: conciliación bancaria)
+- [ ] Como **finanzas**, menú 1.6 *Cuentas bancarias*: aparece "Corriente principal" con 2 movimientos por conciliar. Crea otra cuenta: deja campos vacíos → errores por campo; complétala → se guarda.
+- [ ] Valida la transferencia TRX-DEMO-001 del expediente demo y abre 4.4 *Conciliación bancaria*: la línea de 800.000 sugiere el abono → "Conciliar". La comisión GMF no tiene contrapartida → escribe una nota e "Ignorar".
+- [ ] Carga otra vez el mismo CSV → "Este extracto ya se cargó". Carga un CSV con una fecha en otro formato → error con el número de fila y no se carga nada.
+- [ ] En la caja, registra una salida tipo "Consignación al banco" → aparece en *Movimientos del sistema sin reflejo en el banco*.

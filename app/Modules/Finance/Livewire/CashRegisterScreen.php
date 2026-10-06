@@ -7,6 +7,7 @@ namespace App\Modules\Finance\Livewire;
 use App\Modules\Finance\Actions\CloseCashSessionAction;
 use App\Modules\Finance\Actions\OpenCashSessionAction;
 use App\Modules\Finance\Actions\RecordCashExpenseAction;
+use App\Modules\Finance\Enums\CashMovementType;
 use App\Modules\Finance\Enums\CashSessionStatus;
 use App\Modules\Finance\Exceptions\FinanceRuleViolation;
 use App\Modules\Finance\Models\CashSession;
@@ -20,6 +21,7 @@ use Brick\Money\Money;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -35,7 +37,7 @@ final class CashRegisterScreen extends Component
     public string $branch = '';
 
     /** @var array<string, string> */
-    public array $form = ['opening' => '', 'expense_amount' => '', 'expense_description' => '', 'counted' => '', 'note' => ''];
+    public array $form = ['opening' => '', 'expense_type' => 'expense', 'expense_amount' => '', 'expense_description' => '', 'counted' => '', 'note' => ''];
 
     public function mount(): void
     {
@@ -52,12 +54,13 @@ final class CashRegisterScreen extends Component
     public function expense(RecordCashExpenseAction $record, CashDesk $desk): void
     {
         $data = $this->validate([
+            'form.expense_type' => ['required', Rule::in(array_map(static fn(CashMovementType $type): string => $type->value, CashMovementType::outflows()))],
             'form.expense_amount' => ['required', 'numeric', 'gt:0', 'decimal:0,2'],
             'form.expense_description' => ['required', 'string', 'max:255'],
         ], attributes: ['form.expense_amount' => __('finance.cash.amount'), 'form.expense_description' => __('finance.cash.description')])['form'];
 
         $session = $desk->openSessionFor($this->branchId()) ?? throw FinanceRuleViolation::cashSessionClosed();
-        $this->attempt('form.expense_amount', fn(): \App\Modules\Finance\Models\CashMovement => $record->execute($this->actor(), $session, $this->money((string) $data['expense_amount']), (string) $data['expense_description']));
+        $this->attempt('form.expense_amount', fn(): \App\Modules\Finance\Models\CashMovement => $record->execute($this->actor(), $session, $this->money((string) $data['expense_amount']), (string) $data['expense_description'], CashMovementType::from((string) $data['expense_type'])));
     }
 
     public function close(CloseCashSessionAction $close, CashDesk $desk): void
@@ -88,6 +91,7 @@ final class CashRegisterScreen extends Component
             'history' => CashSession::query()->where('branch_id', $branchId)->where('status', CashSessionStatus::Closed)->latest('closed_at')->limit(config()->integer('travel.finance.cash_history_size'))->get(),
             'branches' => $this->canChooseBranch() ? Branch::query()->orderBy('name')->pluck('name', 'id')->all() : [],
             'currency' => config()->string('travel.agency.default_currency'),
+            'outflows' => CashMovementType::outflows(),
             'presenter' => $presenter,
             'timezone' => config()->string('travel.agency.timezone'),
         ])->title(__('finance.cash.title'))
