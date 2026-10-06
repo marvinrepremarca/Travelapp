@@ -9,6 +9,7 @@ use App\Modules\Finance\Contracts\CashRegister;
 use App\Modules\Identity\Models\User;
 use App\Modules\Payments\Enums\PaymentMethod;
 use App\Modules\Payments\Enums\PaymentStatus;
+use App\Modules\Payments\Events\PaymentReceived;
 use App\Modules\Payments\Exceptions\PaymentRuleViolation;
 use App\Modules\Payments\Models\Payment;
 use App\Modules\Payments\Services\PaymentLedger;
@@ -52,6 +53,10 @@ final readonly class RecordPaymentAction
             $payment->idempotency_key = (string) Str::ulid();
             $payment->approved_at = $method->initialStatus() === PaymentStatus::Approved ? $now : null;
             $payment->save();
+
+            if ($payment->status === PaymentStatus::Approved) {
+                event(PaymentReceived::of($payment));
+            }
 
             // El efectivo entra a la caja abierta de la sucursal de quien lo recibe; sin caja abierta no se recibe.
             if ($method === PaymentMethod::Cash) {

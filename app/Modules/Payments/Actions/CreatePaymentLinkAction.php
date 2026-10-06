@@ -9,6 +9,7 @@ use App\Modules\Identity\Models\User;
 use App\Modules\Payments\Data\PaymentLinkRequest;
 use App\Modules\Payments\Enums\PaymentMethod;
 use App\Modules\Payments\Enums\PaymentStatus;
+use App\Modules\Payments\Events\PaymentLinkCreated;
 use App\Modules\Payments\Models\Payment;
 use App\Modules\Payments\Services\GatewayRegistry;
 use Brick\Money\Money;
@@ -58,6 +59,8 @@ final readonly class CreatePaymentLinkAction
         $payment->idempotency_key = $ulid;
         $payment->recorded_by = $actor->id;
         $payment->save();
+
+        PaymentLinkCreated::dispatch($payment->ulid, $payment->booking_ulid, $payment->amount_minor, $payment->currency, $link->url, $expiresAt);
 
         return $payment;
     }

@@ -6,6 +6,7 @@ namespace App\Modules\Quotes\Providers;
 
 use App\Modules\Quotes\Console\ExpireQuotesCommand;
 use App\Modules\Quotes\Contracts\AcceptedQuotes;
+use App\Modules\Quotes\Contracts\SentQuotes;
 use App\Modules\Quotes\Contracts\SupplierOfferIntake;
 use App\Modules\Quotes\Livewire\PublicQuote;
 use App\Modules\Quotes\Livewire\QuoteCreate;
@@ -14,6 +15,7 @@ use App\Modules\Quotes\Livewire\QuotesIndex;
 use App\Modules\Quotes\Models\Quote;
 use App\Modules\Quotes\Policies\QuotePolicy;
 use App\Modules\Quotes\Services\EloquentAcceptedQuotes;
+use App\Modules\Quotes\Services\EloquentSentQuotes;
 use App\Modules\Quotes\Services\EloquentSupplierOfferIntake;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -32,6 +34,7 @@ final class QuotesServiceProvider extends ServiceProvider
     public array $singletons = [
         AcceptedQuotes::class => EloquentAcceptedQuotes::class,
         SupplierOfferIntake::class => EloquentSupplierOfferIntake::class,
+        SentQuotes::class => EloquentSentQuotes::class,
     ];
 
     public function boot(): void

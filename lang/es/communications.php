@@ -72,6 +72,12 @@ return [
             'travelers' => 'Viajeros',
         ],
     ],
+    'templates' => [
+        'quote_sent' => "Hola :name, te compartimos tu cotización :number (:title). Puedes verla y aceptarla aquí: :url\nEs válida hasta el :valid_until.",
+        'payment_link' => "Hola :name, este es tu link de pago por :amount para el expediente :number: :url\nVence el :expires.",
+        'payment_received' => 'Hola :name, recibimos tu abono de :amount (:method) para el expediente :number. ¡Gracias!',
+        'balance_reminder' => 'Hola :name, te recordamos que el saldo de :amount del expediente :number vence el :due. Si ya pagaste, ignora este mensaje.',
+    ],
     'errors' => [
         'already_taken' => 'Otro asesor ya tomó esta conversación.',
         'not_yours' => 'Esta conversación está a cargo de otro asesor.',
