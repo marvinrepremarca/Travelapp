@@ -56,7 +56,7 @@ final class CashDesk implements CashRegister
         ]);
     }
 
-    /** Base + entradas − salidas. */
+    /** Base + entradas − salidas (gastos y consignaciones). */
     public function expected(CashSession $session): Money
     {
         $totals = CashMovement::query()
@@ -68,6 +68,7 @@ final class CashDesk implements CashRegister
 
         return $session->money($session->opening_amount_minor
             + (int) $totals->get(CashMovementType::Income->value, 0)
-            - (int) $totals->get(CashMovementType::Expense->value, 0));
+            - (int) $totals->get(CashMovementType::Expense->value, 0)
+            - (int) $totals->get(CashMovementType::BankDeposit->value, 0));
     }
 }

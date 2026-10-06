@@ -137,6 +137,16 @@ return [
         'prepaid_days_before_service' => (int) env('TRAVEL_PREPAID_DAYS_BEFORE_SERVICE', 7),
         'per_page' => (int) env('TRAVEL_FINANCE_PER_PAGE', 25),
         'cash_history_size' => (int) env('TRAVEL_CASH_HISTORY_SIZE', 10),
+        // Conciliación: días de diferencia aceptados entre el banco y el sistema para sugerir un cruce.
+        'reconciliation_window_days' => (int) env('TRAVEL_RECONCILIATION_WINDOW_DAYS', 3),
+        'statement_max_kb' => (int) env('TRAVEL_STATEMENT_MAX_KB', 2048),
+        // Formato por defecto del CSV del extracto (se ajusta por cuenta bancaria).
+        'statement_defaults' => [
+            'delimiter' => ',',
+            'date_format' => 'd/m/Y',
+            'decimal_separator' => '.',
+            'header_row' => 1,
+        ],
     ],
 
     'payments' => [

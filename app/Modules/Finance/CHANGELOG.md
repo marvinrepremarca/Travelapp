@@ -20,3 +20,11 @@
 - **Rentabilidad** (menú 5.5, permiso de ver márgenes): por expediente vendido en el mes, venta vigente, costo (neto con la tasa congelada al cotizar), margen y % sobre la venta, **comisión esperada** del proveedor (pactada a la fecha de venta, sobre tarifa pública o neto), **penalidades** y utilidad.
 - Totales **por asesor**, **por sucursal** y del período, separados por moneda y filtrados por el alcance de quien consulta. Los servicios cancelados o rechazados solo aportan sus penalidades.
 - Contrato `BookingProfitLines` en Bookings (una consulta agrupada) e índice `bookings.created_at`.
+
+## Fase 3.2 (parte D: conciliación bancaria)
+
+### Agregado
+- **Cuentas bancarias de la agencia** (crear y editar con formulario validado; solo últimos 4 dígitos) con el **formato del extracto CSV** de cada banco: columnas por título del encabezado, separador, fila del encabezado, formato de fecha, separador decimal y valor con signo o débito/crédito.
+- **Carga del extracto** todo-o-nada: el mismo archivo no se carga dos veces y las líneas de extractos que se solapan no se duplican; una fila ilegible detiene la carga indicando el número de fila.
+- **Cruce sugerido + confirmación** contra abonos de clientes por transferencia o en línea (contrato `ReceivedPayments` de Payments), **liquidaciones a proveedores** (salida por la suma de la liquidación) y **consignaciones de caja**: valor exacto, fecha dentro de ±N días ⚙ y referencia primero. Cada movimiento del sistema se concilia una sola vez; las líneas sin contrapartida (comisiones, GMF) se ignoran con nota; todo se puede deshacer y queda auditado.
+- Movimientos del sistema sin reflejo en el banco del período. Caja: nuevo tipo de salida **Consignación al banco**.

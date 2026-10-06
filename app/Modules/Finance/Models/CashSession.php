@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Modules\Finance\Models;
 
 use App\Modules\Finance\Enums\CashSessionStatus;
+use App\Modules\Organization\Models\Branch;
 use App\Modules\Shared\Enums\AuditLogName;
 use Brick\Money\Money;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use LogicException;
 use Spatie\Activitylog\LogOptions;
@@ -34,6 +36,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property int|null $closed_by
  * @property CarbonImmutable|null $closed_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, CashMovement> $movements
+ * @property-read Branch|null $branch
  */
 final class CashSession extends Model
 {
@@ -57,6 +60,12 @@ final class CashSession extends Model
     public function movements(): HasMany
     {
         return $this->hasMany(CashMovement::class)->orderBy('id');
+    }
+
+    /** @return BelongsTo<Branch, $this> */
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
     }
 
     public function money(int $minor): Money

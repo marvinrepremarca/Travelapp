@@ -11,6 +11,7 @@ use App\Modules\Identity\Models\User;
 use Brick\Money\Money;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /**
  * Liquidación: finanzas paga de una vez varias obligaciones pendientes de UN proveedor y en UNA moneda,
@@ -34,9 +35,11 @@ final class SettleSupplierPayablesAction
             }
 
             $total = Money::zero((string) $payables->firstOrFail()->currency);
+            $settlementUlid = (string) Str::ulid();
             foreach ($payables as $payable) {
                 $payable->status = PayableStatus::Paid;
                 $payable->payment_reference = $paymentReference;
+                $payable->settlement_ulid = $settlementUlid;
                 $payable->paid_by = $actor->id;
                 $payable->paid_at = $now;
                 $payable->save();

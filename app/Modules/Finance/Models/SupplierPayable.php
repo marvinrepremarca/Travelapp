@@ -34,6 +34,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property CarbonImmutable $due_date
  * @property PayableStatus $status
  * @property string|null $payment_reference
+ * @property string|null $settlement_ulid
  * @property int|null $paid_by
  * @property CarbonImmutable|null $paid_at
  * @property-read Supplier $supplier

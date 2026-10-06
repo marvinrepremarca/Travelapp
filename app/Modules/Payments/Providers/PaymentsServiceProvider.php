@@ -6,8 +6,10 @@ namespace App\Modules\Payments\Providers;
 
 use App\Modules\Payments\Actions\ExpirePaymentLinksAction;
 use App\Modules\Payments\Contracts\GatewayWebhooks;
+use App\Modules\Payments\Contracts\ReceivedPayments;
 use App\Modules\Payments\Listeners\ApplyRefundDecision;
 use App\Modules\Payments\Livewire\BookingPayments;
+use App\Modules\Payments\Services\EloquentReceivedPayments;
 use App\Modules\Payments\Services\WebhookReceiver;
 use App\Modules\Shared\Routing\PathPrefix;
 use App\Modules\Workflow\Events\ApprovalResolved;
@@ -27,6 +29,7 @@ final class PaymentsServiceProvider extends ServiceProvider
     /** @var array<class-string, class-string> */
     public array $singletons = [
         GatewayWebhooks::class => WebhookReceiver::class,
+        ReceivedPayments::class => EloquentReceivedPayments::class,
     ];
 
     public function boot(): void
