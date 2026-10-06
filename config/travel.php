@@ -156,6 +156,9 @@ return [
         'breaker_cooldown_seconds' => (int) env('TRAVEL_SEARCH_BREAKER_COOLDOWN', 120),
         'max_passengers' => (int) env('TRAVEL_SEARCH_MAX_PASSENGERS', 9),
         'max_nights' => (int) env('TRAVEL_SEARCH_MAX_NIGHTS', 30),
+        // Autocompletar de lugares: letras mínimas para sugerir y cantidad de sugerencias.
+        'autocomplete_min_chars' => (int) env('TRAVEL_SEARCH_AUTOCOMPLETE_MIN_CHARS', 2),
+        'autocomplete_limit' => (int) env('TRAVEL_SEARCH_AUTOCOMPLETE_LIMIT', 8),
     ],
 
     // Presupuestos de rendimiento (regla performance.md); los verifica tests/Feature/Shared/PerformanceBudgetTest.

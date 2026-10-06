@@ -14,12 +14,28 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
-/** Embudo: columnas por etapa abierta y totales de ganados y perdidos, dentro del alcance. */
+/** Embudo tipo kanban: una columna por etapa abierta (cada una crece con "ver más") y totales de ganados y perdidos, dentro del alcance. */
 #[Layout('components.layouts.backoffice')]
 final class LeadsBoard extends Component
 {
     #[Url(except: '')]
     public string $search = '';
+
+    /** @var array<string, int> páginas visibles por etapa */
+    public array $pages = [];
+
+    public function showMore(string $status): void
+    {
+        $stage = LeadStatus::tryFrom($status);
+        if ($stage instanceof LeadStatus) {
+            $this->pages[$stage->value] = ($this->pages[$stage->value] ?? 1) + 1;
+        }
+    }
+
+    public function updatedSearch(): void
+    {
+        $this->reset('pages');
+    }
 
     public function render(): View
     {
@@ -40,7 +56,7 @@ final class LeadsBoard extends Component
         foreach ([LeadStatus::New, LeadStatus::Contacted, LeadStatus::Quoted] as $status) {
             $columns[] = [
                 'status' => $status,
-                'leads' => $base()->where('status', $status)->latest('status_changed_at')->limit(config()->integer('travel.crm.board_column_size'))->get(),
+                'leads' => $base()->where('status', $status)->latest('status_changed_at')->limit(config()->integer('travel.crm.board_column_size') * ($this->pages[$status->value] ?? 1))->get(),
                 'total' => $totals->get($status->value, 0),
             ];
         }

@@ -1,11 +1,11 @@
 <div class="flex flex-col gap-lg">
     <x-ui.card>
         <form wire:submit="search" class="grid gap-md md:grid-cols-3 md:items-end" novalidate>
-            <x-ui.field :label="__('search.hotels.fields.city')" for="criteria.city">
-                <x-ui.input name="criteria.city" wire:model="criteria.city" required />
+            <x-ui.field :label="__('search.hotels.fields.city')" for="criteria.city" :hint="__('search.hotels.city_hint')">
+                <x-ui.combobox name="criteria.city" model="lookup.city" field="city" :options="$suggestions['city']" hint required />
             </x-ui.field>
             <x-ui.field :label="__('search.hotels.fields.country')" for="criteria.country">
-                <x-ui.input name="criteria.country" wire:model="criteria.country" maxlength="2" required />
+                <x-ui.combobox name="criteria.country" model="lookup.country" field="country" :options="$suggestions['country']" required />
             </x-ui.field>
             <x-ui.field :label="__('search.hotels.fields.ages')" for="criteria.ages" :hint="__('search.ages_hint')">
                 <x-ui.input name="criteria.ages" wire:model="criteria.ages" hint required />

@@ -20,3 +20,7 @@
         display: none !important;
     }
 }
+
+@utility z-dropdown {
+    z-index: var(--z-index-dropdown);
+}
