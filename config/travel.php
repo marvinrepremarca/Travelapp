@@ -168,6 +168,9 @@ return [
         'whatsapp_channel' => env('TRAVEL_WHATSAPP_CHANNEL', 'fake_whatsapp'),
         'default_country_code' => env('TRAVEL_WHATSAPP_COUNTRY_CODE', '+57'),
         'bot_date_format' => 'd/m/Y',
+        // Fechas en los avisos (en el idioma de la aplicación).
+        'notice_date_format' => 'j \d\e F \d\e Y',
+        'notice_datetime_format' => 'j \d\e F \d\e Y, g:i a',
         // Palabras con las que el cliente pide un asesor o indica viaje solo de ida (sin tildes, minúsculas).
         'agent_words' => ['asesor', 'agente', 'humano', 'persona'],
         'one_way_words' => ['no', 'solo ida', 'ninguno'],
@@ -180,6 +183,9 @@ return [
         'simulator_enabled' => (bool) env('TRAVEL_WHATSAPP_SIMULATOR', true),
         'simulator_default_phone' => env('TRAVEL_WHATSAPP_SIMULATOR_PHONE', '+57 300 123 4567'),
         'simulator_history' => (int) env('TRAVEL_WHATSAPP_SIMULATOR_HISTORY', 50),
+        // Recordatorio de saldo: días antes de la fecha límite de pago y hora del envío diario.
+        'balance_reminder_days_before' => (int) env('TRAVEL_BALANCE_REMINDER_DAYS_BEFORE', 3),
+        'balance_reminder_time' => env('TRAVEL_BALANCE_REMINDER_TIME', '09:00'),
     ],
 
     'payments' => [

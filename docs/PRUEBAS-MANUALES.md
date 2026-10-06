@@ -188,3 +188,9 @@ El menú está numerado por etapas; **Inicio** muestra la misma guía con la exp
 - [ ] Prueba una fecha inválida o pasada → el bot la vuelve a pedir. Escribe "asesor" en cualquier paso → pasa a un asesor.
 - [ ] Como **asesor**, menú *Conversaciones WhatsApp* → "Por atender": abre la conversación, revisa lo que recogió el bot y "Tomar conversación" → se crea el lead (canal WhatsApp) y el cliente recibe el aviso. Responde: el mensaje aparece en el simulador.
 - [ ] Cierra la conversación y vuelve a escribir desde el simulador → empieza una nueva con el bot.
+
+### Fase 3.6 — Communications (parte B: avisos automáticos)
+- [ ] Cliente con teléfono y consentimiento de tratamiento de datos: envía una cotización → en el simulador de WhatsApp (con el teléfono del cliente) llega el enlace para verla y aceptarla.
+- [ ] Genera un link de pago y registra un abono en efectivo → llegan el link y el comprobante. Una transferencia llega solo cuando finanzas la valida.
+- [ ] Responde desde el simulador al aviso → el mensaje aparece en *Conversaciones WhatsApp* del asesor responsable.
+- [ ] Un cliente sin consentimiento no recibe avisos.

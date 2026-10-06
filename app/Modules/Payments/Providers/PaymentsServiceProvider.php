@@ -8,10 +8,12 @@ use App\Modules\Payments\Actions\ExpirePaymentLinksAction;
 use App\Modules\Payments\Contracts\BookingCollections;
 use App\Modules\Payments\Contracts\GatewayWebhooks;
 use App\Modules\Payments\Contracts\ReceivedPayments;
+use App\Modules\Payments\Contracts\UpcomingBalances;
 use App\Modules\Payments\Listeners\ApplyRefundDecision;
 use App\Modules\Payments\Livewire\BookingPayments;
 use App\Modules\Payments\Services\EloquentBookingCollections;
 use App\Modules\Payments\Services\EloquentReceivedPayments;
+use App\Modules\Payments\Services\LedgerUpcomingBalances;
 use App\Modules\Payments\Services\WebhookReceiver;
 use App\Modules\Shared\Routing\PathPrefix;
 use App\Modules\Workflow\Events\ApprovalResolved;
@@ -33,6 +35,7 @@ final class PaymentsServiceProvider extends ServiceProvider
         GatewayWebhooks::class => WebhookReceiver::class,
         ReceivedPayments::class => EloquentReceivedPayments::class,
         BookingCollections::class => EloquentBookingCollections::class,
+        UpcomingBalances::class => LedgerUpcomingBalances::class,
     ];
 
     public function boot(): void

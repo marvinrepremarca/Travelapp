@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Payments\Jobs;
 
 use App\Modules\Payments\Enums\PaymentStatus;
+use App\Modules\Payments\Events\PaymentReceived;
 use App\Modules\Payments\Models\Payment;
 use App\Modules\Payments\Models\PaymentGatewayEvent;
 use App\Modules\Shared\Enums\QueueName;
@@ -39,6 +40,9 @@ final class ProcessGatewayEventJob implements ShouldQueue
                 $payment->status = $event->outcome;
                 $payment->approved_at = $event->outcome === PaymentStatus::Approved ? CarbonImmutable::now() : null;
                 $payment->save();
+                if ($payment->status === PaymentStatus::Approved) {
+                    event(PaymentReceived::of($payment));
+                }
             }
 
             $event->processed_at = CarbonImmutable::now();

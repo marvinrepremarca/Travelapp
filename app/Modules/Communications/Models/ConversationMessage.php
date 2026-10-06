@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int|null $user_id
  * @property string $body
  * @property string|null $template
+ * @property string|null $dedupe_key
  * @property string|null $provider_message_id
  * @property MessageStatus $status
  * @property string|null $error

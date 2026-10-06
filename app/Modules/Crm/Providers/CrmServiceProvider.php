@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Crm\Providers;
 
+use App\Modules\Crm\Contracts\CustomerContacts;
 use App\Modules\Crm\Contracts\LeadIntake;
 use App\Modules\Crm\Livewire\CustomerForm;
 use App\Modules\Crm\Livewire\CustomerShow;
@@ -17,6 +18,7 @@ use App\Modules\Crm\Models\Lead;
 use App\Modules\Crm\Policies\CustomerPolicy;
 use App\Modules\Crm\Policies\LeadPolicy;
 use App\Modules\Crm\Services\ActionLeadIntake;
+use App\Modules\Crm\Services\EloquentCustomerContacts;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -27,6 +29,7 @@ final class CrmServiceProvider extends ServiceProvider
     /** @var array<class-string, class-string> */
     public array $singletons = [
         LeadIntake::class => ActionLeadIntake::class,
+        CustomerContacts::class => EloquentCustomerContacts::class,
     ];
 
     public function boot(): void

@@ -7,6 +7,7 @@ namespace App\Modules\Payments\Actions;
 use App\Modules\Identity\Models\User;
 use App\Modules\Payments\Enums\PaymentMethod;
 use App\Modules\Payments\Enums\PaymentStatus;
+use App\Modules\Payments\Events\PaymentReceived;
 use App\Modules\Payments\Exceptions\PaymentRuleViolation;
 use App\Modules\Payments\Models\Payment;
 use Carbon\CarbonImmutable;
@@ -28,6 +29,10 @@ final class ValidateTransferAction
             $payment->approved_at = $approve ? $now : null;
             $payment->note = $note ?? $payment->note;
             $payment->save();
+
+            if ($approve) {
+                event(PaymentReceived::of($payment));
+            }
 
             return $payment;
         });
