@@ -27,6 +27,7 @@ enum Permission: string
     case ApprovalsInvoiceVoids = 'workflow.approvals.invoice_voids';
     case ApprovalsPriceChanges = 'workflow.approvals.price_changes';
     case ApprovalsDataExports = 'workflow.approvals.data_exports';
+    case OperationsManage = 'operations.manage';
 
     public function label(): string
     {

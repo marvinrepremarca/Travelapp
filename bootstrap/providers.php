@@ -12,6 +12,7 @@ use App\Modules\Finance\Providers\FinanceServiceProvider;
 use App\Modules\Identity\Providers\IdentityServiceProvider;
 use App\Modules\Integrations\Providers\IntegrationsServiceProvider;
 use App\Modules\Invoicing\Providers\InvoicingServiceProvider;
+use App\Modules\Operations\Providers\OperationsServiceProvider;
 use App\Modules\Organization\Providers\OrganizationServiceProvider;
 use App\Modules\Payments\Providers\PaymentsServiceProvider;
 use App\Modules\Portal\Providers\PortalServiceProvider;
@@ -43,5 +44,6 @@ return [
     CommunicationsServiceProvider::class,
     ReportsServiceProvider::class,
     PortalServiceProvider::class,
+    OperationsServiceProvider::class,
     IntegrationsServiceProvider::class,
 ];

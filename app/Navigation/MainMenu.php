@@ -49,6 +49,8 @@ final class MainMenu
             ['cash', 'finance.cash', null],
             ['reconciliation', 'finance.reconciliation', Permission::FinanceAccess],
             ['invoicing', 'invoicing.index', Permission::FinanceAccess],
+            ['departures', 'operations.departures', Permission::OperationsManage],
+            ['operations_resources', 'operations.resources', Permission::OperationsManage],
         ],
         'control' => [
             ['advisor_dashboard', 'reports.advisor', null],

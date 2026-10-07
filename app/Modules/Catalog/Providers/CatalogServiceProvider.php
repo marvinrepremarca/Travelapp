@@ -6,6 +6,7 @@ namespace App\Modules\Catalog\Providers;
 
 use App\Modules\Catalog\Contracts\CatalogInventory;
 use App\Modules\Catalog\Contracts\CatalogRates;
+use App\Modules\Catalog\Contracts\DepartureSchedule;
 use App\Modules\Catalog\Livewire\CatalogIndex;
 use App\Modules\Catalog\Livewire\ProductForm;
 use App\Modules\Catalog\Livewire\ProductShow;
@@ -13,6 +14,7 @@ use App\Modules\Catalog\Models\CatalogProduct;
 use App\Modules\Catalog\Policies\CatalogProductPolicy;
 use App\Modules\Catalog\Services\EloquentCatalogInventory;
 use App\Modules\Catalog\Services\EloquentCatalogRates;
+use App\Modules\Catalog\Services\EloquentDepartureSchedule;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -22,6 +24,7 @@ final class CatalogServiceProvider extends ServiceProvider
 {
     /** @var array<class-string, class-string> */
     public array $singletons = [
+        DepartureSchedule::class => EloquentDepartureSchedule::class,
         CatalogInventory::class => EloquentCatalogInventory::class,
         CatalogRates::class => EloquentCatalogRates::class,
     ];
