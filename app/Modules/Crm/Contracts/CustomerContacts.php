@@ -11,4 +11,7 @@ interface CustomerContacts
 {
     /** Null si el cliente no tiene teléfono o su último consentimiento de tratamiento de datos no está otorgado. */
     public function whatsApp(int $customerId): ?CustomerWhatsApp;
+
+    /** Verifica el número de documento del cliente contra su huella (sin descifrar ni exponer el dato). */
+    public function documentMatches(int $customerId, string $documentNumber): bool;
 }

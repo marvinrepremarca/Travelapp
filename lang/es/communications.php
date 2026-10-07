@@ -77,6 +77,7 @@ return [
         'quote_sent' => "Hola :name, te compartimos tu cotización :number (:title). Puedes verla y aceptarla aquí: :url\nEs válida hasta el :valid_until.",
         'payment_link' => "Hola :name, este es tu link de pago por :amount para el expediente :number: :url\nVence el :expires.",
         'payment_received' => 'Hola :name, recibimos tu abono de :amount (:method) para el expediente :number. ¡Gracias!',
+        'trip_portal' => "Hola :name, tu viaje :number (:title) está confirmado. Aquí puedes ver tu itinerario, descargar tus vouchers y pagar el saldo: :url\nEl enlace es personal y vence el :expires.",
         'balance_reminder' => 'Hola :name, te recordamos que el saldo de :amount del expediente :number vence el :due. Si ya pagaste, ignora este mensaje.',
     ],
     'errors' => [
