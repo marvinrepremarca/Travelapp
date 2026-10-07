@@ -17,6 +17,21 @@ return [
     'product' => 'Producto',
     'bookings_count' => '{1} :count expediente|[0,*] :count expedientes',
     'payables_count' => '{1} :count obligación|[0,*] :count obligaciones',
+    'chart' => [
+        'peak' => 'Día con más ventas: :label (:value)',
+        'no_data' => 'Sin ventas en el período.',
+    ],
+    'pie' => [
+        'by_product' => 'Ventas por tipo de producto',
+        'my_by_product' => 'Mis ventas por tipo de producto',
+        'by_branch' => 'Ventas por sucursal',
+        'quotes' => 'Mis cotizaciones enviadas',
+        'accepted' => 'Aceptadas',
+        'not_accepted' => 'Sin aceptar',
+        'receivables' => 'Cartera por vencimiento',
+        'payables' => 'Cuentas por pagar por vencimiento',
+        'empty' => 'Sin datos para graficar.',
+    ],
     'kpi' => [
         'sales' => 'Ventas',
         'my_sales' => 'Mis ventas',

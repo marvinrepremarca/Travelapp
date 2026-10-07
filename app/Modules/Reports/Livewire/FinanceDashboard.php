@@ -32,14 +32,18 @@ final class FinanceDashboard extends Component
         $period = $this->period();
         $cartera = $receivables->for($this->actor(), $this->today());
 
+        $payables = $snapshot->payables($this->today());
+
         return view('reports::livewire.finance', [
             'period' => $period,
             'receivables' => $cartera['buckets'],
             'topReceivables' => array_slice($cartera['items'], 0, config()->integer('travel.reports.list_size')),
-            'payables' => $snapshot->payables($this->today()),
+            'payables' => $payables,
             'cash' => $snapshot->openCash(),
             'invoicing' => $snapshot->invoicing($period),
             'types' => InvoiceType::cases(),
+            'receivablesPie' => $this->moneyPie($this->agingSlices($cartera['buckets']), $presenter),
+            'payablesPie' => $this->moneyPie($this->agingSlices($payables), $presenter),
             'presenter' => $presenter,
             'timezone' => config()->string('travel.agency.timezone'),
         ])->title(__('reports.finance.title'))

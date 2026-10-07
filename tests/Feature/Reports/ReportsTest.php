@@ -200,3 +200,29 @@ it('labels the export reports', function (): void {
 
     expect(app(OpenCashSessionAction::class))->toBeObject();
 });
+
+it('draws pie charts with shares and a compact daily chart on each dashboard', function (): void {
+    $agent = agent();
+    familyBooking($agent);
+
+    actingAs($agent);
+    Livewire::withoutLazyLoading()->test(AdvisorDashboard::class)
+        ->assertSee(__('reports.pie.my_by_product'))
+        ->assertSee(__('reports.pie.quotes'))
+        ->assertSee(__('reports.rate', ['rate' => '100.0']))
+        ->assertSeeHtml('h-chart')
+        ->assertSeeHtml('stroke-dasharray');
+
+    actingAs(reportsOwner());
+    Livewire::withoutLazyLoading()->test(ManagementDashboard::class)
+        ->assertSee(__('reports.pie.by_product'))
+        ->assertSee(__('reports.pie.by_branch'))
+        ->set('month', '2026-01')
+        ->assertSee(__('reports.pie.empty'))
+        ->assertSee(__('reports.chart.no_data'));
+
+    actingAs(financeUser());
+    Livewire::withoutLazyLoading()->test(FinanceDashboard::class)
+        ->assertSee(__('reports.pie.receivables'))
+        ->assertSee(__('reports.pie.payables'));
+});

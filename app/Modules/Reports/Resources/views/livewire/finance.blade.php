@@ -34,6 +34,15 @@
         </x-ui.card>
 
         <div class="grid gap-lg md:grid-cols-2">
+            <x-ui.card :title="__('reports.pie.receivables')">
+                <x-ui.pie-chart :items="$receivablesPie" :caption="__('reports.pie.receivables')" :empty="__('reports.pie.empty')" />
+            </x-ui.card>
+            <x-ui.card :title="__('reports.pie.payables')">
+                <x-ui.pie-chart :items="$payablesPie" :caption="__('reports.pie.payables')" :empty="__('reports.pie.empty')" />
+            </x-ui.card>
+        </div>
+
+        <div class="grid gap-lg md:grid-cols-2">
             <x-ui.card :title="__('reports.finance.cash')">
                 @forelse ($cash as $index => $session)
                     <p wire:key="cash-{{ $index }}" class="flex justify-between gap-sm border-b border-border py-xs">
