@@ -188,3 +188,65 @@ it('restricts operations to users with the operations permission', function (): 
     actingAs(operator())->get(route('operations.departures.show', 'no-existe'))->assertNotFound();
     actingAs(userWithRole(Role::AgencyOwner))->get(route('operations.departures'))->assertOk();
 });
+
+it('reports and resolves incidents and closes the departure once it is over', function (): void {
+    $departure = tourDeparture();
+    passengersOn($departure);
+    $guide = Guide::query()->create(['name' => 'Camila Guía', 'phone' => '3001112233', 'is_active' => true]);
+    $actor = operator();
+    $close = app(App\Modules\Operations\Actions\CloseDepartureAction::class);
+
+    expect(fn() => $close->execute($actor, $departure->ulid, 0, null))->toThrow(OperationsRuleViolation::class, __('operations.errors.departure_not_finished'));
+
+    $this->travelTo(CarbonImmutable::parse('2026-11-10 20:00:00'));
+    expect(fn() => $close->execute($actor, $departure->ulid, 0, null))->toThrow(OperationsRuleViolation::class, __('operations.errors.close_without_guide'));
+    app(AssignDepartureResourcesAction::class)->execute($actor, $departure->ulid, $guide, null);
+
+    $incident = app(App\Modules\Operations\Actions\ReportIncidentAction::class)->execute($actor, $departure->ulid, App\Modules\Operations\Enums\IncidentSeverity::High, 'Retraso de 40 minutos por lluvia.');
+    expect(fn() => $close->execute($actor, $departure->ulid, 0, null))->toThrow(OperationsRuleViolation::class, __('operations.errors.open_incidents'))
+        ->and(fn() => $close->execute($actor, $departure->ulid, 3, null))->toThrow(OperationsRuleViolation::class);
+
+    app(App\Modules\Operations\Actions\ResolveIncidentAction::class)->execute($actor, $incident, 'Se informó a los pasajeros y se extendió el tour.');
+    expect(fn() => $close->execute($actor, $departure->ulid, 3, null))->toThrow(OperationsRuleViolation::class, __('operations.errors.invalid_no_shows', ['passengers' => 2]));
+
+    $closure = $close->execute($actor, $departure->ulid, 1, 'Un pasajero no se presentó.');
+
+    expect($closure->attended)->toBe(1)
+        ->and($closure->no_shows)->toBe(1)
+        ->and(fn() => app(AssignDepartureResourcesAction::class)->execute($actor, $departure->ulid, null, null))->toThrow(OperationsRuleViolation::class, __('operations.errors.departure_closed'))
+        ->and(fn() => app(App\Modules\Operations\Actions\ReportIncidentAction::class)->execute($actor, $departure->ulid, App\Modules\Operations\Enums\IncidentSeverity::Low, 'Otra'))->toThrow(OperationsRuleViolation::class);
+});
+
+it('manages incidents and the closure from the departure screen', function (): void {
+    $departure = tourDeparture();
+    passengersOn($departure);
+    Guide::query()->create(['name' => 'Camila Guía', 'phone' => '3001112233', 'is_active' => true]);
+    actingAs(operator());
+
+    $screen = Livewire::test(DepartureShow::class, ['departure' => $departure->ulid])
+        ->set('description', '')
+        ->call('reportIncident')
+        ->assertHasErrors('description')
+        ->set('description', 'Un pasajero se sintió mal.')
+        ->call('reportIncident')
+        ->assertHasNoErrors()
+        ->assertSee('Un pasajero se sintió mal.');
+    $incident = App\Modules\Operations\Models\DepartureIncident::query()->sole();
+
+    $screen->call('resolveIncident', $incident->ulid)
+        ->assertHasErrors("resolutions.{$incident->ulid}")
+        ->set("resolutions.{$incident->ulid}", 'Atendido por el guía.')
+        ->call('resolveIncident', $incident->ulid)
+        ->assertHasNoErrors()
+        ->assertSee(__('operations.incidents.resolved'))
+        ->call('close')
+        ->assertHasErrors('closure');
+
+    $this->travelTo(CarbonImmutable::parse('2026-11-10 20:00:00'));
+    $screen->set('guide', Guide::query()->value('ulid'))
+        ->call('assign')
+        ->set('noShows', '0')
+        ->call('close')
+        ->assertHasNoErrors()
+        ->assertSee(__('operations.closure.summary', ['date' => App\Modules\Operations\Models\DepartureClosure::query()->sole()->closed_at->timezone(config('travel.agency.timezone'))->isoFormat('lll'), 'attended' => 2, 'no_shows' => 0]));
+});

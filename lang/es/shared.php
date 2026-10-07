@@ -70,6 +70,7 @@ return [
         'workflow_approvals_price_changes' => 'Aprobar cambios de precio confirmados',
         'workflow_approvals_data_exports' => 'Aprobar exportaciones de datos personales',
         'operations_manage' => 'Gestionar la operación (salidas, guías y vehículos)',
+        'compliance_manage' => 'Gestionar el cumplimiento legal (RNT, pólizas, obligaciones y solicitudes de titulares)',
     ],
     'save' => 'Guardar',
     'saving' => 'Guardando…',

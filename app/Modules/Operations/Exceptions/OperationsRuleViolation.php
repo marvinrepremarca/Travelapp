@@ -30,6 +30,36 @@ final class OperationsRuleViolation extends BusinessRuleException
         return self::make('inactive_resource', __('operations.errors.inactive_resource'));
     }
 
+    public static function departureClosed(): self
+    {
+        return self::make('departure_closed', __('operations.errors.departure_closed'));
+    }
+
+    public static function departureNotFinished(): self
+    {
+        return self::make('departure_not_finished', __('operations.errors.departure_not_finished'));
+    }
+
+    public static function closeWithoutGuide(): self
+    {
+        return self::make('close_without_guide', __('operations.errors.close_without_guide'));
+    }
+
+    public static function openIncidents(): self
+    {
+        return self::make('open_incidents', __('operations.errors.open_incidents'));
+    }
+
+    public static function incidentAlreadyResolved(): self
+    {
+        return self::make('incident_resolved', __('operations.errors.incident_resolved'));
+    }
+
+    public static function invalidNoShows(int $passengers): self
+    {
+        return self::make('invalid_no_shows', __('operations.errors.invalid_no_shows', ['passengers' => $passengers]));
+    }
+
     public function errorCode(): string
     {
         return $this->stableCode;

@@ -41,7 +41,7 @@ enum Role: string
             self::SystemAdmin => [Permission::UsersView, Permission::UsersManage, Permission::RolesManage, Permission::AuditView, Permission::IntegrationsManage],
             self::AgencyOwner => Permission::cases(),
             self::BranchManager => [Permission::UsersView, Permission::MarginsView, Permission::ApprovalsDiscounts, Permission::CustomersReassign],
-            self::Finance => [Permission::FinanceAccess, Permission::MarginsView, Permission::ApprovalsRefunds, Permission::ApprovalsInvoiceVoids, Permission::SuppliersManage],
+            self::Finance => [Permission::FinanceAccess, Permission::MarginsView, Permission::ApprovalsRefunds, Permission::ApprovalsInvoiceVoids, Permission::SuppliersManage, Permission::ComplianceManage],
             self::ProductManager => [Permission::SuppliersManage, Permission::PricingManage, Permission::CatalogManage, Permission::MarginsView, Permission::OperationsManage],
             self::Operations => [Permission::OperationsManage],
             self::TravelAgent => [],

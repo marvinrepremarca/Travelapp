@@ -30,6 +30,7 @@ return [
         'communications' => 'Comunicaciones',
         'reports' => 'Reportes',
         'operations' => 'Operaciones',
+        'compliance' => 'Cumplimiento',
     ],
     'filters' => [
         'module' => 'Módulo',

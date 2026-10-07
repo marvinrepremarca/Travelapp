@@ -10,6 +10,7 @@ use App\Modules\Catalog\Data\ScheduledDeparture;
 use App\Modules\Identity\Models\User;
 use App\Modules\Operations\Exceptions\OperationsRuleViolation;
 use App\Modules\Operations\Models\DepartureAssignment;
+use App\Modules\Operations\Models\DepartureClosure;
 use App\Modules\Operations\Models\Guide;
 use App\Modules\Operations\Models\Vehicle;
 use Carbon\CarbonImmutable;
@@ -29,6 +30,7 @@ final readonly class AssignDepartureResourcesAction
     public function execute(User $actor, string $departureUlid, ?Guide $guide, ?Vehicle $vehicle): DepartureAssignment
     {
         $departure = $this->schedule->find($departureUlid) ?? abort(404);
+        throw_if(DepartureClosure::query()->where('departure_ulid', $departureUlid)->exists(), OperationsRuleViolation::departureClosed());
         if (($guide instanceof Guide && ! $guide->is_active) || ($vehicle instanceof Vehicle && ! $vehicle->is_active)) {
             throw OperationsRuleViolation::inactiveResource();
         }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Modules\Portal\Http\Controllers\PortalDocumentsController;
 use App\Modules\Portal\Livewire\RequestAccess;
+use App\Modules\Portal\Livewire\ShopIndex;
+use App\Modules\Portal\Livewire\ShopProductPage;
 use App\Modules\Portal\Livewire\TripPortal;
 use App\Modules\Portal\Providers\PortalServiceProvider;
 use Illuminate\Support\Facades\Route;
@@ -21,3 +23,12 @@ Route::middleware(['web', 'signed', 'throttle:' . PortalServiceProvider::LINK_LI
 Route::middleware(['web', 'throttle:' . PortalServiceProvider::LINK_LIMITER])
     ->get('my-trip', RequestAccess::class)
     ->name('portal.access');
+
+// Tienda B2C pública: productos propios con salidas abiertas; las solicitudes llegan como leads a un asesor.
+Route::middleware(['web', 'throttle:' . PortalServiceProvider::LINK_LIMITER])
+    ->prefix('shop')
+    ->name('portal.shop')
+    ->group(function (): void {
+        Route::get('/', ShopIndex::class);
+        Route::get('/{product}', ShopProductPage::class)->name('.product');
+    });

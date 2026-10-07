@@ -193,12 +193,34 @@ return [
         'link_ttl_hours' => (int) env('TRAVEL_PORTAL_LINK_TTL_HOURS', 168),
         'requests_per_minute' => (int) env('TRAVEL_PORTAL_REQUESTS_PER_MINUTE', 60),
         'access_attempts_per_hour' => (int) env('TRAVEL_PORTAL_ACCESS_ATTEMPTS', 5),
+        // Tienda B2C: ventana de salidas publicadas, máximo de productos, cupos por solicitud y asesor que recibe las solicitudes.
+        'shop_window_days' => (int) env('TRAVEL_SHOP_WINDOW_DAYS', 90),
+        'shop_excerpt_length' => (int) env('TRAVEL_SHOP_EXCERPT_LENGTH', 140),
+        'shop_max_products' => (int) env('TRAVEL_SHOP_MAX_PRODUCTS', 12),
+        'shop_max_seats' => (int) env('TRAVEL_SHOP_MAX_SEATS', 10),
+        'shop_requests_per_hour' => (int) env('TRAVEL_SHOP_REQUESTS_PER_HOUR', 5),
+        'shop_lead_owner_email' => env('TRAVEL_SHOP_LEAD_OWNER_EMAIL'),
     ],
 
     'operations' => [
         // Días que muestra el tablero de salidas y capacidad máxima de un vehículo.
         'board_days' => (int) env('TRAVEL_OPERATIONS_BOARD_DAYS', 7),
         'max_vehicle_capacity' => (int) env('TRAVEL_OPERATIONS_MAX_VEHICLE_CAPACITY', 60),
+    ],
+
+    'compliance' => [
+        // Alertas: días antes del vencimiento de un documento legal y de una obligación del calendario.
+        'document_alert_days' => (int) env('TRAVEL_COMPLIANCE_DOCUMENT_ALERT_DAYS', 60),
+        'obligation_alert_days' => (int) env('TRAVEL_COMPLIANCE_OBLIGATION_ALERT_DAYS', 7),
+        // Ley 1581: plazo de respuesta al titular en días hábiles y aviso cuando quedan N días hábiles.
+        'request_business_days' => (int) env('TRAVEL_COMPLIANCE_REQUEST_BUSINESS_DAYS', 15),
+        'request_alert_business_days' => (int) env('TRAVEL_COMPLIANCE_REQUEST_ALERT_DAYS', 3),
+        'request_number_prefix' => env('TRAVEL_COMPLIANCE_REQUEST_PREFIX', 'SOL-'),
+        'request_number_digits' => 6,
+        // Oficial de protección de datos que recibe las solicitudes; vacío = quien la registra.
+        'privacy_officer_email' => env('TRAVEL_COMPLIANCE_PRIVACY_OFFICER_EMAIL'),
+        'calendar_days' => (int) env('TRAVEL_COMPLIANCE_CALENDAR_DAYS', 90),
+        'page_size' => 20,
     ],
 
     'reports' => [

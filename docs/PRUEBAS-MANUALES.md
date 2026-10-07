@@ -209,3 +209,13 @@ El menú está numerado por etapas; **Inicio** muestra la misma guía con la exp
 - [ ] Como **operaciones** (operaciones@viajesdemo.test), menú *Guías y vehículos*: crea un guía y un vehículo (prueba los errores de validación: teléfono inválido, placa repetida, capacidad 0).
 - [ ] Menú *Salidas y manifiestos*: salidas de los próximos 7 días con ocupación y "Sin guía / Sin vehículo". Abre una salida: manifiesto con pasaportes enmascarados; asigna guía y vehículo.
 - [ ] Asigna el mismo guía a otra salida que se cruce en horario → error. Asigna un vehículo con menos puestos que pasajeros → error. Descarga el manifiesto en PDF.
+- [ ] En una salida que ya terminó: reporta una incidencia, intenta cerrar la salida → error (incidencia abierta). Resuélvela, asigna guía y cierra con los no presentados → resumen del cierre; la asignación ya no se puede cambiar.
+
+### Fase 3.4 — Compliance (cumplimiento legal)
+- [ ] Como **finanzas** (finanzas@viajesdemo.test), menú *Cumplimiento legal*: el RNT demo vence en 30 días → alerta en "Documentos por renovar" y aparece en el calendario.
+- [ ] *Nueva obligación* trimestral con fecha de hoy → aparece en el calendario; "Marcar cumplida" → se programa la siguiente (3 meses después). En *Tareas* el responsable tiene la tarea con recordatorio.
+- [ ] *Solicitudes de titulares* → *Radicar solicitud*: el plazo se calcula a 15 días hábiles (sin fines de semana ni festivos). Los datos del titular aparecen enmascarados; "Ver datos del titular" los muestra y queda en la auditoría. Responder sin texto → error; con respuesta → Respondida.
+
+### Fase 3.7 — Tienda B2C
+- [ ] Sin iniciar sesión, abre `/shop`: tours con salidas abiertas y precio "desde". Entra a un tour, elige salida y personas (el valor estimado se recalcula), deja tus datos y acepta el tratamiento de datos → confirmación.
+- [ ] Como asesor, en *Leads* aparece la solicitud (canal En línea) con la salida, los cupos, el estimado y la versión de la política aceptada. Pedir más cupos de los disponibles → error.

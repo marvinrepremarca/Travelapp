@@ -57,17 +57,17 @@ Objetivo: un esqueleto que ya exige la calidad desde el primer commit.
 | 2.5 ✔ | `Documents` | Vouchers, itinerarios y cotizaciones en PDF con la marca de la agencia | Snapshot tests del contenido del PDF |
 | 2.6 ✔ | `Integrations` + `Search` | Puerto por producto + adaptadores **Duffel (vuelos) y LiteAPI (hoteles)** en modo de prueba (ADR-0006; Amadeus Self-Service cerró), búsqueda unificada con caché, circuit breaker | Contract tests con fixtures grabados; proveedor caído → degradación controlada |
 
-### Fase 3 — Cobrar, facturar y operar · `v0.4.0`
+### Fase 3 — Cobrar, facturar y operar · `v0.4.0` ✔
 
 | # | Módulo | Entregables | Verificación clave |
 |---|---|---|---|
 | 3.1 ✔ | `Payments` | Links de pago tokenizados, abonos/cuotas, reembolsos, webhooks firmados | Tests de firma e idempotencia de webhooks; nunca PAN/CVV |
 | 3.2 ✔ | `Finance` | CxC, CxP, liquidación a proveedores, caja por sucursal, conciliación, rentabilidad por expediente | Cuadre de saldos en tests de escenario |
 | 3.3 ✔ | `Invoicing` | Facturas internas, notas crédito/débito, mandato vs. ingreso propio, puerto `EInvoicingProvider` (Null) | Tests de numeración consecutiva y resolución |
-| 3.4 | `Compliance` | RNT, pólizas, consentimientos, solicitudes de titulares, calendario de obligaciones | Tests de alertas de vencimiento |
-| 3.5 ◐ | `Operations` | Salidas, manifiestos, guías, vehículos, incidencias | Tests de capacidad y cierre de salida |
+| 3.4 ✔ | `Compliance` | RNT, pólizas, consentimientos, solicitudes de titulares, calendario de obligaciones | Tests de alertas de vencimiento |
+| 3.5 ✔ | `Operations` | Salidas, manifiestos, guías, vehículos, incidencias | Tests de capacidad y cierre de salida |
 | 3.6 ✔ | `Communications` | Correo + WhatsApp, plantillas, bandeja por expediente | Tests con fakes de canal y colas |
-| 3.7 ◐ | `Portal` | Portal del viajero "Mi viaje" y tienda B2C | Feature + Livewire tests; viajero solo ve lo suyo |
+| 3.7 ✔ | `Portal` | Portal del viajero "Mi viaje" y tienda B2C | Feature + Livewire tests; viajero solo ve lo suyo |
 | 3.8 ✔ | `Reports` | Dashboards por rol: ventas, margen, plazos, cartera | Tests de KPIs con datasets conocidos |
 
 ### Fase 4 — Ampliar · `v0.5.0`

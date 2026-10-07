@@ -104,7 +104,8 @@ it('seeds demo data idempotently in local', function (): void {
     $this->seed(Database\Seeders\DemoSeeder::class);
 
     expect(App\Modules\Identity\Models\User::query()->where('email', 'like', '%@viajesdemo.test')->count())->toBe(8)
-        ->and(App\Modules\Workflow\Models\Task::query()->count())->toBe(3)
+        // 3 tareas demo + 5 de cumplimiento (2 documentos, 2 obligaciones, 1 solicitud de titular).
+        ->and(App\Modules\Workflow\Models\Task::query()->count())->toBe(8)
         ->and(App\Modules\Workflow\Models\ApprovalRequest::query()->count())->toBe(3)
         ->and(App\Modules\Organization\Models\AgencyProfile::query()->count())->toBe(1)
         ->and(App\Modules\Suppliers\Models\Supplier::query()->count())->toBe(4);

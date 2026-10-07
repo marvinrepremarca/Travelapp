@@ -12,6 +12,16 @@ use App\Modules\Catalog\Actions\AddDepartureAction;
 use App\Modules\Catalog\Actions\AddPackageComponentAction;
 use App\Modules\Catalog\Actions\AddSeasonAction;
 use App\Modules\Catalog\Models\CatalogProduct;
+use App\Modules\Compliance\Actions\RegisterDataRequestAction;
+use App\Modules\Compliance\Actions\SaveComplianceDocumentAction;
+use App\Modules\Compliance\Actions\SaveObligationAction;
+use App\Modules\Compliance\Data\DataRequestData;
+use App\Modules\Compliance\Data\DocumentData;
+use App\Modules\Compliance\Data\ObligationData;
+use App\Modules\Compliance\Enums\ComplianceDocumentType;
+use App\Modules\Compliance\Enums\DataRequestType;
+use App\Modules\Compliance\Enums\ObligationRecurrence;
+use App\Modules\Compliance\Models\ComplianceDocument;
 use App\Modules\Crm\Enums\ConsentChannel;
 use App\Modules\Crm\Enums\ConsentPurpose;
 use App\Modules\Crm\Enums\LeadStatus;
@@ -113,6 +123,7 @@ final class DemoSeeder extends Seeder
         $this->quotes($agentBog);
         $this->bookings($agentBog);
         $this->bank($finance);
+        $this->compliance($finance);
 
         unset($admin);
     }
@@ -248,6 +259,34 @@ final class DemoSeeder extends Seeder
         $today = CarbonImmutable::now()->format('d/m/Y');
         $csv = "Fecha;Descripción;Referencia;Valor\n{$today};Transferencia recibida;TRX-DEMO-001;800.000\n{$today};GMF 4x1000;;-3.200\n";
         app(ImportBankStatementAction::class)->execute($finance, $account, 'extracto-demo.csv', $csv, CarbonImmutable::now());
+    }
+
+    /** RNT por vencer, póliza vigente, obligaciones del calendario y una solicitud de titular abierta. */
+    private function compliance(User $finance): void
+    {
+        if (ComplianceDocument::query()->exists()) {
+            return;
+        }
+
+        $today = CarbonImmutable::today();
+        $documents = app(SaveComplianceDocumentAction::class);
+        $documents->execute($finance, new DocumentData(ComplianceDocumentType::Rnt, '12345', 'Confecámaras', $today->subYear()->addDays(30), $today->addDays(30), $finance->id, null));
+        $documents->execute($finance, new DocumentData(ComplianceDocumentType::LiabilityPolicy, 'RC-2026-889', 'Aseguradora Demo', $today->subMonths(3), $today->addMonths(9), $finance->id, null));
+
+        $obligations = app(SaveObligationAction::class);
+        $obligations->execute($finance, new ObligationData('Declaración contribución parafiscal FONTUR', null, $today->addDays(5), ObligationRecurrence::Quarterly, $finance->id));
+        $obligations->execute($finance, new ObligationData('Reporte de viajeros extranjeros (SIRE)', null, $today->subDay(), ObligationRecurrence::Monthly, $finance->id));
+
+        app(RegisterDataRequestAction::class)->execute($finance, new DataRequestData(
+            DataRequestType::Access,
+            'Titular Demo',
+            '1000000001',
+            'titular@example.test',
+            null,
+            'Quiero conocer qué datos personales tienen de mí.',
+            ConsentChannel::Email,
+            CarbonImmutable::now()->subDays(10),
+        ));
     }
 
     private function crm(User $agent): void
