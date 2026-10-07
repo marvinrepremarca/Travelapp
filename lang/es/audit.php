@@ -29,6 +29,7 @@ return [
         'invoicing' => 'Facturación',
         'communications' => 'Comunicaciones',
         'reports' => 'Reportes',
+        'operations' => 'Operaciones',
     ],
     'filters' => [
         'module' => 'Módulo',

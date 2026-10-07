@@ -205,3 +205,7 @@ El menú está numerado por etapas; **Inicio** muestra la misma guía con la exp
 - [ ] Confirma todos los servicios de un expediente cuyo titular tiene WhatsApp y consentimiento → en el simulador de WhatsApp (teléfono del titular) llega el enlace a "Mi viaje".
 - [ ] Abre el enlace (sin iniciar sesión): itinerario día a día, códigos de confirmación, descarga del itinerario y vouchers en PDF, estado de cuenta. "Pagar en línea" → pasarela simulada → al pagar, el saldo baja.
 - [ ] Quita o altera la firma del enlace → 403. Ve a `/my-trip`, escribe número de expediente y documento del titular → mensaje genérico y nuevo enlace por WhatsApp (solo si coinciden).
+### Fase 3.5 — Operations (salidas, manifiestos, guías y vehículos)
+- [ ] Como **operaciones** (operaciones@viajesdemo.test), menú *Guías y vehículos*: crea un guía y un vehículo (prueba los errores de validación: teléfono inválido, placa repetida, capacidad 0).
+- [ ] Menú *Salidas y manifiestos*: salidas de los próximos 7 días con ocupación y "Sin guía / Sin vehículo". Abre una salida: manifiesto con pasaportes enmascarados; asigna guía y vehículo.
+- [ ] Asigna el mismo guía a otra salida que se cruce en horario → error. Asigna un vehículo con menos puestos que pasajeros → error. Descarga el manifiesto en PDF.

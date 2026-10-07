@@ -69,6 +69,7 @@ return [
         'workflow_approvals_invoice_voids' => 'Aprobar anulaciones de factura',
         'workflow_approvals_price_changes' => 'Aprobar cambios de precio confirmados',
         'workflow_approvals_data_exports' => 'Aprobar exportaciones de datos personales',
+        'operations_manage' => 'Gestionar la operación (salidas, guías y vehículos)',
     ],
     'save' => 'Guardar',
     'saving' => 'Guardando…',

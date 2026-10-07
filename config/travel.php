@@ -195,6 +195,12 @@ return [
         'access_attempts_per_hour' => (int) env('TRAVEL_PORTAL_ACCESS_ATTEMPTS', 5),
     ],
 
+    'operations' => [
+        // Días que muestra el tablero de salidas y capacidad máxima de un vehículo.
+        'board_days' => (int) env('TRAVEL_OPERATIONS_BOARD_DAYS', 7),
+        'max_vehicle_capacity' => (int) env('TRAVEL_OPERATIONS_MAX_VEHICLE_CAPACITY', 60),
+    ],
+
     'reports' => [
         'month_label_format' => 'F Y',
         'list_size' => (int) env('TRAVEL_REPORTS_LIST_SIZE', 8),
