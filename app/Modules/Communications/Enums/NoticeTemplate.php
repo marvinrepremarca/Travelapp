@@ -13,6 +13,7 @@ enum NoticeTemplate: string
     case PaymentLink = 'payment_link';
     case PaymentReceived = 'payment_received';
     case BalanceReminder = 'balance_reminder';
+    case TripPortal = 'trip_portal';
 
     /** @param  array<string, string>  $params */
     public function render(array $params): string

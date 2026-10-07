@@ -67,7 +67,7 @@ Objetivo: un esqueleto que ya exige la calidad desde el primer commit.
 | 3.4 | `Compliance` | RNT, pólizas, consentimientos, solicitudes de titulares, calendario de obligaciones | Tests de alertas de vencimiento |
 | 3.5 | `Operations` | Salidas, manifiestos, guías, vehículos, incidencias | Tests de capacidad y cierre de salida |
 | 3.6 ✔ | `Communications` | Correo + WhatsApp, plantillas, bandeja por expediente | Tests con fakes de canal y colas |
-| 3.7 | `Portal` | Portal del viajero "Mi viaje" y tienda B2C | Feature + Livewire tests; viajero solo ve lo suyo |
+| 3.7 ◐ | `Portal` | Portal del viajero "Mi viaje" y tienda B2C | Feature + Livewire tests; viajero solo ve lo suyo |
 | 3.8 ✔ | `Reports` | Dashboards por rol: ventas, margen, plazos, cartera | Tests de KPIs con datasets conocidos |
 
 ### Fase 4 — Ampliar · `v0.5.0`

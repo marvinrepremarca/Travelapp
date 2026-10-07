@@ -200,3 +200,8 @@ El menú está numerado por etapas; **Inicio** muestra la misma guía con la exp
 - [ ] Exporta "ventas por asesor" a CSV y ábrelo en Excel. Como **asesor**, el tablero de gerencia responde 403.
 - [ ] Como **asesor**, *Mi tablero*: mis ventas y conversión, cotizaciones por vencer, leads por atender y próximos viajes (sin margen si no tiene permiso).
 - [ ] Como **finanzas**, *Tablero de finanzas*: cartera vencida / por vencer / posterior, cuentas por pagar, cajas abiertas con el efectivo esperado y facturación del mes.
+
+### Fase 3.7 — Portal del viajero ("Mi viaje")
+- [ ] Confirma todos los servicios de un expediente cuyo titular tiene WhatsApp y consentimiento → en el simulador de WhatsApp (teléfono del titular) llega el enlace a "Mi viaje".
+- [ ] Abre el enlace (sin iniciar sesión): itinerario día a día, códigos de confirmación, descarga del itinerario y vouchers en PDF, estado de cuenta. "Pagar en línea" → pasarela simulada → al pagar, el saldo baja.
+- [ ] Quita o altera la firma del enlace → 403. Ve a `/my-trip`, escribe número de expediente y documento del titular → mensaje genérico y nuevo enlace por WhatsApp (solo si coinciden).

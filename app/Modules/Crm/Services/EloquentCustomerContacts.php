@@ -10,8 +10,10 @@ use App\Modules\Crm\Enums\ConsentPurpose;
 use App\Modules\Crm\Models\Customer;
 use App\Modules\Crm\Models\CustomerConsent;
 
-final class EloquentCustomerContacts implements CustomerContacts
+final readonly class EloquentCustomerContacts implements CustomerContacts
 {
+    public function __construct(private CustomerDocumentGuard $documents) {}
+
     public function whatsApp(int $customerId): ?CustomerWhatsApp
     {
         $customer = Customer::query()->find($customerId, ['id', 'display_name', 'phone']);
@@ -29,5 +31,17 @@ final class EloquentCustomerContacts implements CustomerContacts
         return $consent instanceof CustomerConsent && $consent->granted
             ? new CustomerWhatsApp($customer->id, $customer->display_name, $customer->phone)
             : null;
+    }
+
+    public function documentMatches(int $customerId, string $documentNumber): bool
+    {
+        $customer = Customer::query()->find($customerId, ['id', 'document_type', 'document_hash']);
+        if (! $customer instanceof Customer || trim($documentNumber) === '') {
+            return false;
+        }
+
+        $hash = $this->documents->hashFor($customer->document_type->value, $customer->document_type->normalize($documentNumber));
+
+        return hash_equals($customer->document_hash, $hash);
     }
 }

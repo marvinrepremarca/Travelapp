@@ -7,6 +7,7 @@ namespace App\Modules\Bookings\Providers;
 use App\Modules\Bookings\Contracts\BookingAccounts;
 use App\Modules\Bookings\Contracts\BookingInvoicing;
 use App\Modules\Bookings\Contracts\BookingProfitLines;
+use App\Modules\Bookings\Contracts\TravelerTrips;
 use App\Modules\Bookings\Livewire\BookingShow;
 use App\Modules\Bookings\Livewire\BookingsIndex;
 use App\Modules\Bookings\Livewire\ConvertQuote;
@@ -15,6 +16,7 @@ use App\Modules\Bookings\Policies\BookingPolicy;
 use App\Modules\Bookings\Services\EloquentBookingAccounts;
 use App\Modules\Bookings\Services\EloquentBookingInvoicing;
 use App\Modules\Bookings\Services\EloquentBookingProfitLines;
+use App\Modules\Bookings\Services\EloquentTravelerTrips;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -27,6 +29,7 @@ final class BookingsServiceProvider extends ServiceProvider
         BookingAccounts::class => EloquentBookingAccounts::class,
         BookingProfitLines::class => EloquentBookingProfitLines::class,
         BookingInvoicing::class => EloquentBookingInvoicing::class,
+        TravelerTrips::class => EloquentTravelerTrips::class,
     ];
 
     public function boot(): void

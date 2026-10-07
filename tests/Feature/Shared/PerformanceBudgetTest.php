@@ -57,6 +57,7 @@ it('renders every backoffice screen within the query budget', function (string $
     'reports.advisor',
     'reports.management',
     'reports.finance',
+    'portal.access',
     'invoicing.index',
     'communications.inbox',
     'integrations.whatsapp-simulator',

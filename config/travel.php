@@ -188,6 +188,13 @@ return [
         'balance_reminder_time' => env('TRAVEL_BALANCE_REMINDER_TIME', '09:00'),
     ],
 
+    'portal' => [
+        // Vigencia del enlace mágico de "Mi viaje" y límites contra abuso.
+        'link_ttl_hours' => (int) env('TRAVEL_PORTAL_LINK_TTL_HOURS', 168),
+        'requests_per_minute' => (int) env('TRAVEL_PORTAL_REQUESTS_PER_MINUTE', 60),
+        'access_attempts_per_hour' => (int) env('TRAVEL_PORTAL_ACCESS_ATTEMPTS', 5),
+    ],
+
     'reports' => [
         'month_label_format' => 'F Y',
         'list_size' => (int) env('TRAVEL_REPORTS_LIST_SIZE', 8),
