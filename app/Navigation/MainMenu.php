@@ -56,6 +56,8 @@ final class MainMenu
             ['advisor_dashboard', 'reports.advisor', null],
             ['management_dashboard', 'reports.management', Permission::MarginsView],
             ['finance_dashboard', 'reports.finance', Permission::FinanceAccess],
+            ['compliance', 'compliance.index', Permission::ComplianceManage],
+            ['data_requests', 'compliance.requests', Permission::ComplianceManage],
             ['tasks', 'workflow.tasks', null],
             ['approvals', 'workflow.approvals', null],
             ['audit', 'audit.index', Permission::AuditView],

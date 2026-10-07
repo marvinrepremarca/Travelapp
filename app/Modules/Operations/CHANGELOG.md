@@ -1,5 +1,11 @@
 # Changelog — Operations
 
+## Fase 3.5 (parte B: incidencias y cierre de salida)
+
+### Agregado
+- **Incidencias** por salida (gravedad baja/media/alta, descripción y resolución), auditadas.
+- **Cierre de la salida**: solo cuando terminó (hora local del destino), con guía asignado y sin incidencias abiertas; registra asistentes y no presentados. Una salida cerrada ya no admite cambios de guía/vehículo ni nuevas incidencias.
+
 ## Fase 3.5 (salidas, manifiestos, guías y vehículos)
 
 ### Agregado

@@ -49,6 +49,8 @@ return [
         'reconciliation' => ['label' => 'Conciliación bancaria', 'hint' => 'Carga el extracto del banco y cruza cada movimiento con abonos, pagos a proveedores y consignaciones.'],
         'invoicing' => ['label' => 'Facturación', 'hint' => 'Factura los expedientes confirmados y pagados: recaudo para terceros e ingreso propio con IVA.'],
         'whatsapp' => ['label' => 'Conversaciones WhatsApp', 'hint' => 'Clientes que escribieron por WhatsApp: el bot recoge destino, fechas y viajeros; toma la conversación y cotiza.'],
+        'compliance' => ['label' => 'Cumplimiento legal', 'hint' => 'RNT, pólizas y calendario de obligaciones con alertas de vencimiento.'],
+        'data_requests' => ['label' => 'Solicitudes de titulares', 'hint' => 'Consultas y reclamos de datos personales (Ley 1581) con plazo en días hábiles.'],
         'departures' => ['label' => 'Salidas y manifiestos', 'hint' => 'Salidas de los próximos días con pasajeros, guía y vehículo; descarga el manifiesto.'],
         'operations_resources' => ['label' => 'Guías y vehículos', 'hint' => 'Registra guías y vehículos (capacidad) para asignarlos a las salidas.'],
         'cash' => ['label' => 'Caja de la sucursal', 'hint' => 'Abre la caja cada día con la base; los abonos en efectivo entran solos; cierra con el arqueo.'],

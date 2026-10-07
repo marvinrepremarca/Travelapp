@@ -7,6 +7,8 @@ namespace App\Modules\Portal\Providers;
 use App\Modules\Bookings\Events\BookingItemConfirmed;
 use App\Modules\Portal\Listeners\SendTripPortalLink;
 use App\Modules\Portal\Livewire\RequestAccess;
+use App\Modules\Portal\Livewire\ShopIndex;
+use App\Modules\Portal\Livewire\ShopProductPage;
 use App\Modules\Portal\Livewire\TripPortal;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -33,6 +35,8 @@ final class PortalServiceProvider extends ServiceProvider
 
         Livewire::component('portal.trip', TripPortal::class);
         Livewire::component('portal.access', RequestAccess::class);
+        Livewire::component('portal.shop', ShopIndex::class);
+        Livewire::component('portal.shop-product', ShopProductPage::class);
 
         Event::listen(BookingItemConfirmed::class, SendTripPortalLink::class);
     }

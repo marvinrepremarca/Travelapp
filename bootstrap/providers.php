@@ -6,6 +6,7 @@ use App\Modules\Audit\Providers\AuditServiceProvider;
 use App\Modules\Bookings\Providers\BookingsServiceProvider;
 use App\Modules\Catalog\Providers\CatalogServiceProvider;
 use App\Modules\Communications\Providers\CommunicationsServiceProvider;
+use App\Modules\Compliance\Providers\ComplianceServiceProvider;
 use App\Modules\Crm\Providers\CrmServiceProvider;
 use App\Modules\Documents\Providers\DocumentsServiceProvider;
 use App\Modules\Finance\Providers\FinanceServiceProvider;
@@ -45,5 +46,6 @@ return [
     ReportsServiceProvider::class,
     PortalServiceProvider::class,
     OperationsServiceProvider::class,
+    ComplianceServiceProvider::class,
     IntegrationsServiceProvider::class,
 ];
