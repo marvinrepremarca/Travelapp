@@ -36,6 +36,9 @@ final class ManagementDashboard extends Component
         $previous = $sales->for($this->actor(), $period->previous());
         $topOwners = array_slice($current->byOwner, 0, config()->integer('travel.reports.top_size'), true);
 
+        $products = collect(ProductType::cases())->mapWithKeys(static fn(ProductType $type): array => [$type->value => $type->label()])->all();
+        $branches = Branch::query()->whereIn('id', array_keys($current->byBranch))->pluck('name', 'id')->all();
+
         return view('reports::livewire.management', [
             'period' => $period,
             'sales' => $current,
@@ -43,8 +46,10 @@ final class ManagementDashboard extends Component
             'funnel' => $funnel->for($this->actor(), $period),
             'topOwners' => $topOwners,
             'owners' => User::query()->whereIn('id', array_keys($topOwners))->pluck('name', 'id')->all(),
-            'branches' => Branch::query()->whereIn('id', array_keys($current->byBranch))->pluck('name', 'id')->all(),
-            'products' => collect(ProductType::cases())->mapWithKeys(static fn(ProductType $type): array => [$type->value => $type->label()])->all(),
+            'branches' => $branches,
+            'products' => $products,
+            'productPie' => $this->moneyPie($this->salesBy($current->byProduct, $products), $presenter),
+            'branchPie' => $this->moneyPie($this->salesBy($current->byBranch, $branches + [0 => __('reports.no_branch')]), $presenter),
             'chart' => $this->chartItems($current->dailySaleMinor, $current->currency, $presenter),
             'presenter' => $presenter,
         ])->title(__('reports.management.title'))

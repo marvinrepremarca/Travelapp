@@ -15,11 +15,19 @@
                 :hint="__('reports.kpi.conversion_hint', ['accepted' => $funnel->quotesAccepted, 'sent' => $funnel->quotesSent])" :href="route('quotes.index')" />
         </div>
 
-        <x-ui.card :title="__('reports.advisor.daily')">
-            <x-ui.bar-chart :items="$chart" :caption="__('reports.management.daily_caption', ['period' => $period->label()])" />
-        </x-ui.card>
+        <div class="grid gap-lg lg:grid-cols-3">
+            <x-ui.card :title="__('reports.advisor.daily')" class="lg:col-span-2">
+                <x-ui.bar-chart :items="$chart" :caption="__('reports.management.daily_caption', ['period' => $period->label()])" />
+            </x-ui.card>
+            <x-ui.card :title="__('reports.pie.my_by_product')">
+                <x-ui.pie-chart :items="$productPie" :caption="__('reports.pie.my_by_product')" :empty="__('reports.pie.empty')" />
+            </x-ui.card>
+        </div>
 
-        <div class="grid gap-lg md:grid-cols-3">
+        <div class="grid gap-lg md:grid-cols-2 xl:grid-cols-4">
+            <x-ui.card :title="__('reports.pie.quotes')">
+                <x-ui.pie-chart :items="$quotesPie" :caption="__('reports.pie.quotes')" :empty="__('reports.pie.empty')" />
+            </x-ui.card>
             <x-ui.card :title="__('reports.advisor.expiring_quotes')">
                 @forelse ($quotes as $quote)
                     <a wire:key="quote-{{ $quote->ulid }}" href="{{ route('quotes.show', $quote) }}" wire:navigate class="flex flex-col border-b border-border py-xs hover:bg-muted">

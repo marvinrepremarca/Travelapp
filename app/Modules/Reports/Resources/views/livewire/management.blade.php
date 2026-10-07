@@ -23,6 +23,15 @@
             <x-ui.bar-chart :items="$chart" :caption="__('reports.management.daily_caption', ['period' => $period->label()])" />
         </x-ui.card>
 
+        <div class="grid gap-lg md:grid-cols-2">
+            <x-ui.card :title="__('reports.pie.by_product')">
+                <x-ui.pie-chart :items="$productPie" :caption="__('reports.pie.by_product')" :empty="__('reports.pie.empty')" />
+            </x-ui.card>
+            <x-ui.card :title="__('reports.pie.by_branch')">
+                <x-ui.pie-chart :items="$branchPie" :caption="__('reports.pie.by_branch')" :empty="__('reports.pie.empty')" />
+            </x-ui.card>
+        </div>
+
         <x-ui.card :title="__('reports.management.funnel')">
             <ol class="grid gap-md md:grid-cols-4">
                 @foreach (['leads' => $funnel->leads, 'quotes_sent' => $funnel->quotesSent, 'quotes_accepted' => $funnel->quotesAccepted, 'bookings' => $funnel->bookings] as $stage => $count)
