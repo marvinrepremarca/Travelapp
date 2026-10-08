@@ -7,6 +7,7 @@ namespace App\Modules\Crm\Models;
 use App\Modules\Crm\Database\Factories\LeadFactory;
 use App\Modules\Crm\Enums\LeadStatus;
 use App\Modules\Crm\Enums\LostReason;
+use App\Modules\Customers\Models\Customer;
 use App\Modules\Shared\Concerns\HasVisibilityScope;
 use App\Modules\Shared\Enums\AuditLogName;
 use App\Modules\Shared\Enums\SalesChannel;

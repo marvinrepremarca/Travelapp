@@ -10,7 +10,7 @@ it('publishes the application under the configured folder', function (): void {
     expect(PathPrefix::value())->toBe('travelapp')
         ->and(route('login', absolute: false))->toBe('/travelapp/login')
         ->and(route('dashboard', absolute: false))->toBe('/travelapp')
-        ->and(route('crm.customers.index', absolute: false))->toBe('/travelapp/crm/customers')
+        ->and(route('customers.index', absolute: false))->toBe('/travelapp/customers')
         ->and(route('livewire.update', absolute: false))->toBe('/travelapp/livewire/update')
         ->and(config('fortify.home'))->toBe('/travelapp');
 });

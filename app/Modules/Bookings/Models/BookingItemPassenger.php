@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Bookings\Models;
 
-use App\Modules\Crm\Models\Traveler;
+use App\Modules\Customers\Models\Traveler;
 use App\Modules\Shared\Enums\PassengerType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

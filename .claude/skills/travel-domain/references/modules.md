@@ -1,6 +1,6 @@
 # Mapa de módulos (`app/Modules/*`)
 
-El sistema pertenece a **una sola agencia** (con sus sucursales) y cubre de forma modular **toda** su administración y su gestión de viajes. Construye por fases: un módulo no se crea hasta que la fase lo necesite (YAGNI), pero sus límites ya están definidos aquí. Cada módulo se puede activar o desactivar por configuración sin afectar a los demás.
+El sistema pertenece a **una sola agencia** (con sus sucursales) y cubre de forma modular **toda** su administración y su gestión de viajes. Construye por fases: un módulo no se crea hasta que la fase lo necesite (YAGNI), pero sus límites ya están definidos aquí. Los módulos de negocio se agrupan en **capacidades** que se encienden o apagan por despliegue sin afectar a las demás; el núcleo siempre está encendido (ADR-0007, enum `Capability`).
 
 ## A. Núcleo (transversal)
 
@@ -10,13 +10,14 @@ El sistema pertenece a **una sola agencia** (con sus sucursales) y cubre de form
 | `Organization` | Datos de la agencia (razón social, NIT, RNT, marca), sucursales/puntos de venta, configuración ⚙, calendarios y festivos, módulos activos | `AppSettings`, `BranchDirectory` | 1 |
 | `Identity` | Usuarios internos, roles, permisos, alcance (own/branch/all), 2FA; usuarios de portal (viajero, empresa cliente, agencia aliada) | `UserRegistered` | 1 |
 | `Audit` | Bitácora de actividad y de accesos a datos sensibles | — | 1 |
+| `Customers` | Maestro de clientes (personas/empresas), viajeros, documentos de viaje y consentimientos, compartido por todas las capacidades | `CustomerContacts`, `CustomerOrigins` | 3 |
 | `Workflow` | Tareas, agenda, recordatorios, asignaciones y aprobaciones genéricas (descuentos, reembolsos, pagos grandes) reutilizadas por los demás módulos | `TaskScheduler`, `ApprovalRequested`, `ApprovalResolved` | 1 |
 
 ## B. Gestión viajera (comercial y operación del viaje)
 
 | Módulo | Responsabilidad | Expone | Fase |
 |---|---|---|---|
-| `Crm` | Clientes (personas/empresas), pasajeros, documentos de viaje, preferencias, programas de lealtad, leads, oportunidades, embudo, interacciones | `CustomerDirectory`, `LeadWon` | 1 |
+| `Crm` | Capacidad Comercial: leads, oportunidades, embudo, interacciones, programas de lealtad | `LeadIntake`, `LeadWon` | 1 |
 | `Suppliers` | Proveedores, contratos, condiciones de pago, comisiones pactadas, contactos, evaluación de desempeño, RNT de proveedores | `SupplierDirectory` | 1 |
 | `Catalog` | Producto propio: tours, pasadías, actividades, traslados, paquetes, alojamientos contratados; temporadas, tarifas, cupos, capacidad, contenido multidioma | `ProductAvailability`, `ProductRates` | 2 |
 | `Integrations` | Adaptadores de plataformas externas: **Amadeus** (vuelos, hoteles, autos, traslados, tours y actividades) como primera; después otros GDS/NDC, bancos de camas, rent-a-car, actividades, seguros, estado de vuelos | Puertos por tipo de producto | 2 |

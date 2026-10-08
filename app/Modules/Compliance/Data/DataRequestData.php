@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Compliance\Data;
 
 use App\Modules\Compliance\Enums\DataRequestType;
-use App\Modules\Crm\Enums\ConsentChannel;
+use App\Modules\Customers\Enums\ConsentChannel;
 use Carbon\CarbonImmutable;
 
 final readonly class DataRequestData

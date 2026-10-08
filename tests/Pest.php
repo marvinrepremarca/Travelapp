@@ -27,7 +27,10 @@ pest()->extend(TestCase::class)
     ->in('Feature', 'Contract');
 
 /** Módulos del monolito: la lista es la fuente para los arch tests de límites. */
-const MODULES = ['Shared', 'Organization', 'Identity', 'Audit', 'Workflow', 'Crm', 'Suppliers', 'Pricing', 'Catalog', 'Quotes', 'Bookings', 'Documents', 'Search', 'Payments', 'Finance', 'Invoicing', 'Communications', 'Reports', 'Portal', 'Operations', 'Compliance', 'Integrations'];
+const MODULES = ['Shared', 'Organization', 'Identity', 'Audit', 'Workflow', 'Customers', 'Crm', 'Suppliers', 'Pricing', 'Catalog', 'Quotes', 'Bookings', 'Documents', 'Search', 'Payments', 'Finance', 'Invoicing', 'Communications', 'Reports', 'Portal', 'Operations', 'Compliance', 'Integrations'];
+
+/** Núcleo siempre encendido (ADR-0007): no puede depender de capacidades activables. */
+const CORE_MODULES = ['Shared', 'Organization', 'Identity', 'Audit', 'Workflow', 'Customers', 'Suppliers', 'Pricing', 'Documents'];
 
 /** Carpetas que forman la API pública de un módulo (skill modular-architecture). */
 const MODULE_PUBLIC_API = ['Contracts', 'Data', 'Enums', 'Events', 'Models'];
@@ -95,7 +98,7 @@ function openCashFor(\App\Modules\Identity\Models\User $user): void
 function familyBooking(\App\Modules\Identity\Models\User $agent): \App\Modules\Bookings\Models\Booking
 {
     openCashFor($agent);
-    $customer = \App\Modules\Crm\Models\Customer::factory()->ownedBy($agent)->create();
+    $customer = \App\Modules\Customers\Models\Customer::factory()->ownedBy($agent)->create();
     $quote = app(\App\Modules\Quotes\Actions\CreateQuoteAction::class)->execute($agent, $customer, 'Familia', 'COP', \App\Modules\Shared\Enums\SalesChannel::Branch);
     $option = $quote->options()->firstOrFail();
     app(\App\Modules\Quotes\Actions\AddItemAction::class)->execute($quote, $option, new \App\Modules\Quotes\Data\QuoteItemData(

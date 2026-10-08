@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Quotes\Models;
 
-use App\Modules\Crm\Models\Customer;
+use App\Modules\Customers\Models\Customer;
 use App\Modules\Quotes\Database\Factories\QuoteFactory;
 use App\Modules\Quotes\Enums\AcceptanceChannel;
 use App\Modules\Quotes\Enums\QuoteStatus;

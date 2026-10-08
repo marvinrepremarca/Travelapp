@@ -15,7 +15,7 @@ use App\Modules\Bookings\Models\BookingItem;
 use App\Modules\Bookings\Models\BookingItemPassenger;
 use App\Modules\Bookings\Services\CancellationPenaltyCalculator;
 use App\Modules\Catalog\Contracts\CatalogInventory;
-use App\Modules\Crm\Models\Traveler;
+use App\Modules\Customers\Models\Traveler;
 use App\Modules\Identity\Models\User;
 use App\Modules\Organization\Contracts\AppSettings;
 use App\Modules\Shared\Enums\Permission;

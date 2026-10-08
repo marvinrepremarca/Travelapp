@@ -13,3 +13,6 @@
 
 ### Cambiado
 - El **embudo de ventas** es un tablero kanban: las etapas (Nuevo, Contactado, Cotizado) van lado a lado, con los leads apilados en tarjetas (contacto, destino, fecha de viaje, canal) y desplazamiento horizontal en pantallas pequeñas, "Mostrando N de M" y **Ver más** por etapa para listas largas.
+
+## 2026-10-22
+- Clientes y viajeros pasan al módulo del núcleo `Customers` (ADR-0007). Crm queda como capacidad Comercial (prospectos).

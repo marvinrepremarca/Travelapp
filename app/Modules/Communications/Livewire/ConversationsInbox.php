@@ -81,7 +81,7 @@ final class ConversationsInbox extends Component
 
         $customerUlid = $leads->customerOf($conversation->lead_ulid);
         if ($customerUlid === null) {
-            $this->redirectRoute('crm.customers.create', ['lead' => $conversation->lead_ulid], navigate: true);
+            $this->redirectRoute('customers.create', ['lead' => $conversation->lead_ulid], navigate: true);
 
             return;
         }

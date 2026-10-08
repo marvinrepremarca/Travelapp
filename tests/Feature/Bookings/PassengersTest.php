@@ -8,7 +8,7 @@ use App\Modules\Bookings\Enums\BookingItemStatus;
 use App\Modules\Bookings\Exceptions\BookingRuleViolation;
 use App\Modules\Bookings\Livewire\BookingShow;
 use App\Modules\Bookings\Models\Booking;
-use App\Modules\Crm\Models\Traveler;
+use App\Modules\Customers\Models\Traveler;
 use App\Modules\Pricing\Models\MarkupRule;
 use App\Modules\Shared\Enums\PassengerType;
 use Carbon\CarbonImmutable;

@@ -143,7 +143,7 @@ final class SupplierShow extends Component
 
     public function revealAccount(string $accountUlid, RevealBankAccountAction $reveal): void
     {
-        $this->validate(['revealReason' => ['required', 'string', 'max:255']], attributes: ['revealReason' => __('crm.customers.reveal_reason')]);
+        $this->validate(['revealReason' => ['required', 'string', 'max:255']], attributes: ['revealReason' => __('customers.reveal_reason')]);
         $account = $this->supplier()->bankAccounts()->where('ulid', $accountUlid)->first() ?? abort(404);
 
         try {

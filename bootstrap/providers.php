@@ -8,6 +8,7 @@ use App\Modules\Catalog\Providers\CatalogServiceProvider;
 use App\Modules\Communications\Providers\CommunicationsServiceProvider;
 use App\Modules\Compliance\Providers\ComplianceServiceProvider;
 use App\Modules\Crm\Providers\CrmServiceProvider;
+use App\Modules\Customers\Providers\CustomersServiceProvider;
 use App\Modules\Documents\Providers\DocumentsServiceProvider;
 use App\Modules\Finance\Providers\FinanceServiceProvider;
 use App\Modules\Identity\Providers\IdentityServiceProvider;
@@ -31,6 +32,7 @@ return [
     IdentityServiceProvider::class,
     AuditServiceProvider::class,
     WorkflowServiceProvider::class,
+    CustomersServiceProvider::class,
     CrmServiceProvider::class,
     SuppliersServiceProvider::class,
     PricingServiceProvider::class,

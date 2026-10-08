@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Quotes\Livewire;
 
-use App\Modules\Crm\Models\Customer;
+use App\Modules\Customers\Models\Customer;
 use App\Modules\Identity\Models\User;
 use App\Modules\Quotes\Actions\CreateQuoteAction;
 use App\Modules\Quotes\Models\Quote;

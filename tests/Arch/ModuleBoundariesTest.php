@@ -58,3 +58,10 @@ arch('models use immutable dates')
     ->not->toUse(['DateTime', \Carbon\Carbon::class, \Illuminate\Support\Carbon::class]);
 
 arch()->preset()->security()->ignoring('assert');
+
+arch('core modules never depend on switchable capabilities (ADR-0007)')
+    ->expect(array_map(static fn(string $m): string => "App\\Modules\\{$m}", CORE_MODULES))
+    ->not->toUse(array_map(
+        static fn(string $m): string => "App\\Modules\\{$m}",
+        array_values(array_diff(MODULES, CORE_MODULES)),
+    ));

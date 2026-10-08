@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Modules\Catalog\Actions\AddSeasonAction;
 use App\Modules\Catalog\Models\CatalogProduct;
-use App\Modules\Crm\Models\Customer;
+use App\Modules\Customers\Models\Customer;
 use App\Modules\Identity\Enums\Role;
 use App\Modules\Pricing\Actions\RecordExchangeRateAction;
 use App\Modules\Pricing\Database\Seeders\TaxReferenceSeeder;

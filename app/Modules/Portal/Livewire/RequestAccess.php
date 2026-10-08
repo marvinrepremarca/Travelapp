@@ -6,7 +6,7 @@ namespace App\Modules\Portal\Livewire;
 
 use App\Modules\Bookings\Contracts\TravelerTrips;
 use App\Modules\Bookings\Data\Trip;
-use App\Modules\Crm\Contracts\CustomerContacts;
+use App\Modules\Customers\Contracts\CustomerContacts;
 use App\Modules\Portal\Services\TripAccessNotifier;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;

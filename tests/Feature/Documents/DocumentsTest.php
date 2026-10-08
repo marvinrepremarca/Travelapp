@@ -7,7 +7,7 @@ use App\Modules\Bookings\Actions\ChangeItemStatusAction;
 use App\Modules\Bookings\Actions\ConfirmItemAction;
 use App\Modules\Bookings\Enums\BookingItemStatus;
 use App\Modules\Bookings\Services\BookingDocuments;
-use App\Modules\Crm\Models\Traveler;
+use App\Modules\Customers\Models\Traveler;
 use App\Modules\Identity\Enums\Role;
 use App\Modules\Identity\Models\User;
 use App\Modules\Organization\Contracts\AgencyLetterhead;

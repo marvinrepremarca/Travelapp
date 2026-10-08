@@ -10,7 +10,7 @@
             <x-ui.field :label="__('suppliers.fields.tax_id')" for="tax_id">
                 <x-ui.input name="tax_id" wire:model="tax_id" required />
             </x-ui.field>
-            <x-ui.field :label="__('suppliers.fields.country')" for="country" :hint="__('crm.customers.country_hint')">
+            <x-ui.field :label="__('suppliers.fields.country')" for="country" :hint="__('customers.country_hint')">
                 <x-ui.input name="country" wire:model.live="country" maxlength="2" hint required />
             </x-ui.field>
             <label class="flex items-center gap-sm text-body md:col-span-2">

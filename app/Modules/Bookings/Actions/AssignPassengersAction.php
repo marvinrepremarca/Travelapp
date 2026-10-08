@@ -7,7 +7,7 @@ namespace App\Modules\Bookings\Actions;
 use App\Modules\Bookings\Exceptions\BookingRuleViolation;
 use App\Modules\Bookings\Models\BookingItem;
 use App\Modules\Bookings\Models\BookingItemPassenger;
-use App\Modules\Crm\Models\Traveler;
+use App\Modules\Customers\Models\Traveler;
 use App\Modules\Shared\Enums\AuditLogName;
 use App\Modules\Shared\Enums\PassengerType;
 use Illuminate\Support\Facades\DB;
