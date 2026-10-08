@@ -64,7 +64,7 @@
                 @foreach ($bookings as $booking)
                     <tr wire:key="booking-{{ $booking->ulid }}">
                         <th scope="row" class="px-md py-sm text-left">
-                            <a href="{{ route('bookings.show', $booking->ulid) }}" class="font-medium text-brand underline" wire:navigate>{{ $booking->number }}</a>
+                            <x-ui.capability-link route="bookings.show" :params="$booking->ulid" class="font-medium text-brand underline">{{ $booking->number }}</x-ui.capability-link>
                             <p class="text-caption text-text-subtle">{{ $booking->title }} · {{ $owners[$booking->ownerId] ?? '—' }} · {{ $booking->soldAt->timezone($timezone)->locale(app()->getLocale())->isoFormat('ll') }}</p>
                         </th>
                         @foreach ($values($booking->figures) as $column => $value)

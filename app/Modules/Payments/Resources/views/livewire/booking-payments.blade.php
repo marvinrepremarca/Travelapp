@@ -6,7 +6,7 @@
 <div class="flex flex-col gap-lg">
     <x-ui.card>
         <div class="flex flex-col gap-sm">
-            <p class="text-text-subtle">{{ $account->title }} · {{ $account->customerName }} · <a href="{{ route('bookings.show', $account->ulid) }}" wire:navigate class="text-brand underline">{{ __('payments.view_booking') }}</a></p>
+            <p class="text-text-subtle">{{ $account->title }} · {{ $account->customerName }} · <x-ui.capability-link route="bookings.show" :params="$account->ulid" class="text-brand underline">{{ __('payments.view_booking') }}</x-ui.capability-link></p>
             <dl class="grid gap-md md:grid-cols-4">
                 <div><dt class="text-caption text-text-subtle">{{ __('payments.summary.total') }}</dt><dd class="font-medium">{{ $presenter->format($summary->total) }}</dd></div>
                 <div><dt class="text-caption text-text-subtle">{{ __('payments.summary.paid') }}</dt><dd class="font-medium text-success">{{ $presenter->format($summary->paid) }}</dd></div>

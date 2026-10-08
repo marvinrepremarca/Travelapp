@@ -16,7 +16,7 @@
             <p class="flex flex-wrap gap-md">
                 <a href="{{ route('bookings.itinerary', $booking) }}" class="text-brand underline">{{ __('bookings.pdf.itinerary') }}</a>
                 @if (Route::has('payments.booking'))
-                    <a href="{{ route('payments.booking', $booking->ulid) }}" wire:navigate class="text-brand underline">{{ __('payments.link') }}</a>
+                    <x-ui.capability-link route="payments.booking" :params="$booking->ulid" class="text-brand underline">{{ __('payments.link') }}</x-ui.capability-link>
                 @endif
             </p>
             @if ($missingPassengers > 0)

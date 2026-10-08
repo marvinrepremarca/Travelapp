@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Shared\Capabilities;
 
 use App\Modules\Shared\Enums\Capability;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -66,6 +67,21 @@ final class Capabilities
             . implode(self::LIST_SEPARATOR, array_map(static fn(Capability $c): string => $c->value, $capabilities));
     }
 
+    /**
+     * Registra un contrato que otras capacidades consumen: con la capacidad dueña encendida entrega la
+     * implementación real; apagada, la nula. El consumidor no se entera (ADR-0007).
+     *
+     * @param  class-string  $contract
+     * @param  class-string  $real
+     * @param  class-string  $null
+     */
+    public static function bindContract(Application $app, Capability $owner, string $contract, string $real, string $null): void
+    {
+        $app->bind($contract, static fn(Application $container): object => $container->make(
+            $container->make(self::class)->enabled($owner) ? $real : $null,
+        ));
+    }
+
     /** ¿La ruta existe y todas sus capacidades están encendidas? Para menús y enlaces entre pantallas. */
     public function allowsRoute(string $name): bool
     {
@@ -88,6 +104,15 @@ final class Capabilities
         }
 
         return true;
+    }
+
+    /**
+     * URL de una pantalla de otra capacidad, o null si está apagada: los enlaces entre capacidades se
+     * vuelven texto en lugar de llevar a una página que no existe.
+     */
+    public static function routeUrl(string $name, mixed $parameters = []): ?string
+    {
+        return app(self::class)->allowsRoute($name) ? route($name, $parameters) : null;
     }
 
     /** @return array<string, bool> */

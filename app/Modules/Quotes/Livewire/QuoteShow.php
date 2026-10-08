@@ -24,6 +24,8 @@ use App\Modules\Quotes\Models\QuoteItem;
 use App\Modules\Quotes\Models\QuoteOption;
 use App\Modules\Quotes\Services\ItineraryBuilder;
 use App\Modules\Quotes\Services\QuoteLinks;
+use App\Modules\Shared\Capabilities\Capabilities;
+use App\Modules\Shared\Enums\Capability;
 use App\Modules\Shared\Enums\Permission;
 use App\Modules\Shared\Enums\ProductType;
 use App\Modules\Shared\Exceptions\BusinessRuleException;
@@ -68,6 +70,24 @@ final class QuoteShow extends Component
         $this->quote = $quote;
         $this->optionUlid = (string) $quote->options()->value('ulid');
         $this->item['net_currency'] = $quote->sale_currency;
+        if (! $this->catalogAvailable()) {
+            $this->item['kind'] = QuoteItemKind::Manual->value;
+        }
+    }
+
+    /** Sin la capacidad Producto propio no se cotizan productos del catálogo: solo servicios de proveedor o manuales. */
+    private function catalogAvailable(): bool
+    {
+        return app(Capabilities::class)->enabled(Capability::OwnProduct);
+    }
+
+    /** @return list<QuoteItemKind> */
+    private function availableKinds(): array
+    {
+        return array_values(array_filter(
+            QuoteItemKind::cases(),
+            fn(QuoteItemKind $kind): bool => $kind !== QuoteItemKind::Catalog || $this->catalogAvailable(),
+        ));
     }
 
     public function addOption(AddOptionAction $add): void
@@ -175,9 +195,9 @@ final class QuoteShow extends Component
             'presenter' => $presenter,
             'canSeeMargin' => $this->actor()->can(Permission::MarginsView->value) || ! $settings->hideMarginsFromAgents(),
             'editable' => $editable,
-            'catalogProducts' => $editable ? CatalogProduct::query()->where('is_active', true)->orderBy('name')->pluck('name', 'ulid')->all() : [],
+            'catalogProducts' => $editable && $this->catalogAvailable() ? CatalogProduct::query()->where('is_active', true)->orderBy('name')->pluck('name', 'ulid')->all() : [],
             'suppliers' => $editable ? Supplier::query()->where('is_active', true)->orderBy('trade_name')->pluck('trade_name', 'id')->all() : [],
-            'kinds' => QuoteItemKind::cases(),
+            'kinds' => $this->availableKinds(),
             'productTypes' => ProductType::cases(),
             'timezone' => config()->string('travel.agency.timezone'),
         ])->title($quote->number . ' · ' . $quote->title)
@@ -189,7 +209,7 @@ final class QuoteShow extends Component
         $isCatalog = $this->item['kind'] === QuoteItemKind::Catalog->value;
         $manual = $isCatalog ? 'exclude' : 'required';
         $data = $this->validate([
-            'item.kind' => ['required', Rule::enum(QuoteItemKind::class)],
+            'item.kind' => ['required', Rule::enum(QuoteItemKind::class)->only($this->availableKinds())],
             'item.catalog_product' => [$isCatalog ? 'required' : 'exclude', Rule::exists('catalog_products', 'ulid')->where('is_active', true)],
             'item.product_type' => [$manual, Rule::enum(ProductType::class)],
             'item.description' => [$manual, 'string', 'max:255'],

@@ -35,7 +35,7 @@
                     @foreach ($ready as $candidate)
                         <tr wire:key="ready-{{ $candidate->ulid }}">
                             <th scope="row" class="px-md py-sm text-left">
-                                <a href="{{ route('bookings.show', $candidate->ulid) }}" wire:navigate class="font-medium text-brand underline">{{ $candidate->number }}</a>
+                                <x-ui.capability-link route="bookings.show" :params="$candidate->ulid" class="font-medium text-brand underline">{{ $candidate->number }}</x-ui.capability-link>
                                 <p class="text-caption text-text-subtle">{{ $candidate->title }}</p>
                             </th>
                             <td class="px-md py-sm">{{ $candidate->customerName }}</td>

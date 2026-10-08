@@ -16,6 +16,8 @@ use App\Modules\Payments\Services\EloquentBookingCollections;
 use App\Modules\Payments\Services\EloquentReceivedPayments;
 use App\Modules\Payments\Services\LedgerCustomerPayments;
 use App\Modules\Payments\Services\LedgerUpcomingBalances;
+use App\Modules\Payments\Services\NullReceivedPayments;
+use App\Modules\Payments\Services\NullUpcomingBalances;
 use App\Modules\Payments\Services\WebhookReceiver;
 use App\Modules\Shared\Capabilities\Capabilities;
 use App\Modules\Shared\Enums\Capability;
@@ -38,11 +40,16 @@ final class PaymentsServiceProvider extends ServiceProvider
     /** @var array<class-string, class-string> */
     public array $singletons = [
         GatewayWebhooks::class => WebhookReceiver::class,
-        ReceivedPayments::class => EloquentReceivedPayments::class,
         BookingCollections::class => EloquentBookingCollections::class,
-        UpcomingBalances::class => LedgerUpcomingBalances::class,
         CustomerPayments::class => LedgerCustomerPayments::class,
     ];
+
+    public function register(): void
+    {
+        // Contratos que consumen otras capacidades: con Cobros apagada se entrega la implementación nula (ADR-0007).
+        Capabilities::bindContract($this->app, Capability::Collections, ReceivedPayments::class, EloquentReceivedPayments::class, NullReceivedPayments::class);
+        Capabilities::bindContract($this->app, Capability::Collections, UpcomingBalances::class, LedgerUpcomingBalances::class, NullUpcomingBalances::class);
+    }
 
     public function boot(): void
     {
