@@ -51,7 +51,7 @@ it('keeps quoting fully usable with accounting, invoicing and collections off', 
 
     actingAs($agent)->get(route('quotes.index'))->assertOk();
     actingAs($agent)->get(route('quotes.create'))->assertOk();
-    actingAs($agent)->get(route('dashboard'))->assertOk()->assertDontSee(__('navigation.items.invoicing.label'));
+    actingAs($agent)->get(route('dashboard'))->assertOk()->assertDontSee(route('invoicing.index'));
 });
 
 it('keeps core customers available when the commercial capability is off', function (): void {
@@ -85,4 +85,17 @@ it('reports a valid configuration to the deploy check', function (): void {
     artisan('capabilities:status', ['--check' => true])
         ->expectsOutputToContain(__('capabilities.status.ok'))
         ->assertSuccessful();
+});
+
+it('describes every capability and its state in the startup guide', function (): void {
+    disableCapabilities(Capability::Accounting);
+
+    $response = actingAs(userWithRole(Role::AgencyOwner))->get(route('dashboard'))->assertOk();
+
+    $response->assertSee(__('capabilities.guide.title'))
+        ->assertSee(__('capabilities.guide.always_on'))
+        ->assertSee(__('capabilities.status.off'));
+    foreach (Capability::cases() as $capability) {
+        $response->assertSee($capability->label())->assertSee(__("capabilities.descriptions.{$capability->value}"));
+    }
 });
