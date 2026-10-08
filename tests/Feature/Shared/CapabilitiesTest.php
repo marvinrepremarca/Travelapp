@@ -86,3 +86,16 @@ it('reports a valid configuration to the deploy check', function (): void {
         ->expectsOutputToContain(__('capabilities.status.ok'))
         ->assertSuccessful();
 });
+
+it('describes every capability and its state in the startup guide', function (): void {
+    disableCapabilities(Capability::Accounting);
+
+    $response = actingAs(userWithRole(Role::AgencyOwner))->get(route('dashboard'))->assertOk();
+
+    $response->assertSee(__('capabilities.guide.title'))
+        ->assertSee(__('capabilities.guide.always_on'))
+        ->assertSee(__('capabilities.status.off'));
+    foreach (Capability::cases() as $capability) {
+        $response->assertSee($capability->label())->assertSee(__("capabilities.descriptions.{$capability->value}"));
+    }
+});
