@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Reports\Queries;
 
 use App\Modules\Bookings\Contracts\BookingMetrics;
+use App\Modules\Bookings\Data\ReceivableBase;
 use App\Modules\Payments\Contracts\BookingCollections;
 use App\Modules\Reports\Data\Receivable;
 use App\Modules\Shared\Contracts\ScopedViewer;
@@ -29,7 +30,7 @@ final readonly class ReceivablesQuery
     {
         $currency = config()->string('travel.agency.default_currency');
         $bases = $this->bookings->receivableBases($viewer, $currency, config()->integer('travel.reports.receivables_scan_limit'));
-        $collected = $this->collections->netCollected(array_fill_keys(array_map(static fn($base): string => $base->bookingUlid, $bases), $currency));
+        $collected = $this->collections->netCollected(array_fill_keys(array_map(static fn(ReceivableBase $base): string => $base->bookingUlid, $bases), $currency));
         $soon = $today->addDays(config()->integer('travel.reports.due_soon_days'));
         $buckets = AgingBuckets::zero($currency);
         $items = [];
