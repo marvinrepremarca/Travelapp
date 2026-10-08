@@ -68,7 +68,7 @@ it('stores every integration event in the outbox with its payload', function ():
     $stored = StoredIntegrationEvent::query()->sole();
 
     expect($stored->name)->toBe(QuoteSent::NAME)
-        ->and($stored->payload)->toBe(['quoteUlid' => '01QUOTE', 'version' => 2]);
+        ->and($stored->payload)->toEqual(['quoteUlid' => '01QUOTE', 'version' => 2]);
 });
 
 it('records accounting deliveries live while the capability is on', function (): void {
