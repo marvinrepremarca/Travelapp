@@ -51,7 +51,7 @@ it('keeps quoting fully usable with accounting, invoicing and collections off', 
 
     actingAs($agent)->get(route('quotes.index'))->assertOk();
     actingAs($agent)->get(route('quotes.create'))->assertOk();
-    actingAs($agent)->get(route('dashboard'))->assertOk()->assertDontSee(__('navigation.items.invoicing.label'));
+    actingAs($agent)->get(route('dashboard'))->assertOk()->assertDontSee(route('invoicing.index'));
 });
 
 it('keeps core customers available when the commercial capability is off', function (): void {
