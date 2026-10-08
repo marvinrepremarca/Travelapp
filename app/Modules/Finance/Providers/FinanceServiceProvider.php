@@ -16,6 +16,7 @@ use App\Modules\Finance\Livewire\PayablesIndex;
 use App\Modules\Finance\Livewire\ProfitabilityScreen;
 use App\Modules\Finance\Livewire\ReconciliationScreen;
 use App\Modules\Finance\Services\CashDesk;
+use App\Modules\Shared\Enums\Capability;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -32,7 +33,7 @@ final class FinanceServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
         if (! $this->app->routesAreCached()) {
-            PathPrefix::load(__DIR__ . '/../Routes/web.php');
+            PathPrefix::load(__DIR__ . '/../Routes/web.php', Capability::Accounting);
         }
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'finance');
 

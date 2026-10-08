@@ -17,6 +17,7 @@ use App\Modules\Catalog\Services\EloquentCatalogInventory;
 use App\Modules\Catalog\Services\EloquentCatalogRates;
 use App\Modules\Catalog\Services\EloquentDepartureSchedule;
 use App\Modules\Catalog\Services\EloquentShopCatalog;
+use App\Modules\Shared\Enums\Capability;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -36,7 +37,7 @@ final class CatalogServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
         if (! $this->app->routesAreCached()) {
-            PathPrefix::load(__DIR__ . '/../Routes/web.php');
+            PathPrefix::load(__DIR__ . '/../Routes/web.php', Capability::OwnProduct);
         }
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'catalog');
 

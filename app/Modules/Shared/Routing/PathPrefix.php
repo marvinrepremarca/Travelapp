@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Shared\Routing;
 
+use App\Modules\Shared\Capabilities\Capabilities;
+use App\Modules\Shared\Enums\Capability;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -23,9 +25,14 @@ final class PathPrefix
         return '/' . trim(self::value() . '/' . trim($path, '/'), '/');
     }
 
-    /** Registra un archivo de rutas bajo el prefijo. */
-    public static function load(string $routesFile): void
+    /** Registra un archivo de rutas bajo el prefijo; si pertenece a capacidades activables, responde 404 cuando estén apagadas. */
+    public static function load(string $routesFile, Capability ...$capabilities): void
     {
-        Route::prefix(self::value())->group($routesFile);
+        $routes = Route::prefix(self::value());
+        if ($capabilities !== []) {
+            $routes->middleware(Capabilities::middleware(...$capabilities));
+        }
+
+        $routes->group($routesFile);
     }
 }

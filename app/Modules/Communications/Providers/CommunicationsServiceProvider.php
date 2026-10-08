@@ -17,6 +17,7 @@ use App\Modules\Communications\Services\WebhookIntake;
 use App\Modules\Payments\Events\PaymentLinkCreated;
 use App\Modules\Payments\Events\PaymentReceived;
 use App\Modules\Quotes\Events\QuoteSent;
+use App\Modules\Shared\Enums\Capability;
 use App\Modules\Shared\Routing\PathPrefix;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -45,7 +46,7 @@ final class CommunicationsServiceProvider extends ServiceProvider
 
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
         if (! $this->app->routesAreCached()) {
-            PathPrefix::load(__DIR__ . '/../Routes/web.php');
+            PathPrefix::load(__DIR__ . '/../Routes/web.php', Capability::Messaging);
         }
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'communications');
 

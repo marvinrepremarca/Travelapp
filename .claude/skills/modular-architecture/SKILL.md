@@ -45,6 +45,15 @@ Traducciones en `lang/es/<modulo>.php`. `Shared` solo contiene lo verdaderamente
 
 **Excepción:** `Reports` lee (SELECT) cualquier tabla; nunca escribe.
 
+## Capacidades activables (ADR-0007)
+
+- Cada módulo de negocio pertenece a una `Capability` (enum en Shared); el núcleo (Organization, Identity, Audit, Workflow, Pricing, Suppliers, Documents, clientes) no se apaga.
+- Interruptores en `config/capabilities.php` (`CAPABILITY_<NOMBRE>_ENABLED`); `php artisan capabilities:status --check` en cada despliegue.
+- Rutas: `PathPrefix::load($archivo, Capability::X)` o `Capabilities::middleware(Capability::X)` por grupo → 404 si está apagada. Los webhooks entrantes nunca se bloquean (`withoutMiddleware`).
+- Menú y enlaces entre pantallas: `Capabilities::allowsRoute($nombre)`.
+- Apagar nunca borra datos. Lo que una capacidad necesita de otra llega por eventos o por un `Contract` con implementación nula.
+- Tests: `disableCapabilities(Capability::X)` en `tests/Pest.php`.
+
 ## Una agencia, sucursales y alcance de visibilidad (ADR-0002)
 
 - No hay multi-tenancy: el sistema pertenece a una sola agencia. Sus datos y configuración viven en `Organization`.
@@ -75,5 +84,6 @@ Cambiar stack, agregar un módulo con dependencias nuevas, romper un límite, ca
 - [ ] Solo se usa la API pública de otros módulos (Contracts, Data, Enums, Events, Models de lectura).
 - [ ] Ningún módulo escribe tablas de otro; comunicación por contrato o evento; sin ciclos.
 - [ ] Provider registrado, rutas con nombres `<modulo>.*`, traducciones en `lang/es/<modulo>.php`.
+- [ ] Rutas nuevas protegidas por su capacidad; la funcionalidad sigue en pie con las demás capacidades apagadas.
 - [ ] Modelos operativos con `HasVisibilityScope`; listados con `visibleTo()`.
 - [ ] Arch tests actualizados y en verde; ADR si se cambió un límite.

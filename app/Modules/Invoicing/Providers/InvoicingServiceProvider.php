@@ -10,6 +10,7 @@ use App\Modules\Invoicing\Listeners\SubmitInvoiceToEInvoicing;
 use App\Modules\Invoicing\Livewire\InvoiceShow;
 use App\Modules\Invoicing\Livewire\InvoicesIndex;
 use App\Modules\Invoicing\Services\InvoiceNumbering;
+use App\Modules\Shared\Enums\Capability;
 use App\Modules\Shared\Routing\PathPrefix;
 use App\Modules\Workflow\Events\ApprovalResolved;
 use Illuminate\Support\Facades\Event;
@@ -27,7 +28,7 @@ final class InvoicingServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
         if (! $this->app->routesAreCached()) {
-            PathPrefix::load(__DIR__ . '/../Routes/web.php');
+            PathPrefix::load(__DIR__ . '/../Routes/web.php', Capability::Invoicing);
         }
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'invoicing');
 

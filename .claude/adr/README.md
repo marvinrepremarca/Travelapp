@@ -9,3 +9,4 @@
 | [0004](0004-facturacion-electronica-preparada.md) | Facturación electrónica preparada, sin integración inicial | Aceptado |
 | [0005](0005-pdf-con-dompdf.md) | Documentos PDF con spatie/laravel-pdf y motor DomPDF | Aceptado |
 | [0006](0006-proveedores-de-prueba-y-cambio-de-proveedor.md) | Proveedores de prueba (Duffel, LiteAPI) y cambio de proveedor por configuración | Aceptado |
+| [0007](0007-capacidades-activables.md) | Capacidades de negocio activables e independientes | Aceptado |

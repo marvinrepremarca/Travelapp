@@ -17,6 +17,7 @@ use App\Modules\Payments\Services\EloquentReceivedPayments;
 use App\Modules\Payments\Services\LedgerCustomerPayments;
 use App\Modules\Payments\Services\LedgerUpcomingBalances;
 use App\Modules\Payments\Services\WebhookReceiver;
+use App\Modules\Shared\Enums\Capability;
 use App\Modules\Shared\Routing\PathPrefix;
 use App\Modules\Workflow\Events\ApprovalResolved;
 use Carbon\CarbonImmutable;
@@ -48,7 +49,7 @@ final class PaymentsServiceProvider extends ServiceProvider
 
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
         if (! $this->app->routesAreCached()) {
-            PathPrefix::load(__DIR__ . '/../Routes/web.php');
+            PathPrefix::load(__DIR__ . '/../Routes/web.php', Capability::Collections);
         }
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'payments');
 

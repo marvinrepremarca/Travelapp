@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Modules\Shared\Capabilities\Capabilities;
 use App\Modules\Shared\Routing\PathPrefix;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -25,8 +26,19 @@ final class AppServiceProvider extends ServiceProvider
 
     private const SEARCH_REQUESTS_PER_MINUTE = 30;
 
+    /** @var array<class-string, class-string> */
+    public array $singletons = [
+        Capabilities::class => Capabilities::class,
+    ];
+
     public function boot(): void
     {
+        // Falla cerrado si el despliegue enciende una capacidad sin la que necesita; la consola queda libre
+        // para diagnosticar con `capabilities:status`.
+        if (! $this->app->runningInConsole()) {
+            $this->app->make(Capabilities::class)->assertConsistent();
+        }
+
         $production = $this->app->isProduction();
 
         Model::shouldBeStrict(! $production);
