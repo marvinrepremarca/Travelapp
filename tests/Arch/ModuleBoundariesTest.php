@@ -65,3 +65,10 @@ arch('core modules never depend on switchable capabilities (ADR-0007)')
         static fn(string $m): string => "App\\Modules\\{$m}",
         array_values(array_diff(MODULES, CORE_MODULES)),
     ));
+
+arch('reports read other capabilities only through their contracts (ADR-0007)')
+    ->expect('App\Modules\Reports')
+    ->not->toUse(array_map(
+        static fn(string $m): string => "App\\Modules\\{$m}\\Models",
+        array_values(array_diff(MODULES, CORE_MODULES, ['Reports'])),
+    ));

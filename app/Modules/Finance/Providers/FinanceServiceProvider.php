@@ -7,6 +7,7 @@ namespace App\Modules\Finance\Providers;
 use App\Modules\Bookings\Events\BookingItemCancelled;
 use App\Modules\Bookings\Events\BookingItemConfirmed;
 use App\Modules\Finance\Contracts\CashRegister;
+use App\Modules\Finance\Contracts\FinanceMetrics;
 use App\Modules\Finance\Listeners\RegisterSupplierPayable;
 use App\Modules\Finance\Listeners\VoidSupplierPayable;
 use App\Modules\Finance\Livewire\BankAccountForm;
@@ -16,7 +17,9 @@ use App\Modules\Finance\Livewire\PayablesIndex;
 use App\Modules\Finance\Livewire\ProfitabilityScreen;
 use App\Modules\Finance\Livewire\ReconciliationScreen;
 use App\Modules\Finance\Services\CashDesk;
+use App\Modules\Finance\Services\EloquentFinanceMetrics;
 use App\Modules\Finance\Services\NullCashRegister;
+use App\Modules\Finance\Services\NullFinanceMetrics;
 use App\Modules\Shared\Capabilities\Capabilities;
 use App\Modules\Shared\Enums\Capability;
 use App\Modules\Shared\Enums\CatchUpPolicy;
@@ -35,6 +38,7 @@ final class FinanceServiceProvider extends ServiceProvider
     {
         // Contratos que consumen otras capacidades: con Contabilidad apagada se entrega la implementación nula (ADR-0007).
         Capabilities::bindContract($this->app, Capability::Accounting, CashRegister::class, CashDesk::class, NullCashRegister::class);
+        Capabilities::bindContract($this->app, Capability::Accounting, FinanceMetrics::class, EloquentFinanceMetrics::class, NullFinanceMetrics::class);
     }
 
     public function boot(): void
@@ -57,5 +61,6 @@ final class FinanceServiceProvider extends ServiceProvider
         $subscriptions = $this->app->make(CapabilitySubscriptions::class);
         $subscriptions->listen(Capability::Accounting, BookingItemConfirmed::class, RegisterSupplierPayable::class, CatchUpPolicy::Replay);
         $subscriptions->listen(Capability::Accounting, BookingItemCancelled::class, VoidSupplierPayable::class, CatchUpPolicy::Replay);
+        Capabilities::bindContract($this->app, Capability::Accounting, FinanceMetrics::class, EloquentFinanceMetrics::class, NullFinanceMetrics::class);
     }
 }
