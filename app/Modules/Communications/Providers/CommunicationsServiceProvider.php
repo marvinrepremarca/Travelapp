@@ -13,6 +13,7 @@ use App\Modules\Communications\Listeners\SendQuoteNotice;
 use App\Modules\Communications\Livewire\ConversationsInbox;
 use App\Modules\Communications\Services\EloquentConversationTranscripts;
 use App\Modules\Communications\Services\NotifierCustomerNotices;
+use App\Modules\Communications\Services\NullCustomerNotices;
 use App\Modules\Communications\Services\WebhookIntake;
 use App\Modules\Payments\Events\PaymentLinkCreated;
 use App\Modules\Payments\Events\PaymentReceived;
@@ -38,8 +39,13 @@ final class CommunicationsServiceProvider extends ServiceProvider
     public array $singletons = [
         InboundMessages::class => WebhookIntake::class,
         ConversationTranscripts::class => EloquentConversationTranscripts::class,
-        CustomerNotices::class => NotifierCustomerNotices::class,
     ];
+
+    public function register(): void
+    {
+        // Contratos que consumen otras capacidades: con Mensajería apagada se entrega la implementación nula (ADR-0007).
+        Capabilities::bindContract($this->app, Capability::Messaging, CustomerNotices::class, NotifierCustomerNotices::class, NullCustomerNotices::class);
+    }
 
     public function boot(): void
     {

@@ -10,13 +10,13 @@
             <x-ui.stat :label="__('reports.kpi.sales')" :value="$presenter->format($sales->total->sale)"
                 :hint="$growth === null ? __('reports.no_previous') : __('reports.vs_previous', ['growth' => $growth])"
                 :tone="$growth === null ? null : (str_starts_with($growth, '-') ? 'danger' : 'success')"
-                :href="route('bookings.index')" />
-            <x-ui.stat :label="__('reports.kpi.margin')" :value="$presenter->format($sales->total->margin())" :hint="$rate($sales->total)" :href="route('finance.profitability', ['month' => $period->key()])" />
+                :href="\App\Modules\Shared\Capabilities\Capabilities::routeUrl('bookings.index')" />
+            <x-ui.stat :label="__('reports.kpi.margin')" :value="$presenter->format($sales->total->margin())" :hint="$rate($sales->total)" :href="\App\Modules\Shared\Capabilities\Capabilities::routeUrl('finance.profitability', ['month' => $period->key()])" />
             <x-ui.stat :label="__('reports.kpi.bookings')" :value="(string) $sales->total->bookings"
                 :hint="$sales->total->averageTicket() ? __('reports.kpi.ticket', ['amount' => $presenter->format($sales->total->averageTicket())]) : null"
-                :href="route('bookings.index')" />
+                :href="\App\Modules\Shared\Capabilities\Capabilities::routeUrl('bookings.index')" />
             <x-ui.stat :label="__('reports.kpi.conversion')" :value="$funnel->conversion() !== null ? __('reports.rate', ['rate' => $funnel->conversion()]) : '—'"
-                :hint="__('reports.kpi.conversion_hint', ['accepted' => $funnel->quotesAccepted, 'sent' => $funnel->quotesSent])" :href="route('quotes.index')" />
+                :hint="__('reports.kpi.conversion_hint', ['accepted' => $funnel->quotesAccepted, 'sent' => $funnel->quotesSent])" :href="\App\Modules\Shared\Capabilities\Capabilities::routeUrl('quotes.index')" />
         </div>
 
         <x-ui.card :title="__('reports.management.daily')">
@@ -91,8 +91,8 @@
         </x-ui.table>
 
         <div class="flex flex-wrap gap-sm">
-            <x-ui.link-button variant="secondary" :href="route('reports.export', ['report' => 'sales_by_owner', 'month' => $period->key()])">{{ __('reports.export.sales_by_owner') }}</x-ui.link-button>
-            <x-ui.link-button variant="secondary" :href="route('reports.export', ['report' => 'sales_by_branch', 'month' => $period->key()])">{{ __('reports.export.sales_by_branch') }}</x-ui.link-button>
+            <x-ui.link-button variant="secondary" :href="\App\Modules\Shared\Capabilities\Capabilities::routeUrl('reports.export', ['report' => 'sales_by_owner', 'month' => $period->key()])">{{ __('reports.export.sales_by_owner') }}</x-ui.link-button>
+            <x-ui.link-button variant="secondary" :href="\App\Modules\Shared\Capabilities\Capabilities::routeUrl('reports.export', ['report' => 'sales_by_branch', 'month' => $period->key()])">{{ __('reports.export.sales_by_branch') }}</x-ui.link-button>
         </div>
         <p class="text-caption text-text-subtle">{{ __('reports.management.definition', ['currency' => $sales->currency]) }}</p>
     </div>

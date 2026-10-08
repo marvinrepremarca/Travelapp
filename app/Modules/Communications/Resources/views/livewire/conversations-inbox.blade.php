@@ -54,7 +54,7 @@
                             <x-ui.button type="button" wire:click="quote" wire:loading.attr="disabled" wire:target="quote">{{ __('communications.quote') }}</x-ui.button>
                         @endif
                         @if ($selected->lead_ulid)
-                            <x-ui.link-button variant="secondary" :href="route('crm.leads.show', $selected->lead_ulid)">{{ __('communications.open_lead') }}</x-ui.link-button>
+                            @if ($leadUrl = \App\Modules\Shared\Capabilities\Capabilities::routeUrl('crm.leads.show', $selected->lead_ulid))<x-ui.link-button variant="secondary" :href="$leadUrl">{{ __('communications.open_lead') }}</x-ui.link-button>@endif
                         @endif
                         @if ($selected->status->isOpen() && ($selected->owner_id === null || $selected->owner_id === $actor->id))
                             <x-ui.button type="button" variant="ghost" wire:click="close" wire:confirm="{{ __('communications.confirm_close') }}" wire:loading.attr="disabled" wire:target="close">{{ __('communications.close') }}</x-ui.button>

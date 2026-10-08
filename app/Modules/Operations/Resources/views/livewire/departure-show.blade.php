@@ -112,7 +112,7 @@
             @foreach ($passengers as $index => $passenger)
                 <tr wire:key="passenger-{{ $index }}">
                     <th scope="row" class="px-md py-sm text-left font-medium">{{ $passenger->travelerName }}</th>
-                    <td class="px-md py-sm"><a href="{{ route('bookings.show', $passenger->bookingUlid) }}" wire:navigate class="text-brand underline">{{ $passenger->bookingNumber }}</a></td>
+                    <td class="px-md py-sm"><x-ui.capability-link route="bookings.show" :params="$passenger->bookingUlid" class="text-brand underline">{{ $passenger->bookingNumber }}</x-ui.capability-link></td>
                     <td class="px-md py-sm">{{ $passenger->age }} · {{ $passenger->passengerType }}</td>
                     <td class="px-md py-sm">{{ $passenger->nationality }}</td>
                     <td class="px-md py-sm">{{ $passenger->maskedDocument ?: '—' }}</td>

@@ -32,6 +32,8 @@ enum Capability: string
     {
         return match ($this) {
             self::Portals => [self::Bookings],
+            // Las salidas que se operan son las del catálogo propio.
+            self::Operations => [self::OwnProduct],
             default => [],
         };
     }

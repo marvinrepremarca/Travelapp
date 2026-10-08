@@ -21,7 +21,7 @@
             @endif
             @if ($quote->status === QuoteStatus::Accepted && Route::has('bookings.from-quote'))
                 <div class="flex justify-end">
-                    <x-ui.link-button :href="route('bookings.from-quote', $quote->ulid)">{{ __('bookings.convert.from_quote_link') }}</x-ui.link-button>
+                    @if ($convertUrl = \App\Modules\Shared\Capabilities\Capabilities::routeUrl('bookings.from-quote', $quote->ulid))<x-ui.link-button :href="$convertUrl">{{ __('bookings.convert.from_quote_link') }}</x-ui.link-button>@endif
                 </div>
             @endif
             @if ($quote->status === QuoteStatus::Accepted)

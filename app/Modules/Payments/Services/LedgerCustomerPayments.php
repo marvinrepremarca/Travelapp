@@ -12,6 +12,8 @@ use App\Modules\Payments\Data\BalanceSummary;
 use App\Modules\Payments\Enums\PaymentMethod;
 use App\Modules\Payments\Enums\PaymentStatus;
 use App\Modules\Payments\Models\Payment;
+use App\Modules\Shared\Capabilities\Capabilities;
+use App\Modules\Shared\Enums\Capability;
 use Carbon\CarbonImmutable;
 
 /** El link lo crea el sistema a nombre del asesor responsable del expediente (queda en su estado de cuenta). */
@@ -21,6 +23,7 @@ final readonly class LedgerCustomerPayments implements CustomerPayments
         private BookingAccounts $accounts,
         private PaymentLedger $ledger,
         private CreatePaymentLinkAction $links,
+        private Capabilities $capabilities,
     ) {}
 
     public function statement(string $bookingUlid): BalanceSummary
@@ -30,6 +33,11 @@ final readonly class LedgerCustomerPayments implements CustomerPayments
 
     public function payBalanceUrl(string $bookingUlid): ?string
     {
+        // Con Cobros apagada no se ofrecen ni se crean links de pago; el estado de cuenta sigue visible.
+        if (! $this->capabilities->enabled(Capability::Collections)) {
+            return null;
+        }
+
         $now = CarbonImmutable::now();
         $open = Payment::query()
             ->where('booking_ulid', $bookingUlid)

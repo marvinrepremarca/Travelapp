@@ -16,6 +16,8 @@ use App\Modules\Finance\Livewire\PayablesIndex;
 use App\Modules\Finance\Livewire\ProfitabilityScreen;
 use App\Modules\Finance\Livewire\ReconciliationScreen;
 use App\Modules\Finance\Services\CashDesk;
+use App\Modules\Finance\Services\NullCashRegister;
+use App\Modules\Shared\Capabilities\Capabilities;
 use App\Modules\Shared\Enums\Capability;
 use App\Modules\Shared\Enums\CatchUpPolicy;
 use App\Modules\Shared\IntegrationEvents\CapabilitySubscriptions;
@@ -27,8 +29,13 @@ final class FinanceServiceProvider extends ServiceProvider
 {
     /** @var array<class-string, class-string> */
     public array $singletons = [
-        CashRegister::class => CashDesk::class,
     ];
+
+    public function register(): void
+    {
+        // Contratos que consumen otras capacidades: con Contabilidad apagada se entrega la implementación nula (ADR-0007).
+        Capabilities::bindContract($this->app, Capability::Accounting, CashRegister::class, CashDesk::class, NullCashRegister::class);
+    }
 
     public function boot(): void
     {

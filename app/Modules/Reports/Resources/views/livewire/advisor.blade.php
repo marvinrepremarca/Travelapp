@@ -6,13 +6,13 @@
 
     <div wire:loading.remove wire:target="month" class="flex flex-col gap-lg">
         <div class="grid gap-md md:grid-cols-4">
-            <x-ui.stat :label="__('reports.kpi.my_sales')" :value="$presenter->format($sales->total->sale)" :href="route('bookings.index')" />
+            <x-ui.stat :label="__('reports.kpi.my_sales')" :value="$presenter->format($sales->total->sale)" :href="\App\Modules\Shared\Capabilities\Capabilities::routeUrl('bookings.index')" />
             @if ($canSeeMargins)
                 <x-ui.stat :label="__('reports.kpi.margin')" :value="$presenter->format($sales->total->margin())" :hint="$sales->total->marginRate() !== null ? __('reports.rate', ['rate' => $sales->total->marginRate()]) : null" />
             @endif
-            <x-ui.stat :label="__('reports.kpi.bookings')" :value="(string) $sales->total->bookings" :href="route('bookings.index')" />
+            <x-ui.stat :label="__('reports.kpi.bookings')" :value="(string) $sales->total->bookings" :href="\App\Modules\Shared\Capabilities\Capabilities::routeUrl('bookings.index')" />
             <x-ui.stat :label="__('reports.kpi.conversion')" :value="$funnel->conversion() !== null ? __('reports.rate', ['rate' => $funnel->conversion()]) : '—'"
-                :hint="__('reports.kpi.conversion_hint', ['accepted' => $funnel->quotesAccepted, 'sent' => $funnel->quotesSent])" :href="route('quotes.index')" />
+                :hint="__('reports.kpi.conversion_hint', ['accepted' => $funnel->quotesAccepted, 'sent' => $funnel->quotesSent])" :href="\App\Modules\Shared\Capabilities\Capabilities::routeUrl('quotes.index')" />
         </div>
 
         <div class="grid gap-lg lg:grid-cols-3">
@@ -30,10 +30,10 @@
             </x-ui.card>
             <x-ui.card :title="__('reports.advisor.expiring_quotes')">
                 @forelse ($quotes as $quote)
-                    <a wire:key="quote-{{ $quote->ulid }}" href="{{ route('quotes.show', $quote) }}" wire:navigate class="flex flex-col border-b border-border py-xs hover:bg-muted">
+                    <x-ui.capability-link wire:key="quote-{{ $quote->ulid }}" route="quotes.show" :params="$quote" class="flex flex-col border-b border-border py-xs hover:bg-muted">
                         <span class="font-medium">{{ $quote->number }} · {{ $quote->customer->display_name }}</span>
                         <span class="text-caption text-danger">{{ __('reports.advisor.expires', ['date' => $date($quote->valid_until)]) }}</span>
-                    </a>
+                    </x-ui.capability-link>
                 @empty
                     <p class="text-text-subtle">{{ __('reports.advisor.no_expiring') }}</p>
                 @endforelse
@@ -41,10 +41,10 @@
 
             <x-ui.card :title="__('reports.advisor.open_leads')">
                 @forelse ($leads as $lead)
-                    <a wire:key="lead-{{ $lead->ulid }}" href="{{ route('crm.leads.show', $lead) }}" wire:navigate class="flex flex-col border-b border-border py-xs hover:bg-muted">
+                    <x-ui.capability-link wire:key="lead-{{ $lead->ulid }}" route="crm.leads.show" :params="$lead" class="flex flex-col border-b border-border py-xs hover:bg-muted">
                         <span class="font-medium">{{ $lead->contact_name }}</span>
                         <span class="text-caption text-text-subtle">{{ $lead->destination ?? __('crm.leads.no_destination') }} · {{ $lead->status->label() }}</span>
-                    </a>
+                    </x-ui.capability-link>
                 @empty
                     <p class="text-text-subtle">{{ __('reports.advisor.no_leads') }}</p>
                 @endforelse
@@ -52,10 +52,10 @@
 
             <x-ui.card :title="__('reports.advisor.upcoming_trips')">
                 @forelse ($trips as $trip)
-                    <a wire:key="trip-{{ $trip->ulid }}" href="{{ route('bookings.show', $trip) }}" wire:navigate class="flex flex-col border-b border-border py-xs hover:bg-muted">
+                    <x-ui.capability-link wire:key="trip-{{ $trip->ulid }}" route="bookings.show" :params="$trip" class="flex flex-col border-b border-border py-xs hover:bg-muted">
                         <span class="font-medium">{{ $trip->number }} · {{ $trip->customer->display_name }}</span>
                         <span class="text-caption text-text-subtle">{{ __('reports.advisor.starts', ['date' => \Carbon\CarbonImmutable::parse((string) $trip->getAttribute('next_service_date'))->locale(app()->getLocale())->isoFormat('ll')]) }}</span>
-                    </a>
+                    </x-ui.capability-link>
                 @empty
                     <p class="text-text-subtle">{{ __('reports.advisor.no_trips') }}</p>
                 @endforelse

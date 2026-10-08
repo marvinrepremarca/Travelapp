@@ -10,7 +10,7 @@
             <div><dt class="text-caption text-text-subtle">{{ __('invoicing.customer') }}</dt><dd class="font-medium">{{ $invoice->customer_name }}</dd>
                 <dd class="text-caption text-text-subtle">{{ $invoice->customer_document_type->label() }} · {{ __('invoicing.masked_document', ['last' => mb_substr($invoice->customer_document_number, -4)]) }}</dd></div>
             <div><dt class="text-caption text-text-subtle">{{ __('invoicing.booking') }}</dt>
-                <dd><a href="{{ route('bookings.show', $invoice->booking_ulid) }}" wire:navigate class="font-medium text-brand underline">{{ $invoice->booking_number }}</a></dd></div>
+                <dd><x-ui.capability-link route="bookings.show" :params="$invoice->booking_ulid" class="font-medium text-brand underline">{{ $invoice->booking_number }}</x-ui.capability-link></dd></div>
             <div><dt class="text-caption text-text-subtle">{{ __('invoicing.issued_at') }}</dt><dd>{{ $invoice->issued_at->timezone($timezone)->locale(app()->getLocale())->isoFormat('lll') }}</dd></div>
             @if ($invoice->related)
                 <div><dt class="text-caption text-text-subtle">{{ __('invoicing.related') }}</dt>

@@ -13,7 +13,8 @@ Route::middleware(['web', 'auth'])
     ->prefix('payments')
     ->name('payments.')
     ->group(function (): void {
-        Route::get('/bookings/{booking}', BookingPayments::class)->name('booking');
+        // Cobros de un expediente: necesita también Reservas.
+        Route::get('/bookings/{booking}', BookingPayments::class)->middleware(Capabilities::middleware(Capability::Bookings))->name('booking');
     });
 
 // Webhooks de pasarelas: sin grupo web (sin sesión ni CSRF); la firma autentica y el limitador protege.

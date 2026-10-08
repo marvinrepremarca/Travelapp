@@ -19,6 +19,8 @@ use App\Modules\Bookings\Services\EloquentBookingInvoicing;
 use App\Modules\Bookings\Services\EloquentBookingProfitLines;
 use App\Modules\Bookings\Services\EloquentDepartureManifests;
 use App\Modules\Bookings\Services\EloquentTravelerTrips;
+use App\Modules\Bookings\Services\NullBookingProfitLines;
+use App\Modules\Shared\Capabilities\Capabilities;
 use App\Modules\Shared\Enums\Capability;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Support\Facades\Gate;
@@ -30,11 +32,16 @@ final class BookingsServiceProvider extends ServiceProvider
     /** @var array<class-string, class-string> */
     public array $singletons = [
         BookingAccounts::class => EloquentBookingAccounts::class,
-        BookingProfitLines::class => EloquentBookingProfitLines::class,
         BookingInvoicing::class => EloquentBookingInvoicing::class,
         TravelerTrips::class => EloquentTravelerTrips::class,
         DepartureManifests::class => EloquentDepartureManifests::class,
     ];
+
+    public function register(): void
+    {
+        // Contratos que consumen otras capacidades: con Reservas apagada se entrega la implementación nula (ADR-0007).
+        Capabilities::bindContract($this->app, Capability::Bookings, BookingProfitLines::class, EloquentBookingProfitLines::class, NullBookingProfitLines::class);
+    }
 
     public function boot(): void
     {
