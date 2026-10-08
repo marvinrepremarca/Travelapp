@@ -50,7 +50,7 @@ final readonly class IssueDebitNoteAction
         }
 
         $note = DB::transaction(fn(): Invoice => $this->writer->write(InvoiceType::DebitNote, $invoice, $lines, $reason, $actor, $now));
-        InvoiceIssued::dispatch($note->ulid, InvoiceType::DebitNote, $note->booking_ulid);
+        (new InvoiceIssued($note->ulid, InvoiceType::DebitNote, $note->booking_ulid))->publish();
 
         return $note;
     }

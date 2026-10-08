@@ -54,7 +54,7 @@ final readonly class ChangeItemStatusAction
             }
 
             if ($next === BookingItemStatus::Cancelled) {
-                BookingItemCancelled::dispatch($item->ulid);
+                (new BookingItemCancelled($item->ulid))->publish();
             }
 
             return $item;

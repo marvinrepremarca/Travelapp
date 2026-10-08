@@ -11,10 +11,11 @@ use App\Modules\Portal\Livewire\ShopIndex;
 use App\Modules\Portal\Livewire\ShopProductPage;
 use App\Modules\Portal\Livewire\TripPortal;
 use App\Modules\Shared\Enums\Capability;
+use App\Modules\Shared\Enums\CatchUpPolicy;
+use App\Modules\Shared\IntegrationEvents\CapabilitySubscriptions;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -39,6 +40,6 @@ final class PortalServiceProvider extends ServiceProvider
         Livewire::component('portal.shop', ShopIndex::class);
         Livewire::component('portal.shop-product', ShopProductPage::class);
 
-        Event::listen(BookingItemConfirmed::class, SendTripPortalLink::class);
+        $this->app->make(CapabilitySubscriptions::class)->listen(Capability::Portals, BookingItemConfirmed::class, SendTripPortalLink::class, CatchUpPolicy::Skip);
     }
 }

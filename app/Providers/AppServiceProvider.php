@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Modules\Shared\Capabilities\Capabilities;
+use App\Modules\Shared\IntegrationEvents\CapabilitySubscriptions;
+use App\Modules\Shared\IntegrationEvents\CatchUpIntegrationEvents;
+use App\Modules\Shared\IntegrationEvents\IntegrationEventOutbox;
 use App\Modules\Shared\Routing\PathPrefix;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
@@ -29,6 +33,8 @@ final class AppServiceProvider extends ServiceProvider
     /** @var array<class-string, class-string> */
     public array $singletons = [
         Capabilities::class => Capabilities::class,
+        IntegrationEventOutbox::class => IntegrationEventOutbox::class,
+        CapabilitySubscriptions::class => CapabilitySubscriptions::class,
     ];
 
     public function boot(): void
@@ -59,6 +65,15 @@ final class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('search', static fn(Request $request): Limit => Limit::perMinute(self::SEARCH_REQUESTS_PER_MINUTE)
             ->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())));
+
+        // Las capacidades encendidas reconocen lo que ocurrió mientras estuvieron apagadas (ADR-0007).
+        $this->callAfterResolving(Schedule::class, static function (Schedule $schedule): void {
+            $schedule->call(static fn(): int => app(CatchUpIntegrationEvents::class)->run())
+                ->name('capabilities:catch-up')
+                ->cron(config()->string('capabilities.catch_up.cron'))
+                ->withoutOverlapping()
+                ->onOneServer();
+        });
 
         RateLimiter::for('health', static fn(Request $request): Limit => Limit::perMinute(config()->integer('travel.health.requests_per_minute'))
             ->by((string) $request->ip()));

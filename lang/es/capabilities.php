@@ -18,6 +18,9 @@ return [
     ],
     'missing_requirement' => ':capability necesita :required, que está apagada',
     'invalid_configuration' => 'Configuración de capacidades inválida: :problems',
+    'catch_up' => [
+        'done' => 'Eventos pendientes procesados: :count',
+    ],
     'status' => [
         'capability' => 'Capacidad',
         'state' => 'Estado',

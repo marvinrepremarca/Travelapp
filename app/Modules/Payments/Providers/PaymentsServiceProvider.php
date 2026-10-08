@@ -17,14 +17,16 @@ use App\Modules\Payments\Services\EloquentReceivedPayments;
 use App\Modules\Payments\Services\LedgerCustomerPayments;
 use App\Modules\Payments\Services\LedgerUpcomingBalances;
 use App\Modules\Payments\Services\WebhookReceiver;
+use App\Modules\Shared\Capabilities\Capabilities;
 use App\Modules\Shared\Enums\Capability;
+use App\Modules\Shared\Enums\CatchUpPolicy;
+use App\Modules\Shared\IntegrationEvents\CapabilitySubscriptions;
 use App\Modules\Shared\Routing\PathPrefix;
 use App\Modules\Workflow\Events\ApprovalResolved;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -56,13 +58,14 @@ final class PaymentsServiceProvider extends ServiceProvider
         Livewire::component('payments.booking', BookingPayments::class);
 
         // La decisión de finanzas sobre un reembolso llega por evento del módulo Workflow.
-        Event::listen(ApprovalResolved::class, ApplyRefundDecision::class);
+        $this->app->make(CapabilitySubscriptions::class)->listen(Capability::Collections, ApprovalResolved::class, ApplyRefundDecision::class, CatchUpPolicy::Replay);
 
         // Los links vencidos liberan su monto del saldo cobrable.
         $this->callAfterResolving(Schedule::class, static function (Schedule $schedule): void {
             $schedule->call(static fn(): int => app(ExpirePaymentLinksAction::class)->execute(CarbonImmutable::now()))
                 ->name('payments:expire-links')
                 ->everyFifteenMinutes()
+                ->when(static fn(): bool => app(Capabilities::class)->enabled(Capability::Collections))
                 ->withoutOverlapping()
                 ->onOneServer();
         });

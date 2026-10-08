@@ -56,7 +56,7 @@ final readonly class ConfirmItemAction
             $this->workflow->transition($item, BookingItemStatus::Confirmed, null, $now);
             $booking = $item->booking()->firstOrFail();
 
-            BookingItemConfirmed::dispatch(
+            (new BookingItemConfirmed(
                 $item->ulid,
                 $booking->ulid,
                 (string) $booking->number,
@@ -67,7 +67,7 @@ final readonly class ConfirmItemAction
                 $item->net_amount_minor,
                 $item->net_currency,
                 $item->service_date,
-            );
+            ))->publish();
 
             return $item;
         });

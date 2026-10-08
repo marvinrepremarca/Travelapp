@@ -55,7 +55,7 @@ final readonly class AcceptQuoteAction
             throw QuoteRuleViolation::expired();
         }
 
-        QuoteAccepted::dispatch($accepted->ulid, $optionUlid, (int) $accepted->accepted_version);
+        (new QuoteAccepted($accepted->ulid, $optionUlid, (int) $accepted->accepted_version))->publish();
 
         return $accepted;
     }

@@ -60,7 +60,7 @@ final readonly class CreatePaymentLinkAction
         $payment->recorded_by = $actor->id;
         $payment->save();
 
-        PaymentLinkCreated::dispatch($payment->ulid, $payment->booking_ulid, $payment->amount_minor, $payment->currency, $link->url, $expiresAt);
+        (new PaymentLinkCreated($payment->ulid, $payment->booking_ulid, $payment->amount_minor, $payment->currency, $link->url, $expiresAt))->publish();
 
         return $payment;
     }
