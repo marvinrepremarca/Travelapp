@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Invoicing\Models;
 
-use App\Modules\Crm\Enums\DocumentType;
+use App\Modules\Customers\Enums\DocumentType;
 use App\Modules\Invoicing\Enums\EInvoiceStatus;
 use App\Modules\Invoicing\Enums\InvoiceType;
 use App\Modules\Shared\Concerns\HasVisibilityScope;

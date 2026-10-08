@@ -8,7 +8,7 @@ use App\Modules\Bookings\Contracts\BookingInvoicing;
 use App\Modules\Bookings\Data\InvoiceableBooking;
 use App\Modules\Bookings\Data\InvoiceableLine;
 use App\Modules\Bookings\Enums\BookingStatus;
-use App\Modules\Crm\Models\Customer;
+use App\Modules\Customers\Models\Customer;
 use App\Modules\Identity\Models\User;
 use App\Modules\Invoicing\Enums\EInvoiceStatus;
 use App\Modules\Invoicing\Enums\InvoiceLineKind;

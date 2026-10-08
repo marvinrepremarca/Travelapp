@@ -22,7 +22,7 @@ use App\Modules\Compliance\Livewire\ObligationForm;
 use App\Modules\Compliance\Models\ComplianceDocument;
 use App\Modules\Compliance\Models\ComplianceObligation;
 use App\Modules\Compliance\Models\DataSubjectRequest;
-use App\Modules\Crm\Enums\ConsentChannel;
+use App\Modules\Customers\Enums\ConsentChannel;
 use App\Modules\Identity\Enums\Role;
 use App\Modules\Identity\Models\User;
 use App\Modules\Workflow\Models\Task;

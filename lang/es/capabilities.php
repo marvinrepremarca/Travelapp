@@ -44,6 +44,7 @@ return [
             'Todo evento de negocio queda en una bitácora: al encender Contabilidad, Facturación o Cobros, reconocen en orden lo ocurrido mientras estuvieron apagadas, sin duplicar.',
             'Los avisos al cliente que se perdieron su momento (WhatsApp, enlace del portal) no se envían tarde.',
             'Antes de desplegar se valida que ninguna capacidad encendida dependa de una apagada.',
+            'Clientes y viajeros son parte del núcleo: se registran a mano aunque Comercial esté apagada, y se vinculan al prospecto cuando está encendida.',
         ],
         'how_to' => 'Para cambiar las capacidades activas, el administrador técnico ajusta la configuración del despliegue y verifica con la comprobación de capacidades.',
     ],

@@ -21,7 +21,7 @@
                     @if ($lead->customer)
                         <div>
                             <dt class="text-caption text-text-subtle">{{ __('crm.leads.customer') }}</dt>
-                            <dd><a href="{{ route('crm.customers.show', $lead->customer) }}" wire:navigate class="text-brand underline">{{ $lead->customer->display_name }}</a></dd>
+                            <dd><a href="{{ route('customers.show', $lead->customer) }}" wire:navigate class="text-brand underline">{{ $lead->customer->display_name }}</a></dd>
                         </div>
                     @endif
                     @if ($lead->lost_reason)
@@ -88,7 +88,7 @@
                     <x-ui.field :label="__('crm.leads.customer')" for="customerUlid" :hint="__('crm.leads.win_hint')">
                         <x-ui.select name="customerUlid" wire:model="customerUlid" :options="$customers" :placeholder="__('crm.leads.choose_customer')" hint />
                     </x-ui.field>
-                    <x-ui.link-button :href="route('crm.customers.create')" variant="secondary">{{ __('crm.customers.create') }}</x-ui.link-button>
+                    <x-ui.link-button :href="route('customers.create')" variant="secondary">{{ __('customers.create') }}</x-ui.link-button>
                     <x-ui.button wire:click="move('{{ LeadStatus::Won->value }}')" wire:loading.attr="disabled">{{ __('crm.leads.mark_won') }}</x-ui.button>
                 </div>
             </x-ui.card>

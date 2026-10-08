@@ -57,7 +57,7 @@ it('keeps quoting fully usable with accounting, invoicing and collections off', 
 it('keeps core customers available when the commercial capability is off', function (): void {
     disableCapabilities(Capability::Commercial);
 
-    actingAs(agent())->get(route('crm.customers.index'))->assertOk();
+    actingAs(agent())->get(route('customers.index'))->assertOk();
 });
 
 it('keeps receiving gateway webhooks with collections off so no payment is lost', function (): void {

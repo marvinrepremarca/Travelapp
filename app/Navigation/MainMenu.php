@@ -36,7 +36,7 @@ final readonly class MainMenu
             ['simulator', 'pricing.simulator', null],
         ],
         'sales' => [
-            ['customers', 'crm.customers.index', null],
+            ['customers', 'customers.index', null],
             ['leads', 'crm.leads.index', null],
             ['whatsapp', 'communications.inbox', null],
             ['flights', 'search.flights', null],

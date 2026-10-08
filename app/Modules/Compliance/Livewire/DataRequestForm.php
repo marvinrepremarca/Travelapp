@@ -8,7 +8,7 @@ use App\Modules\Compliance\Actions\RegisterDataRequestAction;
 use App\Modules\Compliance\Data\DataRequestData;
 use App\Modules\Compliance\Enums\DataRequestType;
 use App\Modules\Compliance\Livewire\Concerns\AuthorizesCompliance;
-use App\Modules\Crm\Enums\ConsentChannel;
+use App\Modules\Customers\Enums\ConsentChannel;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Validation\Rule;

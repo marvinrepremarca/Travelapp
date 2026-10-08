@@ -6,7 +6,7 @@ namespace App\Modules\Compliance\Models;
 
 use App\Modules\Compliance\Enums\DataRequestStatus;
 use App\Modules\Compliance\Enums\DataRequestType;
-use App\Modules\Crm\Enums\ConsentChannel;
+use App\Modules\Customers\Enums\ConsentChannel;
 use App\Modules\Identity\Models\User;
 use App\Modules\Shared\Enums\AuditLogName;
 use Carbon\CarbonImmutable;

@@ -132,7 +132,7 @@
                         <li class="text-text-subtle">{{ __('suppliers.no_accounts') }}</li>
                     @endforelse
                 </ul>
-                <x-ui.field :label="__('crm.customers.reveal_reason')" for="revealReason" class="mt-md">
+                <x-ui.field :label="__('customers.reveal_reason')" for="revealReason" class="mt-md">
                     <x-ui.input name="revealReason" wire:model="revealReason" />
                 </x-ui.field>
                 <form wire:submit="addBankAccount" class="mt-md flex flex-col gap-sm" novalidate>

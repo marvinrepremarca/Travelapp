@@ -30,7 +30,7 @@ it('renders every backoffice screen within the query budget', function (string $
 })->with([
     'dashboard',
     'suppliers.index',
-    'crm.customers.index',
+    'customers.index',
     'crm.leads.index',
     'pricing.rates',
     'pricing.rules',

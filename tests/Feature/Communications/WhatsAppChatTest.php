@@ -217,10 +217,10 @@ it('goes from the chat to a quote creating the customer from the lead', function
         ->assertHasErrors('conversation')
         ->call('take')
         ->call('quote')
-        ->assertRedirect(route('crm.customers.create', ['lead' => conversation()->lead_ulid]));
+        ->assertRedirect(route('customers.create', ['lead' => conversation()->lead_ulid]));
 
     $lead = Lead::query()->where('ulid', conversation()->lead_ulid)->sole();
-    Livewire::withQueryParams(['lead' => $lead->ulid])->test(App\Modules\Crm\Livewire\CustomerForm::class)
+    Livewire::withQueryParams(['lead' => $lead->ulid])->test(App\Modules\Customers\Livewire\CustomerForm::class)
         ->assertSet('first_name', 'Laura')
         ->assertSet('last_name', 'Pérez')
         ->assertSet('phone', '+573005551234')
@@ -230,7 +230,7 @@ it('goes from the chat to a quote creating the customer from the lead', function
         ->assertHasNoErrors()
         ->assertRedirectContains('title=Viaje%20a%20Cartagena');
 
-    $customer = App\Modules\Crm\Models\Customer::query()->where('id', $lead->fresh()?->customer_id)->sole();
+    $customer = App\Modules\Customers\Models\Customer::query()->where('id', $lead->fresh()?->customer_id)->sole();
     Livewire::test(ConversationsInbox::class)
         ->call('select', $ulid)
         ->call('quote')

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Bookings\Models;
 
 use App\Modules\Bookings\Enums\BookingStatus;
-use App\Modules\Crm\Models\Customer;
+use App\Modules\Customers\Models\Customer;
 use App\Modules\Shared\Concerns\HasVisibilityScope;
 use App\Modules\Shared\Enums\AuditLogName;
 use Brick\Money\Money;

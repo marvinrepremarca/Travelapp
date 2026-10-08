@@ -26,7 +26,7 @@
             <x-ui.field :label="__('crm.leads.fields.travel_end')" for="travel_end">
                 <x-ui.input name="travel_end" type="date" wire:model="travel_end" />
             </x-ui.field>
-            <x-ui.field :label="__('crm.leads.fields.notes')" for="notes" class="md:col-span-2" :hint="__('crm.customers.notes_hint')">
+            <x-ui.field :label="__('crm.leads.fields.notes')" for="notes" class="md:col-span-2" :hint="__('customers.notes_hint')">
                 <x-ui.input name="notes" wire:model="notes" hint />
             </x-ui.field>
         </div>
