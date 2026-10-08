@@ -28,7 +28,7 @@ final class CancelApprovalAction
         $approval->decided_at = CarbonImmutable::now();
         $approval->save();
 
-        event(new ApprovalResolved($approval->ulid, $approval->type, ApprovalStatus::Cancelled, $approval->subject_type, $approval->subject_id));
+        (new ApprovalResolved($approval->ulid, $approval->type, ApprovalStatus::Cancelled, $approval->subject_type, $approval->subject_id))->publish();
 
         return $approval;
     }

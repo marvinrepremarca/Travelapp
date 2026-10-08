@@ -17,8 +17,9 @@ use App\Modules\Finance\Livewire\ProfitabilityScreen;
 use App\Modules\Finance\Livewire\ReconciliationScreen;
 use App\Modules\Finance\Services\CashDesk;
 use App\Modules\Shared\Enums\Capability;
+use App\Modules\Shared\Enums\CatchUpPolicy;
+use App\Modules\Shared\IntegrationEvents\CapabilitySubscriptions;
 use App\Modules\Shared\Routing\PathPrefix;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -45,7 +46,9 @@ final class FinanceServiceProvider extends ServiceProvider
         Livewire::component('finance.reconciliation', ReconciliationScreen::class);
 
         // Las obligaciones con proveedores siguen la vida de los servicios del expediente.
-        Event::listen(BookingItemConfirmed::class, RegisterSupplierPayable::class);
-        Event::listen(BookingItemCancelled::class, VoidSupplierPayable::class);
+        // Con Contabilidad apagada quedan en la bitácora y se registran al encenderla (ADR-0007).
+        $subscriptions = $this->app->make(CapabilitySubscriptions::class);
+        $subscriptions->listen(Capability::Accounting, BookingItemConfirmed::class, RegisterSupplierPayable::class, CatchUpPolicy::Replay);
+        $subscriptions->listen(Capability::Accounting, BookingItemCancelled::class, VoidSupplierPayable::class, CatchUpPolicy::Replay);
     }
 }

@@ -49,7 +49,7 @@ final readonly class IssueCreditNoteAction
         });
 
         if ($note instanceof Invoice) {
-            InvoiceIssued::dispatch($note->ulid, InvoiceType::CreditNote, $note->booking_ulid);
+            (new InvoiceIssued($note->ulid, InvoiceType::CreditNote, $note->booking_ulid))->publish();
         }
 
         return $note;

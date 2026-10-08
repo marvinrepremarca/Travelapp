@@ -31,7 +31,7 @@ final class ValidateTransferAction
             $payment->save();
 
             if ($approve) {
-                event(PaymentReceived::of($payment));
+                PaymentReceived::of($payment)->publish();
             }
 
             return $payment;

@@ -20,4 +20,11 @@ return [
         'portals' => (bool) env('CAPABILITY_PORTALS_ENABLED', true),
         'compliance' => (bool) env('CAPABILITY_COMPLIANCE_ENABLED', true),
     ],
+
+    // Reproceso de eventos pendientes al encender una capacidad (bitácora de integración).
+    'catch_up' => [
+        'cron' => env('CAPABILITY_CATCH_UP_CRON', '*/5 * * * *'),
+        'chunk' => (int) env('CAPABILITY_CATCH_UP_CHUNK', 100),
+        'lock_seconds' => (int) env('CAPABILITY_CATCH_UP_LOCK_SECONDS', 120),
+    ],
 ];

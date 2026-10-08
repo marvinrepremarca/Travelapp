@@ -11,9 +11,10 @@ use App\Modules\Invoicing\Livewire\InvoiceShow;
 use App\Modules\Invoicing\Livewire\InvoicesIndex;
 use App\Modules\Invoicing\Services\InvoiceNumbering;
 use App\Modules\Shared\Enums\Capability;
+use App\Modules\Shared\Enums\CatchUpPolicy;
+use App\Modules\Shared\IntegrationEvents\CapabilitySubscriptions;
 use App\Modules\Shared\Routing\PathPrefix;
 use App\Modules\Workflow\Events\ApprovalResolved;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -35,7 +36,8 @@ final class InvoicingServiceProvider extends ServiceProvider
         Livewire::component('invoicing.index', InvoicesIndex::class);
         Livewire::component('invoicing.show', InvoiceShow::class);
 
-        Event::listen(InvoiceIssued::class, SubmitInvoiceToEInvoicing::class);
-        Event::listen(ApprovalResolved::class, ApplyCreditNoteDecision::class);
+        $subscriptions = $this->app->make(CapabilitySubscriptions::class);
+        $subscriptions->listen(Capability::Invoicing, InvoiceIssued::class, SubmitInvoiceToEInvoicing::class, CatchUpPolicy::Replay);
+        $subscriptions->listen(Capability::Invoicing, ApprovalResolved::class, ApplyCreditNoteDecision::class, CatchUpPolicy::Replay);
     }
 }

@@ -41,7 +41,7 @@ final class ProcessGatewayEventJob implements ShouldQueue
                 $payment->approved_at = $event->outcome === PaymentStatus::Approved ? CarbonImmutable::now() : null;
                 $payment->save();
                 if ($payment->status === PaymentStatus::Approved) {
-                    event(PaymentReceived::of($payment));
+                    PaymentReceived::of($payment)->publish();
                 }
             }
 

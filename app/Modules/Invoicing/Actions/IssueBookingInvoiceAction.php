@@ -96,7 +96,7 @@ final readonly class IssueBookingInvoiceAction
             throw InvoicingRuleViolation::alreadyInvoiced();
         }
 
-        InvoiceIssued::dispatch($invoice->ulid, InvoiceType::Invoice, $booking->ulid);
+        (new InvoiceIssued($invoice->ulid, InvoiceType::Invoice, $booking->ulid))->publish();
 
         return $invoice;
     }

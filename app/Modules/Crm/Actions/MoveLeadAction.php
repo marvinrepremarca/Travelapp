@@ -47,7 +47,7 @@ final class MoveLeadAction
             $lead->save();
 
             if ($next === LeadStatus::Won) {
-                event(new LeadWon($lead->ulid, $customer->ulid, $lead->owner_id));
+                (new LeadWon($lead->ulid, $customer->ulid, $lead->owner_id))->publish();
             }
 
             return $lead;

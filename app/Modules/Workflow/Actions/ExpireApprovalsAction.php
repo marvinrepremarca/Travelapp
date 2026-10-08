@@ -27,7 +27,7 @@ final class ExpireApprovalsAction
                     $approval->decided_at = $now;
                     $approval->save();
 
-                    event(new ApprovalResolved($approval->ulid, $approval->type, ApprovalStatus::Expired, $approval->subject_type, $approval->subject_id));
+                    (new ApprovalResolved($approval->ulid, $approval->type, ApprovalStatus::Expired, $approval->subject_type, $approval->subject_id))->publish();
                     $expired++;
                 }
             });

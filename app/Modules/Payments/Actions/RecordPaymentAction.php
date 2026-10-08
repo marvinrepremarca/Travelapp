@@ -55,7 +55,7 @@ final readonly class RecordPaymentAction
             $payment->save();
 
             if ($payment->status === PaymentStatus::Approved) {
-                event(PaymentReceived::of($payment));
+                PaymentReceived::of($payment)->publish();
             }
 
             // El efectivo entra a la caja abierta de la sucursal de quien lo recibe; sin caja abierta no se recibe.

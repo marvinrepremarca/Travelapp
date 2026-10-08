@@ -51,7 +51,7 @@ final class ResolveApprovalAction
             $locked->decided_at = $now;
             $locked->save();
 
-            event(new ApprovalResolved($locked->ulid, $locked->type, $decision, $locked->subject_type, $locked->subject_id));
+            (new ApprovalResolved($locked->ulid, $locked->type, $decision, $locked->subject_type, $locked->subject_id))->publish();
 
             return $locked;
         });

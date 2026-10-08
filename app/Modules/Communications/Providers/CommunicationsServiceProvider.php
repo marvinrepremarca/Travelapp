@@ -17,13 +17,15 @@ use App\Modules\Communications\Services\WebhookIntake;
 use App\Modules\Payments\Events\PaymentLinkCreated;
 use App\Modules\Payments\Events\PaymentReceived;
 use App\Modules\Quotes\Events\QuoteSent;
+use App\Modules\Shared\Capabilities\Capabilities;
 use App\Modules\Shared\Enums\Capability;
+use App\Modules\Shared\Enums\CatchUpPolicy;
+use App\Modules\Shared\IntegrationEvents\CapabilitySubscriptions;
 use App\Modules\Shared\Routing\PathPrefix;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -52,16 +54,18 @@ final class CommunicationsServiceProvider extends ServiceProvider
 
         Livewire::component('communications.inbox', ConversationsInbox::class);
 
-        // Avisos automáticos por WhatsApp.
-        Event::listen(QuoteSent::class, SendQuoteNotice::class);
-        Event::listen(PaymentLinkCreated::class, [SendPaymentNotices::class, 'handleLink']);
-        Event::listen(PaymentReceived::class, [SendPaymentNotices::class, 'handleReceived']);
+        // Avisos automáticos por WhatsApp. Con Mensajería apagada se omiten: un aviso tardío confunde al cliente.
+        $subscriptions = $this->app->make(CapabilitySubscriptions::class);
+        $subscriptions->listen(Capability::Messaging, QuoteSent::class, SendQuoteNotice::class, CatchUpPolicy::Skip);
+        $subscriptions->listen(Capability::Messaging, PaymentLinkCreated::class, SendPaymentNotices::class, CatchUpPolicy::Skip, 'handleLink');
+        $subscriptions->listen(Capability::Messaging, PaymentReceived::class, SendPaymentNotices::class, CatchUpPolicy::Skip, 'handleReceived');
 
         $this->callAfterResolving(Schedule::class, static function (Schedule $schedule): void {
             $schedule->call(static fn(): int => app(SendBalanceRemindersAction::class)->execute(CarbonImmutable::now(config()->string('travel.agency.timezone'))))
                 ->name('communications:balance-reminders')
                 ->dailyAt(config()->string('travel.communications.balance_reminder_time'))
                 ->timezone(config()->string('travel.agency.timezone'))
+                ->when(static fn(): bool => app(Capabilities::class)->enabled(Capability::Messaging))
                 ->withoutOverlapping()
                 ->onOneServer();
         });

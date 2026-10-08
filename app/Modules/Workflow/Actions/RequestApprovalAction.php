@@ -47,7 +47,7 @@ final class RequestApprovalAction implements Approvals
             $approval->branch_id = $requester->branch_id;
             $approval->save();
 
-            event(new ApprovalRequested($approval->ulid, $approval->type, $subjectType, $subjectId));
+            (new ApprovalRequested($approval->ulid, $approval->type, $subjectType, $subjectId))->publish();
 
             return $approval;
         });
