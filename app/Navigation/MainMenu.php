@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Navigation;
 
 use App\Modules\Identity\Models\User;
+use App\Modules\Shared\Capabilities\Capabilities;
 use App\Modules\Shared\Enums\Permission;
-use Illuminate\Support\Facades\Route;
 
 /**
  * Menú principal ordenado por el orden en que se pone en marcha la agencia: cada etapa depende de las anteriores.
  * El número (1.2, 3.4…) indica qué hacer primero. Textos en lang/es/navigation.php.
  */
-final class MainMenu
+final readonly class MainMenu
 {
     /**
      * Etapas con sus pasos: [clave de texto, ruta, permiso requerido o null].
@@ -66,8 +66,10 @@ final class MainMenu
         ],
     ];
 
+    public function __construct(private Capabilities $capabilities) {}
+
     /**
-     * Etapas visibles para el usuario, numeradas: "2.3" = etapa 2, paso 3. Los pasos sin permiso se omiten
+     * Etapas visibles para el usuario, numeradas: "2.3" = etapa 2, paso 3. Los pasos sin permiso o de capacidades apagadas se omiten
      * pero conservan su número para que la guía sea la misma para todos.
      *
      * @return list<array{key: string, number: int, steps: list<array{number: string, key: string, route: string}>}>
@@ -80,7 +82,7 @@ final class MainMenu
             $stageNumber++;
             $visible = [];
             foreach ($steps as $index => [$key, $route, $permission]) {
-                if (! Route::has($route) || ($permission instanceof Permission && $user?->can($permission->value) !== true)) {
+                if (! $this->capabilities->allowsRoute($route) || ($permission instanceof Permission && $user?->can($permission->value) !== true)) {
                     continue;
                 }
 

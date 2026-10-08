@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Modules\Identity\Http\Middleware\RequireTwoFactorForRole;
+use App\Modules\Shared\Capabilities\Capabilities;
+use App\Modules\Shared\Capabilities\EnsureCapabilityEnabled;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -19,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->appendToGroup('web', RequireTwoFactorForRole::class);
+        $middleware->alias([Capabilities::MIDDLEWARE => EnsureCapabilityEnabled::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

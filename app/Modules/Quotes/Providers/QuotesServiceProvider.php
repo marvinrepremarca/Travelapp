@@ -17,6 +17,7 @@ use App\Modules\Quotes\Policies\QuotePolicy;
 use App\Modules\Quotes\Services\EloquentAcceptedQuotes;
 use App\Modules\Quotes\Services\EloquentSentQuotes;
 use App\Modules\Quotes\Services\EloquentSupplierOfferIntake;
+use App\Modules\Shared\Enums\Capability;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Console\Scheduling\Schedule;
@@ -44,7 +45,7 @@ final class QuotesServiceProvider extends ServiceProvider
 
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
         if (! $this->app->routesAreCached()) {
-            PathPrefix::load(__DIR__ . '/../Routes/web.php');
+            PathPrefix::load(__DIR__ . '/../Routes/web.php', Capability::Quoting);
         }
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'quotes');
 

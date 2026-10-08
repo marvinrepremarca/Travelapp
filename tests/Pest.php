@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Modules\Identity\Database\Seeders\RolesAndPermissionsSeeder;
 use App\Modules\Identity\Enums\Role;
 use App\Modules\Identity\Models\User;
+use App\Modules\Shared\Capabilities\Capabilities;
+use App\Modules\Shared\Enums\Capability;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -32,6 +34,16 @@ const MODULE_PUBLIC_API = ['Contracts', 'Data', 'Enums', 'Events', 'Models'];
 
 /** Carpetas internas: solo el propio módulo puede usarlas. */
 const MODULE_INTERNALS = ['Actions', 'Services', 'Http', 'Jobs', 'Listeners', 'Policies', 'Queries', 'Livewire', 'Sagas', 'Database'];
+
+/** Apaga capacidades para el escenario; el registro se recrea para leer la nueva configuración. */
+function disableCapabilities(Capability ...$capabilities): void
+{
+    foreach ($capabilities as $capability) {
+        config()->set("capabilities.enabled.{$capability->value}", false);
+    }
+
+    app()->forgetInstance(Capabilities::class);
+}
 
 function userWithRole(Role $role): User
 {

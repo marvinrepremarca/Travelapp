@@ -9,6 +9,7 @@ use App\Modules\Operations\Livewire\DepartureShow;
 use App\Modules\Operations\Livewire\GuideForm;
 use App\Modules\Operations\Livewire\ResourcesIndex;
 use App\Modules\Operations\Livewire\VehicleForm;
+use App\Modules\Shared\Enums\Capability;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -20,7 +21,7 @@ final class OperationsServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
         if (! $this->app->routesAreCached()) {
-            PathPrefix::load(__DIR__ . '/../Routes/web.php');
+            PathPrefix::load(__DIR__ . '/../Routes/web.php', Capability::Operations);
         }
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'operations');
 

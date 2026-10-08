@@ -19,6 +19,7 @@ use App\Modules\Bookings\Services\EloquentBookingInvoicing;
 use App\Modules\Bookings\Services\EloquentBookingProfitLines;
 use App\Modules\Bookings\Services\EloquentDepartureManifests;
 use App\Modules\Bookings\Services\EloquentTravelerTrips;
+use App\Modules\Shared\Enums\Capability;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -39,7 +40,7 @@ final class BookingsServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
         if (! $this->app->routesAreCached()) {
-            PathPrefix::load(__DIR__ . '/../Routes/web.php');
+            PathPrefix::load(__DIR__ . '/../Routes/web.php', Capability::Bookings);
         }
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'bookings');
 

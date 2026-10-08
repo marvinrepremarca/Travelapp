@@ -11,6 +11,7 @@ use App\Modules\Compliance\Livewire\DataRequestsIndex;
 use App\Modules\Compliance\Livewire\DocumentForm;
 use App\Modules\Compliance\Livewire\DocumentsIndex;
 use App\Modules\Compliance\Livewire\ObligationForm;
+use App\Modules\Shared\Enums\Capability;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -22,7 +23,7 @@ final class ComplianceServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
         if (! $this->app->routesAreCached()) {
-            PathPrefix::load(__DIR__ . '/../Routes/web.php');
+            PathPrefix::load(__DIR__ . '/../Routes/web.php', Capability::Compliance);
         }
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'compliance');
 

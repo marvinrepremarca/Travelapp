@@ -8,6 +8,8 @@ use App\Modules\Portal\Livewire\ShopIndex;
 use App\Modules\Portal\Livewire\ShopProductPage;
 use App\Modules\Portal\Livewire\TripPortal;
 use App\Modules\Portal\Providers\PortalServiceProvider;
+use App\Modules\Shared\Capabilities\Capabilities;
+use App\Modules\Shared\Enums\Capability;
 use Illuminate\Support\Facades\Route;
 
 // Portal del viajero: sin sesión; el acceso lo da el enlace firmado y vigente ("enlace mágico").
@@ -25,7 +27,7 @@ Route::middleware(['web', 'throttle:' . PortalServiceProvider::LINK_LIMITER])
     ->name('portal.access');
 
 // Tienda B2C pública: productos propios con salidas abiertas; las solicitudes llegan como leads a un asesor.
-Route::middleware(['web', 'throttle:' . PortalServiceProvider::LINK_LIMITER])
+Route::middleware(['web', 'throttle:' . PortalServiceProvider::LINK_LIMITER, Capabilities::middleware(Capability::OwnProduct)])
     ->prefix('shop')
     ->name('portal.shop')
     ->group(function (): void {

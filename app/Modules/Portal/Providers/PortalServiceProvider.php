@@ -10,6 +10,7 @@ use App\Modules\Portal\Livewire\RequestAccess;
 use App\Modules\Portal\Livewire\ShopIndex;
 use App\Modules\Portal\Livewire\ShopProductPage;
 use App\Modules\Portal\Livewire\TripPortal;
+use App\Modules\Shared\Enums\Capability;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -29,7 +30,7 @@ final class PortalServiceProvider extends ServiceProvider
             ->by((string) $request->ip()));
 
         if (! $this->app->routesAreCached()) {
-            PathPrefix::load(__DIR__ . '/../Routes/web.php');
+            PathPrefix::load(__DIR__ . '/../Routes/web.php', Capability::Portals);
         }
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'portal');
 
