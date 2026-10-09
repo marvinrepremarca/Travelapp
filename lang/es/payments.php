@@ -77,7 +77,14 @@ return [
             ],
         ],
     ],
+    'advances' => [
+        'title' => 'Anticipos del cliente sin aplicar',
+        'help' => 'Abonos que el cliente hizo antes de tener este expediente. Al aplicarlos cuentan en su saldo.',
+        'apply' => 'Aplicar a este expediente',
+        'applied' => 'Anticipo de :amount aplicado al expediente.',
+    ],
     'errors' => [
+        'advance_not_applicable' => 'Ese abono no es un anticipo aprobado de este cliente o ya está aplicado.',
         'invalid_amount' => 'El valor del abono debe ser mayor que cero.',
         'method_not_allowed_without_booking' => 'Sin expediente solo se reciben abonos en efectivo o por transferencia.',
         'exceeds_balance' => 'El valor supera lo que se puede cobrar (:balance).',

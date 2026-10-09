@@ -17,3 +17,6 @@
 
 ## 2026-10-25
 - Abonos de clientes sin expediente (ADR-0007): anticipos y ventas externas en efectivo o transferencia; pantalla Abonos de clientes; funciona con Reservas apagada.
+
+## 2026-10-26
+- Aplicar a un expediente los anticipos del mismo cliente, sin superar su saldo.

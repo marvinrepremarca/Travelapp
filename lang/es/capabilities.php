@@ -50,6 +50,7 @@ return [
             'Contabilidad funciona sola: reconoce cada venta al confirmarse el servicio (y la reversa si se cancela), admite ventas y cuentas por pagar registradas a mano y concilia lo reconocido contra lo cobrado y lo facturado.',
             'Facturación funciona sola: además de facturar expedientes pagados, emite facturas manuales a cualquier cliente (ingreso propio con IVA y recaudo para terceros sin IVA), aunque Reservas esté apagada.',
             'Cobros funciona sola: recibe abonos de clientes sin expediente (anticipos y ventas externas) en efectivo o transferencia; el efectivo entra a la caja solo si Contabilidad está encendida.',
+            'Reservas funciona sola: crea expedientes directos sin cotización, con servicios cuyo precio de venta calcula el sistema; los anticipos del cliente se aplican después al saldo del expediente.',
         ],
         'how_to' => 'Para cambiar las capacidades activas, el administrador técnico ajusta la configuración del despliegue y verifica con la comprobación de capacidades.',
     ],

@@ -50,6 +50,21 @@
         @endif
     </x-ui.card>
 
+    @if ($advances->isNotEmpty())
+        <x-ui.card :title="__('payments.advances.title')">
+            <p class="mb-sm text-caption text-text-subtle">{{ __('payments.advances.help') }}</p>
+            @error('advances')<p class="text-caption text-danger" role="alert">{{ $message }}</p>@enderror
+            <ul class="flex flex-col divide-y divide-border">
+                @foreach ($advances as $advance)
+                    <li class="flex flex-wrap items-center justify-between gap-sm py-sm" wire:key="advance-{{ $advance->ulid }}">
+                        <span>{{ $advance->concept }} · {{ $advance->method->label() }} · <span class="font-medium">{{ $presenter->format($advance->amount()) }}</span></span>
+                        <x-ui.button variant="secondary" wire:click="applyAdvance('{{ $advance->ulid }}')" wire:loading.attr="disabled">{{ __('payments.advances.apply') }}</x-ui.button>
+                    </li>
+                @endforeach
+            </ul>
+        </x-ui.card>
+    @endif
+
     <x-ui.card :title="__('payments.list.title')">
         @error('payments')<x-ui.alert :tone="Tone::Danger">{{ $message }}</x-ui.alert>@enderror
         @if ($payments->isEmpty())

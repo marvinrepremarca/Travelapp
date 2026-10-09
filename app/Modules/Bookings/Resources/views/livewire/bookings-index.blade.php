@@ -1,4 +1,8 @@
 <div class="flex flex-col gap-lg">
+    <div>
+        <x-ui.link-button :href="route('bookings.create')">{{ __('bookings.direct.open') }}</x-ui.link-button>
+    </div>
+
     <div class="flex flex-col gap-md md:flex-row md:items-end">
         <x-ui.field :label="__('shared.search')" for="search" :hint="__('bookings.search_hint')">
             <x-ui.input name="search" type="search" wire:model.live.debounce.400ms="search" hint />

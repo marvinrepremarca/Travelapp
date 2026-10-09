@@ -19,6 +19,34 @@ final readonly class PriceBreakdown
         public ?ExchangeRateQuote $exchangeRate,
     ) {}
 
+    /**
+     * Foto del desglose que se congela en la cotización y en la reserva (mismo formato en ambas capacidades).
+     *
+     * @return array{currency: string, components: list<array{type: string, description: string, amount_minor: int}>, exchange_rate: array{from: string, to: string, rate: string, official_rate: string, spread_basis_points: int, source: string, rate_date: string}|null}
+     */
+    public function snapshot(string $saleCurrency): array
+    {
+        $rate = $this->exchangeRate;
+
+        return [
+            'currency' => $saleCurrency,
+            'components' => array_map(static fn(PriceComponent $component): array => [
+                'type' => $component->type->value,
+                'description' => $component->description,
+                'amount_minor' => $component->amount->getMinorAmount()->toInt(),
+            ], $this->components),
+            'exchange_rate' => $rate instanceof ExchangeRateQuote ? [
+                'from' => $rate->from,
+                'to' => $rate->to,
+                'rate' => (string) $rate->rate,
+                'official_rate' => (string) $rate->officialRate,
+                'spread_basis_points' => $rate->spreadBasisPoints,
+                'source' => $rate->source->value,
+                'rate_date' => $rate->rateDate->toDateString(),
+            ] : null,
+        ];
+    }
+
     public function total(): Money
     {
         return $this->sum(static fn(PriceComponent $component): bool => true);

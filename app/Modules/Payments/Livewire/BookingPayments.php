@@ -7,6 +7,7 @@ namespace App\Modules\Payments\Livewire;
 use App\Modules\Bookings\Contracts\BookingAccounts;
 use App\Modules\Bookings\Data\BookingAccount;
 use App\Modules\Identity\Models\User;
+use App\Modules\Payments\Actions\ApplyAdvanceAction;
 use App\Modules\Payments\Actions\CreatePaymentLinkAction;
 use App\Modules\Payments\Actions\PayRefundAction;
 use App\Modules\Payments\Actions\RecordPaymentAction;
@@ -128,6 +129,22 @@ final class BookingPayments extends Component
         $this->reset('payoutReference');
     }
 
+    public function applyAdvance(string $paymentUlid, ApplyAdvanceAction $apply, MoneyPresenter $presenter): void
+    {
+        $account = $this->account();
+        $advance = $this->advances($account)->where('ulid', $paymentUlid)->first() ?? abort(404);
+
+        try {
+            $applied = $apply->execute($advance, $account, CarbonImmutable::now());
+        } catch (BusinessRuleException $violation) {
+            $this->addError('advances', $violation->getMessage());
+
+            return;
+        }
+
+        session()->flash('status', __('payments.advances.applied', ['amount' => $presenter->format($applied->amount())]));
+    }
+
     public function render(PaymentLedger $ledger, MoneyPresenter $presenter): View
     {
         $account = $this->account();
@@ -137,6 +154,7 @@ final class BookingPayments extends Component
             'summary' => $ledger->summary($account, CarbonImmutable::now()),
             'payments' => Payment::query()->where('booking_ulid', $account->ulid)->latest('id')->get(),
             'refunds' => Refund::query()->where('booking_ulid', $account->ulid)->latest('id')->get(),
+            'advances' => $this->advances($account)->latest('id')->get(),
             'methods' => PaymentMethod::cases(),
             'canValidate' => $this->actor()->can(Permission::FinanceAccess->value),
             'presenter' => $presenter,
@@ -172,5 +190,18 @@ final class BookingPayments extends Component
     {
         /** @var User */
         return Auth::user();
+    }
+
+    /**
+     * Anticipos aprobados del mismo cliente que aún no están en ningún expediente.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder<Payment>
+     */
+    private function advances(BookingAccount $account): \Illuminate\Database\Eloquent\Builder
+    {
+        return Payment::query()
+            ->whereNull('booking_ulid')
+            ->where('customer_id', $account->customerId)
+            ->where('status', \App\Modules\Payments\Enums\PaymentStatus::Approved);
     }
 }

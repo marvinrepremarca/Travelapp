@@ -65,6 +65,11 @@ final class PaymentRuleViolation extends BusinessRuleException
         return self::make('method_not_allowed_without_booking', __('payments.errors.method_not_allowed_without_booking'));
     }
 
+    public static function advanceNotApplicable(): self
+    {
+        return self::make('advance_not_applicable', __('payments.errors.advance_not_applicable'));
+    }
+
     private static function make(string $code, string $message): self
     {
         $exception = new self($message);
