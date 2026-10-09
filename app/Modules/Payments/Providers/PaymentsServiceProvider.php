@@ -6,6 +6,7 @@ namespace App\Modules\Payments\Providers;
 
 use App\Modules\Payments\Actions\ExpirePaymentLinksAction;
 use App\Modules\Payments\Contracts\BookingCollections;
+use App\Modules\Payments\Contracts\CollectionTotals;
 use App\Modules\Payments\Contracts\CustomerPayments;
 use App\Modules\Payments\Contracts\GatewayWebhooks;
 use App\Modules\Payments\Contracts\ReceivedPayments;
@@ -13,9 +14,11 @@ use App\Modules\Payments\Contracts\UpcomingBalances;
 use App\Modules\Payments\Listeners\ApplyRefundDecision;
 use App\Modules\Payments\Livewire\BookingPayments;
 use App\Modules\Payments\Services\EloquentBookingCollections;
+use App\Modules\Payments\Services\EloquentCollectionTotals;
 use App\Modules\Payments\Services\EloquentReceivedPayments;
 use App\Modules\Payments\Services\LedgerCustomerPayments;
 use App\Modules\Payments\Services\LedgerUpcomingBalances;
+use App\Modules\Payments\Services\NullCollectionTotals;
 use App\Modules\Payments\Services\NullReceivedPayments;
 use App\Modules\Payments\Services\NullUpcomingBalances;
 use App\Modules\Payments\Services\WebhookReceiver;
@@ -49,6 +52,7 @@ final class PaymentsServiceProvider extends ServiceProvider
         // Contratos que consumen otras capacidades: con Cobros apagada se entrega la implementación nula (ADR-0007).
         Capabilities::bindContract($this->app, Capability::Collections, ReceivedPayments::class, EloquentReceivedPayments::class, NullReceivedPayments::class);
         Capabilities::bindContract($this->app, Capability::Collections, UpcomingBalances::class, LedgerUpcomingBalances::class, NullUpcomingBalances::class);
+        Capabilities::bindContract($this->app, Capability::Collections, CollectionTotals::class, EloquentCollectionTotals::class, NullCollectionTotals::class);
     }
 
     public function boot(): void

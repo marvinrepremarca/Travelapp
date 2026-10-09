@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\Finance\Livewire;
 
+use App\Modules\Finance\Actions\RegisterManualPayableAction;
 use App\Modules\Finance\Actions\SettleSupplierPayablesAction;
+use App\Modules\Finance\Data\ManualPayableData;
 use App\Modules\Finance\Enums\PayableStatus;
 use App\Modules\Finance\Models\SupplierPayable;
 use App\Modules\Identity\Models\User;
@@ -16,7 +18,9 @@ use Brick\Money\Money;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -41,6 +45,12 @@ final class PayablesIndex extends Component
     public array $selected = [];
 
     public string $paymentReference = '';
+
+    /**
+     * Cuenta por pagar registrada a mano, sin expediente (ADR-0007).
+     *
+     * @var array{supplier: string, description: string, amount: string, currency: string, due_date: string} */
+    public array $manual = ['supplier' => '', 'description' => '', 'amount' => '', 'currency' => '', 'due_date' => ''];
 
     public function mount(): void
     {
@@ -76,6 +86,34 @@ final class PayablesIndex extends Component
         $this->reset('selected', 'paymentReference');
     }
 
+    public function registerManual(RegisterManualPayableAction $register, MoneyPresenter $presenter): void
+    {
+        $this->authorizeFinance();
+        $currency = $this->manual['currency'] !== '' ? $this->manual['currency'] : config()->string('travel.agency.default_currency');
+        $validated = $this->validate([
+            'manual.supplier' => ['required', 'integer', Rule::exists('suppliers', 'id')->whereNull('deleted_at')],
+            'manual.description' => ['required', 'string', 'max:255'],
+            'manual.amount' => ['required', 'numeric', 'gt:0'],
+            'manual.due_date' => ['required', 'date'],
+        ], attributes: Arr::dot(trans('finance.payables.manual_fields')));
+
+        try {
+            $payable = $register->execute($this->actor(), new ManualPayableData(
+                (int) $validated['manual']['supplier'],
+                $validated['manual']['description'],
+                Money::of($validated['manual']['amount'], $currency),
+                CarbonImmutable::parse($validated['manual']['due_date']),
+            ));
+        } catch (BusinessRuleException $violation) {
+            $this->addError('manual.amount', $violation->getMessage());
+
+            return;
+        }
+
+        session()->flash('status', __('finance.payables.manual_registered', ['amount' => $presenter->format($payable->amount())]));
+        $this->reset('manual');
+    }
+
     public function render(MoneyPresenter $presenter): View
     {
         $today = CarbonImmutable::parse(CarbonImmutable::now(config()->string('travel.agency.timezone'))->toDateString());
@@ -105,6 +143,8 @@ final class PayablesIndex extends Component
                 'next_due' => CarbonImmutable::parse((string) $row->next_due),
             ])->all(),
             'suppliers' => Supplier::query()->withTrashed()->orderBy('trade_name')->pluck('trade_name', 'id')->all(),
+            'activeSuppliers' => Supplier::query()->orderBy('trade_name')->pluck('trade_name', 'id')->all(),
+            'defaultCurrency' => config()->string('travel.agency.default_currency'),
             'statuses' => PayableStatus::cases(),
             'today' => $today,
             'presenter' => $presenter,

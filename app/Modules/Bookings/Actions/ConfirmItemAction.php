@@ -54,7 +54,7 @@ final readonly class ConfirmItemAction
             $item->provider_booking_reference = $providerReference;
             $item->supplier_confirmation = $confirmationCode !== null && $confirmationCode !== '' ? $confirmationCode : $providerReference;
             $this->workflow->transition($item, BookingItemStatus::Confirmed, null, $now);
-            $booking = $item->booking()->firstOrFail();
+            $booking = $item->booking()->with('customer:id,display_name')->firstOrFail();
 
             (new BookingItemConfirmed(
                 $item->ulid,
@@ -67,6 +67,9 @@ final readonly class ConfirmItemAction
                 $item->net_amount_minor,
                 $item->net_currency,
                 $item->service_date,
+                $item->sale_amount_minor,
+                $booking->sale_currency,
+                $booking->customer->display_name,
             ))->publish();
 
             return $item;

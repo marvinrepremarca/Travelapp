@@ -80,6 +80,21 @@ final class FinanceRuleViolation extends BusinessRuleException
         return $this->stableCode;
     }
 
+    public static function revenueAmountInvalid(): self
+    {
+        return self::make('revenue_amount_invalid', __('finance.errors.revenue_amount_invalid'));
+    }
+
+    public static function revenueDateInFuture(): self
+    {
+        return self::make('revenue_date_in_future', __('finance.errors.revenue_date_in_future'));
+    }
+
+    public static function payableAmountInvalid(): self
+    {
+        return self::make('payable_amount_invalid', __('finance.errors.payable_amount_invalid'));
+    }
+
     private static function make(string $code, string $message): self
     {
         $exception = new self($message);

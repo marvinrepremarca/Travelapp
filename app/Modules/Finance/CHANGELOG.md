@@ -28,3 +28,7 @@
 - **Carga del extracto** todo-o-nada: el mismo archivo no se carga dos veces y las líneas de extractos que se solapan no se duplican; una fila ilegible detiene la carga indicando el número de fila.
 - **Cruce sugerido + confirmación** contra abonos de clientes por transferencia o en línea (contrato `ReceivedPayments` de Payments), **liquidaciones a proveedores** (salida por la suma de la liquidación) y **consignaciones de caja**: valor exacto, fecha dentro de ±N días ⚙ y referencia primero. Cada movimiento del sistema se concilia una sola vez; las líneas sin contrapartida (comisiones, GMF) se ignoran con nota; todo se puede deshacer y queda auditado.
 - Movimientos del sistema sin reflejo en el banco del período. Caja: nuevo tipo de salida **Consignación al banco**.
+
+## 2026-10-23
+- Ingresos (ADR-0007, base de causación): se reconocen al confirmar cada servicio por su precio de venta y se reversan si se cancela; ventas registradas a mano; pantalla Ingresos conciliada con lo cobrado y lo facturado.
+- Cuentas por pagar registradas a mano, sin expediente (columna `source`).
