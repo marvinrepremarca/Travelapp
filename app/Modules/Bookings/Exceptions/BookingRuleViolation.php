@@ -75,6 +75,21 @@ final class BookingRuleViolation extends BusinessRuleException
         return self::make('confirmation_code_required', __('bookings.errors.confirmation_code_required'));
     }
 
+    public static function itemsComeFromQuote(): self
+    {
+        return self::make('items_come_from_quote', __('bookings.errors.items_come_from_quote'));
+    }
+
+    public static function bookingClosed(): self
+    {
+        return self::make('booking_closed', __('bookings.errors.booking_closed'));
+    }
+
+    public static function directItemInvalid(): self
+    {
+        return self::make('direct_item_invalid', __('bookings.errors.direct_item_invalid'));
+    }
+
     public function errorCode(): string
     {
         return $this->stableCode;

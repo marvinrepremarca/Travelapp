@@ -15,6 +15,9 @@
             <p class="font-medium">{{ __('bookings.total') }}: {{ $presenter->format($booking->saleTotal()) }}</p>
             <p class="flex flex-wrap gap-md">
                 <a href="{{ route('bookings.itinerary', $booking) }}" class="text-brand underline">{{ __('bookings.pdf.itinerary') }}</a>
+                @if ($booking->quote_ulid === null && $booking->status !== \App\Modules\Bookings\Enums\BookingStatus::Cancelled)
+                    <a href="{{ route('bookings.items.create', $booking) }}" wire:navigate class="text-brand underline">{{ __('bookings.direct.add_item') }}</a>
+                @endif
                 @if (Route::has('payments.booking'))
                     <x-ui.capability-link route="payments.booking" :params="$booking->ulid" class="text-brand underline">{{ __('payments.link') }}</x-ui.capability-link>
                 @endif

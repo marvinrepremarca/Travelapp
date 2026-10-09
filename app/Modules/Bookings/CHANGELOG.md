@@ -27,3 +27,6 @@
 
 ### Agregado
 - Contrato `BookingProfitLines`: venta vigente, costo y penalidades por expediente, proveedor y tipo de producto, para la rentabilidad de Finance. Índice por fecha de creación del expediente.
+
+## 2026-10-26
+- Expediente directo sin cotización (ADR-0007): servicios manuales con precio de venta calculado en el servidor; funciona con Cotizaciones apagada.

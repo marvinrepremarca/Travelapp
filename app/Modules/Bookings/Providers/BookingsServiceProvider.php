@@ -13,6 +13,8 @@ use App\Modules\Bookings\Contracts\TravelerTrips;
 use App\Modules\Bookings\Livewire\BookingShow;
 use App\Modules\Bookings\Livewire\BookingsIndex;
 use App\Modules\Bookings\Livewire\ConvertQuote;
+use App\Modules\Bookings\Livewire\DirectBookingForm;
+use App\Modules\Bookings\Livewire\DirectItemForm;
 use App\Modules\Bookings\Models\Booking;
 use App\Modules\Bookings\Policies\BookingPolicy;
 use App\Modules\Bookings\Services\EloquentBookingAccounts;
@@ -58,6 +60,8 @@ final class BookingsServiceProvider extends ServiceProvider
         Livewire::component('bookings.index', BookingsIndex::class);
         Livewire::component('bookings.show', BookingShow::class);
         Livewire::component('bookings.convert-quote', ConvertQuote::class);
+        Livewire::component('bookings.direct-form', DirectBookingForm::class);
+        Livewire::component('bookings.direct-item', DirectItemForm::class);
 
         Gate::policy(Booking::class, BookingPolicy::class);
         Capabilities::bindContract($this->app, Capability::Bookings, BookingMetrics::class, EloquentBookingMetrics::class, NullBookingMetrics::class);

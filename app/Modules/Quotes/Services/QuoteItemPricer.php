@@ -56,7 +56,7 @@ final readonly class QuoteItemPricer
         $item->net_currency = $net->getCurrency()->getCurrencyCode();
         $item->sale_amount_minor = $breakdown->total()->getMinorAmount()->toInt();
         $item->margin_amount_minor = $breakdown->margin()->getMinorAmount()->toInt();
-        $item->price_breakdown = $this->serialize($breakdown, $quote->sale_currency);
+        $item->price_breakdown = $breakdown->snapshot($quote->sale_currency);
     }
 
     /** Reconstruye los datos del ítem guardado para recalcularlo con tarifas y reglas vigentes. */
@@ -111,27 +111,4 @@ final readonly class QuoteItemPricer
         return $data->manualNet ?? throw QuoteRuleViolation::manualNetRequired();
     }
 
-    /** @return array<string, mixed> */
-    private function serialize(PriceBreakdown $breakdown, string $saleCurrency): array
-    {
-        $rate = $breakdown->exchangeRate;
-
-        return [
-            'currency' => $saleCurrency,
-            'components' => array_map(static fn(PriceComponent $component): array => [
-                'type' => $component->type->value,
-                'description' => $component->description,
-                'amount_minor' => $component->amount->getMinorAmount()->toInt(),
-            ], $breakdown->components),
-            'exchange_rate' => $rate instanceof \App\Modules\Pricing\Data\ExchangeRateQuote ? [
-                'from' => $rate->from,
-                'to' => $rate->to,
-                'rate' => (string) $rate->rate,
-                'official_rate' => (string) $rate->officialRate,
-                'spread_basis_points' => $rate->spreadBasisPoints,
-                'source' => $rate->source->value,
-                'rate_date' => $rate->rateDate->toDateString(),
-            ] : null,
-        ];
-    }
 }
