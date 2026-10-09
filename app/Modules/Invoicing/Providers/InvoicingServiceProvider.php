@@ -10,6 +10,7 @@ use App\Modules\Invoicing\Listeners\ApplyCreditNoteDecision;
 use App\Modules\Invoicing\Listeners\SubmitInvoiceToEInvoicing;
 use App\Modules\Invoicing\Livewire\InvoiceShow;
 use App\Modules\Invoicing\Livewire\InvoicesIndex;
+use App\Modules\Invoicing\Livewire\ManualInvoiceForm;
 use App\Modules\Invoicing\Services\EloquentInvoicingMetrics;
 use App\Modules\Invoicing\Services\InvoiceNumbering;
 use App\Modules\Invoicing\Services\NullInvoicingMetrics;
@@ -44,6 +45,7 @@ final class InvoicingServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'invoicing');
 
         Livewire::component('invoicing.index', InvoicesIndex::class);
+        Livewire::component('invoicing.manual', ManualInvoiceForm::class);
         Livewire::component('invoicing.show', InvoiceShow::class);
 
         $subscriptions = $this->app->make(CapabilitySubscriptions::class);

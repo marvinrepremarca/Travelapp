@@ -7,6 +7,10 @@
     @if (session('status'))<x-ui.alert :tone="Tone::Success" role="status">{{ session('status') }}</x-ui.alert>@endif
     @error('issue')<x-ui.alert :tone="Tone::Danger">{{ $message }}</x-ui.alert>@enderror
 
+    <div>
+        <x-ui.link-button :href="route('invoicing.create')" variant="secondary">{{ __('invoicing.manual.open') }}</x-ui.link-button>
+    </div>
+
     <div class="flex flex-wrap gap-sm" role="tablist" aria-label="{{ __('invoicing.title') }}">
         @foreach ([InvoicesIndex::TAB_READY, InvoicesIndex::TAB_ISSUED] as $option)
             <x-ui.button type="button" role="tab" :variant="$tab === $option ? 'primary' : 'secondary'" :aria-selected="$tab === $option ? 'true' : 'false'" wire:click="$set('tab', '{{ $option }}')">
@@ -75,7 +79,7 @@
                         <tr wire:key="invoice-{{ $invoice->ulid }}">
                             <th scope="row" class="px-md py-sm text-left">
                                 <a href="{{ route('invoicing.show', $invoice) }}" wire:navigate class="font-medium text-brand underline">{{ $invoice->number }}</a>
-                                <p class="text-caption text-text-subtle">{{ $invoice->type->label() }} · {{ $invoice->booking_number }}</p>
+                                <p class="text-caption text-text-subtle">{{ $invoice->type->label() }} · {{ $invoice->booking_number ?? __('invoicing.manual.without_booking') }}</p>
                             </th>
                             <td class="px-md py-sm">{{ $invoice->customer_name }}</td>
                             <td class="px-md py-sm">{{ $date($invoice->issued_at) }}</td>

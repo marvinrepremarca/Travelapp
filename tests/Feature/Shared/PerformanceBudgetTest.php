@@ -71,6 +71,7 @@ it('renders every backoffice screen within the query budget', function (string $
     'compliance.requests.create',
     'portal.shop',
     'invoicing.index',
+    'invoicing.create',
     'communications.inbox',
     'integrations.whatsapp-simulator',
     'search.flights',
