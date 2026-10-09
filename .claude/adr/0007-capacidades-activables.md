@@ -29,7 +29,7 @@
 - Una capacidad **nunca** lee tablas ni llama Actions de otra. Solo conoce el núcleo.
 - Para **reconocer** lo que hicieron otras capacidades, consume **eventos de integración** y guarda su propia copia (modelo de lectura). Ej.: Contabilidad registra la venta al recibir `BookingConfirmed`, sin consultar Bookings.
 - Toda consulta síncrona a otra capacidad pasa por un `Contract` con **implementación nula** registrada cuando la otra está apagada (p. ej. `CashRegister` → `NullCashRegister`).
-- Dependencias duras solo cuando no tienen sentido sin la otra (`portals` → `bookings`); se declaran en `Capability::requires()` y se validan al arrancar.
+- Dependencias duras solo cuando no tienen sentido sin la otra; se declaran en `Capability::requires()` y se validan al arrancar: `portals` → `bookings`; `operations` → `own_product` y `bookings` (decisión 2026-10-09: se operan salidas del catálogo propio con los pasajeros de los expedientes; no se cargan pasajeros a mano).
 
 ### 4. Cero pérdida de información
 - **Bandeja de salida persistente** (`integration_events`): el emisor guarda cada evento de integración en la misma transacción que su cambio, aunque nadie lo escuche.

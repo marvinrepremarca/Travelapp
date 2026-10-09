@@ -104,14 +104,14 @@ it('quotes only supplier or manual services when own product is off', function (
         ->assertHasErrors('item.kind');
 });
 
-it('requires own product to operate departures', function (): void {
-    disableCapabilities(Capability::OwnProduct);
+it('requires own product and bookings to operate departures', function (Capability $required): void {
+    disableCapabilities($required);
 
     expect(app(Capabilities::class)->problems())->toContain(__('capabilities.missing_requirement', [
         'capability' => Capability::Operations->label(),
-        'required' => Capability::OwnProduct->label(),
+        'required' => $required->label(),
     ]));
-});
+})->with([Capability::OwnProduct, Capability::Bookings]);
 
 it('keeps the agency owner dashboard working with every capability off', function (): void {
     config()->set('capabilities.enabled', array_fill_keys(array_map(static fn(Capability $c): string => $c->value, Capability::cases()), false));

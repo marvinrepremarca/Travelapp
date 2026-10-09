@@ -73,7 +73,8 @@ it('keeps receiving gateway webhooks with collections off so no payment is lost'
 it('rejects a configuration where a capability lacks a required one', function (): void {
     disableCapabilities(Capability::Bookings);
 
-    expect(app(Capabilities::class)->problems())->toHaveCount(1)
+    // Portales y Operación necesitan Reservas.
+    expect(app(Capabilities::class)->problems())->toHaveCount(2)
         ->and(fn() => app(Capabilities::class)->assertConsistent())->toThrow(CapabilityConfigurationInvalid::class);
 
     artisan('capabilities:status', ['--check' => true])->assertFailed();
