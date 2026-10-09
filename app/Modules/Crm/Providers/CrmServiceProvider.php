@@ -5,14 +5,18 @@ declare(strict_types=1);
 namespace App\Modules\Crm\Providers;
 
 use App\Modules\Crm\Contracts\LeadIntake;
+use App\Modules\Crm\Contracts\LeadMetrics;
 use App\Modules\Crm\Livewire\LeadForm;
 use App\Modules\Crm\Livewire\LeadsBoard;
 use App\Modules\Crm\Livewire\LeadShow;
 use App\Modules\Crm\Models\Lead;
 use App\Modules\Crm\Policies\LeadPolicy;
 use App\Modules\Crm\Services\ActionLeadIntake;
+use App\Modules\Crm\Services\EloquentLeadMetrics;
 use App\Modules\Crm\Services\LeadCustomerOrigins;
+use App\Modules\Crm\Services\NullLeadMetrics;
 use App\Modules\Customers\Contracts\CustomerOrigins;
+use App\Modules\Shared\Capabilities\Capabilities;
 use App\Modules\Shared\Enums\Capability;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Support\Facades\Gate;
@@ -35,6 +39,12 @@ final class CrmServiceProvider extends ServiceProvider
     public array $bindings = [
         CustomerOrigins::class => LeadCustomerOrigins::class,
     ];
+
+    public function register(): void
+    {
+        // Indicadores para los tableros: con Comercial apagada se entrega la implementación nula (ADR-0007).
+        Capabilities::bindContract($this->app, Capability::Commercial, LeadMetrics::class, EloquentLeadMetrics::class, NullLeadMetrics::class);
+    }
 
     public function boot(): void
     {

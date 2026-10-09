@@ -104,8 +104,8 @@ it('lists the advisor pending work', function (): void {
     Lead::factory()->ownedBy($agent)->create(['contact_name' => 'Lead pendiente']);
     $worklist = app(AdvisorWorklistQuery::class);
 
-    expect($worklist->openLeads($agent)->pluck('contact_name')->all())->toBe(['Lead pendiente'])
-        ->and($worklist->upcomingTrips($agent, CarbonImmutable::parse('2026-11-01'))->pluck('ulid')->all())->toBe([$booking->ulid])
+    expect(array_column($worklist->openLeads($agent), 'contactName'))->toBe(['Lead pendiente'])
+        ->and(array_column($worklist->upcomingTrips($agent, CarbonImmutable::parse('2026-11-01')), 'ulid'))->toBe([$booking->ulid])
         ->and($worklist->upcomingTrips($agent, CarbonImmutable::parse('2026-10-01')))->toHaveCount(0)
         ->and($worklist->expiringQuotes($agent, CarbonImmutable::now()))->toHaveCount(0);
 });

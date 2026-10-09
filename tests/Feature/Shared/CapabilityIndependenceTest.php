@@ -45,6 +45,11 @@ dataset('owned contracts', [
     'saldos por vencer' => [Capability::Collections, UpcomingBalances::class, NullUpcomingBalances::class],
     'ventas por expediente' => [Capability::Bookings, BookingProfitLines::class, NullBookingProfitLines::class],
     'avisos al cliente' => [Capability::Messaging, CustomerNotices::class, NullCustomerNotices::class],
+    'indicadores de prospectos' => [Capability::Commercial, App\Modules\Crm\Contracts\LeadMetrics::class, App\Modules\Crm\Services\NullLeadMetrics::class],
+    'indicadores de cotizaciones' => [Capability::Quoting, App\Modules\Quotes\Contracts\QuoteMetrics::class, App\Modules\Quotes\Services\NullQuoteMetrics::class],
+    'indicadores de expedientes' => [Capability::Bookings, App\Modules\Bookings\Contracts\BookingMetrics::class, App\Modules\Bookings\Services\NullBookingMetrics::class],
+    'indicadores contables' => [Capability::Accounting, App\Modules\Finance\Contracts\FinanceMetrics::class, App\Modules\Finance\Services\NullFinanceMetrics::class],
+    'indicadores de facturación' => [Capability::Invoicing, App\Modules\Invoicing\Contracts\InvoicingMetrics::class, App\Modules\Invoicing\Services\NullInvoicingMetrics::class],
 ]);
 
 it('hands consumers the null implementation only while the owner capability is off', function (Capability $owner, string $contract, string $null): void {
@@ -114,4 +119,19 @@ it('keeps the agency owner dashboard working with every capability off', functio
 
     actingAs(userWithRole(Role::AgencyOwner))->get(route('dashboard'))->assertOk();
     actingAs(userWithRole(Role::AgencyOwner))->get(route('customers.index'))->assertOk();
+});
+
+it('hides the dashboard cards of disabled capabilities', function (): void {
+    actingAs(userWithRole(Role::AgencyOwner));
+    Livewire::withoutLazyLoading()->test(App\Modules\Reports\Livewire\AdvisorDashboard::class)
+        ->assertSee(__('reports.advisor.open_leads'))->assertSee(__('reports.advisor.expiring_quotes'))->assertSee(__('reports.advisor.upcoming_trips'));
+
+    disableCapabilities(Capability::Commercial, Capability::Quoting, Capability::Invoicing);
+
+    Livewire::withoutLazyLoading()->test(App\Modules\Reports\Livewire\AdvisorDashboard::class)
+        ->assertDontSee(__('reports.advisor.open_leads'))->assertDontSee(__('reports.advisor.expiring_quotes'))->assertSee(__('reports.advisor.upcoming_trips'));
+    Livewire::withoutLazyLoading()->test(App\Modules\Reports\Livewire\ManagementDashboard::class)->assertOk();
+    actingAs(financeUser());
+    Livewire::withoutLazyLoading()->test(App\Modules\Reports\Livewire\FinanceDashboard::class)
+        ->assertSee(__('reports.finance.payables'))->assertDontSee(__('reports.finance.invoicing', ['period' => '']));
 });

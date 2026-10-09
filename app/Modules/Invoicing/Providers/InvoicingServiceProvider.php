@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace App\Modules\Invoicing\Providers;
 
+use App\Modules\Invoicing\Contracts\InvoicingMetrics;
 use App\Modules\Invoicing\Events\InvoiceIssued;
 use App\Modules\Invoicing\Listeners\ApplyCreditNoteDecision;
 use App\Modules\Invoicing\Listeners\SubmitInvoiceToEInvoicing;
 use App\Modules\Invoicing\Livewire\InvoiceShow;
 use App\Modules\Invoicing\Livewire\InvoicesIndex;
+use App\Modules\Invoicing\Services\EloquentInvoicingMetrics;
 use App\Modules\Invoicing\Services\InvoiceNumbering;
+use App\Modules\Invoicing\Services\NullInvoicingMetrics;
+use App\Modules\Shared\Capabilities\Capabilities;
 use App\Modules\Shared\Enums\Capability;
 use App\Modules\Shared\Enums\CatchUpPolicy;
 use App\Modules\Shared\IntegrationEvents\CapabilitySubscriptions;
@@ -24,6 +28,12 @@ final class InvoicingServiceProvider extends ServiceProvider
     public array $singletons = [
         InvoiceNumbering::class => InvoiceNumbering::class,
     ];
+
+    public function register(): void
+    {
+        // Indicadores para los tableros: con Facturación apagada se entrega la implementación nula (ADR-0007).
+        Capabilities::bindContract($this->app, Capability::Invoicing, InvoicingMetrics::class, EloquentInvoicingMetrics::class, NullInvoicingMetrics::class);
+    }
 
     public function boot(): void
     {

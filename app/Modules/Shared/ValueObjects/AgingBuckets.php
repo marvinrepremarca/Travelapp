@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Reports\Data;
+namespace App\Modules\Shared\ValueObjects;
 
 use Brick\Money\Money;
 

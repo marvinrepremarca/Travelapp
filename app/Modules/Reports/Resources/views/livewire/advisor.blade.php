@@ -25,41 +25,49 @@
         </div>
 
         <div class="grid gap-lg md:grid-cols-2 xl:grid-cols-4">
+            @capability(\App\Modules\Shared\Enums\Capability::Quoting)
             <x-ui.card :title="__('reports.pie.quotes')">
                 <x-ui.pie-chart :items="$quotesPie" :caption="__('reports.pie.quotes')" :empty="__('reports.pie.empty')" />
             </x-ui.card>
+            @endcapability
+            @capability(\App\Modules\Shared\Enums\Capability::Quoting)
             <x-ui.card :title="__('reports.advisor.expiring_quotes')">
                 @forelse ($quotes as $quote)
-                    <x-ui.capability-link wire:key="quote-{{ $quote->ulid }}" route="quotes.show" :params="$quote" class="flex flex-col border-b border-border py-xs hover:bg-muted">
-                        <span class="font-medium">{{ $quote->number }} · {{ $quote->customer->display_name }}</span>
-                        <span class="text-caption text-danger">{{ __('reports.advisor.expires', ['date' => $date($quote->valid_until)]) }}</span>
+                    <x-ui.capability-link wire:key="quote-{{ $quote->ulid }}" route="quotes.show" :params="$quote->ulid" class="flex flex-col border-b border-border py-xs hover:bg-muted">
+                        <span class="font-medium">{{ $quote->number }} · {{ $quote->customerName }}</span>
+                        <span class="text-caption text-danger">{{ __('reports.advisor.expires', ['date' => $date($quote->validUntil)]) }}</span>
                     </x-ui.capability-link>
                 @empty
                     <p class="text-text-subtle">{{ __('reports.advisor.no_expiring') }}</p>
                 @endforelse
             </x-ui.card>
+            @endcapability
 
+            @capability(\App\Modules\Shared\Enums\Capability::Commercial)
             <x-ui.card :title="__('reports.advisor.open_leads')">
                 @forelse ($leads as $lead)
-                    <x-ui.capability-link wire:key="lead-{{ $lead->ulid }}" route="crm.leads.show" :params="$lead" class="flex flex-col border-b border-border py-xs hover:bg-muted">
-                        <span class="font-medium">{{ $lead->contact_name }}</span>
+                    <x-ui.capability-link wire:key="lead-{{ $lead->ulid }}" route="crm.leads.show" :params="$lead->ulid" class="flex flex-col border-b border-border py-xs hover:bg-muted">
+                        <span class="font-medium">{{ $lead->contactName }}</span>
                         <span class="text-caption text-text-subtle">{{ $lead->destination ?? __('crm.leads.no_destination') }} · {{ $lead->status->label() }}</span>
                     </x-ui.capability-link>
                 @empty
                     <p class="text-text-subtle">{{ __('reports.advisor.no_leads') }}</p>
                 @endforelse
             </x-ui.card>
+            @endcapability
 
+            @capability(\App\Modules\Shared\Enums\Capability::Bookings)
             <x-ui.card :title="__('reports.advisor.upcoming_trips')">
                 @forelse ($trips as $trip)
-                    <x-ui.capability-link wire:key="trip-{{ $trip->ulid }}" route="bookings.show" :params="$trip" class="flex flex-col border-b border-border py-xs hover:bg-muted">
-                        <span class="font-medium">{{ $trip->number }} · {{ $trip->customer->display_name }}</span>
-                        <span class="text-caption text-text-subtle">{{ __('reports.advisor.starts', ['date' => \Carbon\CarbonImmutable::parse((string) $trip->getAttribute('next_service_date'))->locale(app()->getLocale())->isoFormat('ll')]) }}</span>
+                    <x-ui.capability-link wire:key="trip-{{ $trip->ulid }}" route="bookings.show" :params="$trip->ulid" class="flex flex-col border-b border-border py-xs hover:bg-muted">
+                        <span class="font-medium">{{ $trip->number }} · {{ $trip->customerName }}</span>
+                        <span class="text-caption text-text-subtle">{{ __('reports.advisor.starts', ['date' => $trip->nextServiceDate->locale(app()->getLocale())->isoFormat('ll')]) }}</span>
                     </x-ui.capability-link>
                 @empty
                     <p class="text-text-subtle">{{ __('reports.advisor.no_trips') }}</p>
                 @endforelse
             </x-ui.card>
+            @endcapability
         </div>
     </div>
 </div>

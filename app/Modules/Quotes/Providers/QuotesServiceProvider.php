@@ -6,6 +6,7 @@ namespace App\Modules\Quotes\Providers;
 
 use App\Modules\Quotes\Console\ExpireQuotesCommand;
 use App\Modules\Quotes\Contracts\AcceptedQuotes;
+use App\Modules\Quotes\Contracts\QuoteMetrics;
 use App\Modules\Quotes\Contracts\SentQuotes;
 use App\Modules\Quotes\Contracts\SupplierOfferIntake;
 use App\Modules\Quotes\Livewire\PublicQuote;
@@ -15,8 +16,11 @@ use App\Modules\Quotes\Livewire\QuotesIndex;
 use App\Modules\Quotes\Models\Quote;
 use App\Modules\Quotes\Policies\QuotePolicy;
 use App\Modules\Quotes\Services\EloquentAcceptedQuotes;
+use App\Modules\Quotes\Services\EloquentQuoteMetrics;
 use App\Modules\Quotes\Services\EloquentSentQuotes;
 use App\Modules\Quotes\Services\EloquentSupplierOfferIntake;
+use App\Modules\Quotes\Services\NullQuoteMetrics;
+use App\Modules\Shared\Capabilities\Capabilities;
 use App\Modules\Shared\Enums\Capability;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -37,6 +41,12 @@ final class QuotesServiceProvider extends ServiceProvider
         SupplierOfferIntake::class => EloquentSupplierOfferIntake::class,
         SentQuotes::class => EloquentSentQuotes::class,
     ];
+
+    public function register(): void
+    {
+        // Indicadores para los tableros: con Cotizaciones apagada se entrega la implementación nula (ADR-0007).
+        Capabilities::bindContract($this->app, Capability::Quoting, QuoteMetrics::class, EloquentQuoteMetrics::class, NullQuoteMetrics::class);
+    }
 
     public function boot(): void
     {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Modules\Shared\Capabilities\Capabilities;
+use App\Modules\Shared\Enums\Capability;
 use App\Modules\Shared\IntegrationEvents\CapabilitySubscriptions;
 use App\Modules\Shared\IntegrationEvents\CatchUpIntegrationEvents;
 use App\Modules\Shared\IntegrationEvents\IntegrationEventOutbox;
@@ -14,6 +15,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
@@ -74,6 +76,9 @@ final class AppServiceProvider extends ServiceProvider
                 ->withoutOverlapping()
                 ->onOneServer();
         });
+
+        // @capability(Capability::X) … @endcapability: secciones que solo existen con su capacidad encendida.
+        Blade::if('capability', static fn(Capability $capability): bool => app(Capabilities::class)->enabled($capability));
 
         RateLimiter::for('health', static fn(Request $request): Limit => Limit::perMinute(config()->integer('travel.health.requests_per_minute'))
             ->by((string) $request->ip()));

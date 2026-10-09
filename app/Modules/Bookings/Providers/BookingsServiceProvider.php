@@ -6,6 +6,7 @@ namespace App\Modules\Bookings\Providers;
 
 use App\Modules\Bookings\Contracts\BookingAccounts;
 use App\Modules\Bookings\Contracts\BookingInvoicing;
+use App\Modules\Bookings\Contracts\BookingMetrics;
 use App\Modules\Bookings\Contracts\BookingProfitLines;
 use App\Modules\Bookings\Contracts\DepartureManifests;
 use App\Modules\Bookings\Contracts\TravelerTrips;
@@ -16,9 +17,11 @@ use App\Modules\Bookings\Models\Booking;
 use App\Modules\Bookings\Policies\BookingPolicy;
 use App\Modules\Bookings\Services\EloquentBookingAccounts;
 use App\Modules\Bookings\Services\EloquentBookingInvoicing;
+use App\Modules\Bookings\Services\EloquentBookingMetrics;
 use App\Modules\Bookings\Services\EloquentBookingProfitLines;
 use App\Modules\Bookings\Services\EloquentDepartureManifests;
 use App\Modules\Bookings\Services\EloquentTravelerTrips;
+use App\Modules\Bookings\Services\NullBookingMetrics;
 use App\Modules\Bookings\Services\NullBookingProfitLines;
 use App\Modules\Shared\Capabilities\Capabilities;
 use App\Modules\Shared\Enums\Capability;
@@ -41,6 +44,7 @@ final class BookingsServiceProvider extends ServiceProvider
     {
         // Contratos que consumen otras capacidades: con Reservas apagada se entrega la implementación nula (ADR-0007).
         Capabilities::bindContract($this->app, Capability::Bookings, BookingProfitLines::class, EloquentBookingProfitLines::class, NullBookingProfitLines::class);
+        Capabilities::bindContract($this->app, Capability::Bookings, BookingMetrics::class, EloquentBookingMetrics::class, NullBookingMetrics::class);
     }
 
     public function boot(): void
@@ -56,5 +60,6 @@ final class BookingsServiceProvider extends ServiceProvider
         Livewire::component('bookings.convert-quote', ConvertQuote::class);
 
         Gate::policy(Booking::class, BookingPolicy::class);
+        Capabilities::bindContract($this->app, Capability::Bookings, BookingMetrics::class, EloquentBookingMetrics::class, NullBookingMetrics::class);
     }
 }

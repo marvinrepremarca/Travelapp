@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Modules\Reports\Livewire\Concerns;
 
 use App\Modules\Identity\Models\User;
-use App\Modules\Reports\Data\AgingBuckets;
 use App\Modules\Reports\Data\Period;
 use App\Modules\Reports\Data\SalesFigures;
 use App\Modules\Shared\Money\MoneyPresenter;
+use App\Modules\Shared\ValueObjects\AgingBuckets;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 use Brick\Money\Money;

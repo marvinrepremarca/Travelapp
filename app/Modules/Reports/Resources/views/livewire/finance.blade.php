@@ -2,6 +2,7 @@
     @include('reports::livewire.partials.month-filter')
 
     <div wire:loading.remove wire:target="month" class="flex flex-col gap-lg">
+        @capability(\App\Modules\Shared\Enums\Capability::Bookings)
         <x-ui.card :title="__('reports.finance.receivables')">
             <div class="grid gap-md md:grid-cols-4">
                 <x-ui.stat :label="__('reports.aging.overdue')" :value="$presenter->format($receivables->overdue)" :tone="$receivables->overdue->isPositive() ? 'danger' : null" />
@@ -23,6 +24,7 @@
             @endif
             <div class="mt-md"><x-ui.link-button variant="secondary" :href="\App\Modules\Shared\Capabilities\Capabilities::routeUrl('reports.export', ['report' => 'receivables'])">{{ __('reports.export.receivables') }}</x-ui.link-button></div>
         </x-ui.card>
+        @endcapability
 
         <x-ui.card :title="__('reports.finance.payables')">
             <div class="grid gap-md md:grid-cols-4">
@@ -34,9 +36,11 @@
         </x-ui.card>
 
         <div class="grid gap-lg md:grid-cols-2">
+            @capability(\App\Modules\Shared\Enums\Capability::Bookings)
             <x-ui.card :title="__('reports.pie.receivables')">
                 <x-ui.pie-chart :items="$receivablesPie" :caption="__('reports.pie.receivables')" :empty="__('reports.pie.empty')" />
             </x-ui.card>
+            @endcapability
             <x-ui.card :title="__('reports.pie.payables')">
                 <x-ui.pie-chart :items="$payablesPie" :caption="__('reports.pie.payables')" :empty="__('reports.pie.empty')" />
             </x-ui.card>
@@ -46,8 +50,8 @@
             <x-ui.card :title="__('reports.finance.cash')">
                 @forelse ($cash as $index => $session)
                     <p wire:key="cash-{{ $index }}" class="flex justify-between gap-sm border-b border-border py-xs">
-                        <span>{{ $session['branch'] }} <span class="text-caption text-text-subtle">· {{ __('reports.finance.opened', ['date' => $session['opened_at']->timezone($timezone)->locale(app()->getLocale())->isoFormat('lll')]) }}</span></span>
-                        <span class="font-medium">{{ $presenter->format($session['expected']) }}</span>
+                        <span>{{ $session->branchName }} <span class="text-caption text-text-subtle">· {{ __('reports.finance.opened', ['date' => $session->openedAt->timezone($timezone)->locale(app()->getLocale())->isoFormat('lll')]) }}</span></span>
+                        <span class="font-medium">{{ $presenter->format($session->expected) }}</span>
                     </p>
                 @empty
                     <p class="text-text-subtle">{{ __('reports.finance.no_cash') }}</p>
@@ -55,6 +59,7 @@
                 <x-ui.capability-link route="finance.cash" class="mt-sm inline-block text-caption font-medium text-brand underline">{{ __('reports.see_detail') }}</x-ui.capability-link>
             </x-ui.card>
 
+            @capability(\App\Modules\Shared\Enums\Capability::Invoicing)
             <x-ui.card :title="__('reports.finance.invoicing', ['period' => $period->label()])">
                 @foreach ($types as $type)
                     <p wire:key="invoicing-{{ $type->value }}" class="flex justify-between gap-sm border-b border-border py-xs">
@@ -63,6 +68,7 @@
                 @endforeach
                 <x-ui.capability-link route="invoicing.index" :params="['tab' => 'issued']" class="mt-sm inline-block text-caption font-medium text-brand underline">{{ __('reports.see_detail') }}</x-ui.capability-link>
             </x-ui.card>
+            @endcapability
         </div>
     </div>
 </div>
