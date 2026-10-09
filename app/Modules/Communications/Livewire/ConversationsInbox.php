@@ -13,6 +13,7 @@ use App\Modules\Communications\Models\Conversation;
 use App\Modules\Communications\Services\PhoneNumbers;
 use App\Modules\Crm\Contracts\LeadIntake;
 use App\Modules\Identity\Models\User;
+use App\Modules\Shared\Capabilities\Capabilities;
 use App\Modules\Shared\Enums\SalesChannel;
 use App\Modules\Shared\Exceptions\BusinessRuleException;
 use Illuminate\Contracts\View\View;
@@ -29,6 +30,8 @@ use Livewire\Component;
 #[Layout('components.layouts.backoffice')]
 final class ConversationsInbox extends Component
 {
+    private const QUOTE_ROUTE = 'quotes.create';
+
     public const FILTER_WAITING = 'waiting';
 
     public const FILTER_MINE = 'mine';
@@ -86,8 +89,15 @@ final class ConversationsInbox extends Component
             return;
         }
 
+        // Sin la capacidad Cotizaciones el chat lleva a la ficha del cliente (núcleo) en lugar de cotizar.
+        if (! app(Capabilities::class)->allowsRoute(self::QUOTE_ROUTE)) {
+            $this->redirectRoute('customers.show', $customerUlid, navigate: true);
+
+            return;
+        }
+
         $destination = $conversation->bot_data[BotStep::Destination->value] ?? null;
-        $this->redirectRoute('quotes.create', [
+        $this->redirectRoute(self::QUOTE_ROUTE, [
             'customer' => $customerUlid,
             'title' => is_string($destination) && $destination !== '' ? __('crm.leads.quote_title', ['destination' => $destination]) : __('crm.leads.quote_title_generic', ['name' => (string) $conversation->contact_name]),
             'channel' => SalesChannel::WhatsApp->value,

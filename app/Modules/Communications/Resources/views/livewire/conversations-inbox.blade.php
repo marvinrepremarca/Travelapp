@@ -51,7 +51,7 @@
                             <x-ui.button type="button" wire:click="take" wire:loading.attr="disabled" wire:target="take">{{ __('communications.take') }}</x-ui.button>
                         @endif
                         @if ($selected->lead_ulid && $selected->owner_id === $actor->id && $selected->status->isOpen())
-                            <x-ui.button type="button" wire:click="quote" wire:loading.attr="disabled" wire:target="quote">{{ __('communications.quote') }}</x-ui.button>
+                            <x-ui.button type="button" wire:click="quote" wire:loading.attr="disabled" wire:target="quote">{{ app(\App\Modules\Shared\Capabilities\Capabilities::class)->enabled(\App\Modules\Shared\Enums\Capability::Quoting) ? __('communications.quote') : __('communications.open_customer') }}</x-ui.button>
                         @endif
                         @if ($selected->lead_ulid)
                             @if ($leadUrl = \App\Modules\Shared\Capabilities\Capabilities::routeUrl('crm.leads.show', $selected->lead_ulid))<x-ui.link-button variant="secondary" :href="$leadUrl">{{ __('communications.open_lead') }}</x-ui.link-button>@endif

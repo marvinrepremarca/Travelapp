@@ -40,6 +40,7 @@ return [
     'take_hint' => 'Toma la conversación para responder: se creará el lead con los datos del bot.',
     'open_lead' => 'Ver lead',
     'quote' => 'Cotizar',
+    'open_customer' => 'Abrir cliente',
     'close' => 'Cerrar',
     'confirm_close' => '¿Cerrar la conversación? Si el cliente vuelve a escribir, empezará una nueva con el bot.',
     'reply' => 'Respuesta',
