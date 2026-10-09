@@ -24,9 +24,10 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('payments', function (Blueprint $table): void {
+            // La llave foránea usa el índice compuesto: se suelta primero.
+            $table->dropForeign(['customer_id']);
             $table->dropIndex('payments_customer_status_index');
-            $table->dropConstrainedForeignId('customer_id');
-            $table->dropColumn('concept');
+            $table->dropColumn(['customer_id', 'concept']);
         });
     }
 };

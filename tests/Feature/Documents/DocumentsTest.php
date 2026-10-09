@@ -42,7 +42,7 @@ it('renders the sent quote version without net prices or margins', function (): 
 
     expect($html)->toContain('Hotel Caribe')
         ->toContain(__('quotes.itinerary.title'))
-        ->toContain(__('quotes.pdf.prepared_for', ['customer' => $quote->customer->display_name]))
+        ->toContain(e(__('quotes.pdf.prepared_for', ['customer' => $quote->customer->display_name])))
         ->not->toContain(__('quotes.options.margin'))
         ->not->toContain(__('quotes.item_fields.net_amount'));
 });
