@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Finance\Models;
 
+use App\Modules\Finance\Enums\PayableSource;
 use App\Modules\Finance\Enums\PayableStatus;
 use App\Modules\Shared\Enums\AuditLogName;
 use App\Modules\Suppliers\Models\Supplier;
@@ -21,16 +22,17 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @property int $id
  * @property string $ulid
- * @property string $booking_item_ulid
- * @property string $booking_ulid
- * @property string $booking_number
+ * @property PayableSource $source
+ * @property string|null $booking_item_ulid
+ * @property string|null $booking_ulid
+ * @property string|null $booking_number
  * @property int $supplier_id
  * @property int $owner_id
  * @property int|null $branch_id
  * @property string $description
  * @property int $amount_minor
  * @property string $currency
- * @property CarbonImmutable $service_date
+ * @property CarbonImmutable|null $service_date
  * @property CarbonImmutable $due_date
  * @property PayableStatus $status
  * @property string|null $payment_reference
@@ -92,6 +94,7 @@ final class SupplierPayable extends Model
             'service_date' => 'immutable_date',
             'due_date' => 'immutable_date',
             'status' => PayableStatus::class,
+            'source' => PayableSource::class,
             'paid_at' => 'immutable_datetime',
         ];
     }

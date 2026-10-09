@@ -23,6 +23,27 @@
         @endif
     </x-ui.card>
 
+    <x-ui.card :title="__('finance.payables.manual_title')">
+        <p class="mb-md text-text-subtle">{{ __('finance.payables.manual_help') }}</p>
+        <form wire:submit="registerManual" class="grid gap-md md:grid-cols-5 md:items-end" novalidate>
+            <x-ui.field :label="__('finance.payables.manual_fields.manual.supplier')" for="manual.supplier">
+                <x-ui.select name="manual.supplier" wire:model="manual.supplier" :options="$activeSuppliers" :placeholder="__('finance.payables.choose_supplier')" />
+            </x-ui.field>
+            <x-ui.field :label="__('finance.payables.manual_fields.manual.description')" for="manual.description" class="md:col-span-2">
+                <x-ui.input name="manual.description" wire:model="manual.description" />
+            </x-ui.field>
+            <x-ui.field :label="__('finance.payables.manual_fields.manual.amount', ['currency' => $defaultCurrency])" for="manual.amount">
+                <x-ui.input name="manual.amount" type="number" min="0" step="any" inputmode="decimal" wire:model="manual.amount" />
+            </x-ui.field>
+            <x-ui.field :label="__('finance.payables.manual_fields.manual.due_date')" for="manual.due_date">
+                <x-ui.input name="manual.due_date" type="date" wire:model="manual.due_date" />
+            </x-ui.field>
+            <div class="md:col-span-5">
+                <x-ui.button type="submit" wire:loading.attr="disabled" wire:target="registerManual">{{ __('finance.payables.manual_submit') }}</x-ui.button>
+            </div>
+        </form>
+    </x-ui.card>
+
     <div class="flex flex-col gap-md md:flex-row md:items-end">
         <x-ui.field :label="__('finance.payables.supplier')" for="supplier">
             <x-ui.select name="supplier" wire:model.live="supplier" :options="$suppliers" :placeholder="__('finance.payables.all_suppliers')" />
@@ -63,7 +84,7 @@
                         <td class="px-md py-sm">{{ $payable->supplier->trade_name }}</td>
                         <td class="px-md py-sm">
                             {{ $payable->description }}
-                            <p class="text-caption text-text-subtle">{{ $payable->booking_number }} · {{ $format($payable->service_date) }}</p>
+                            <p class="text-caption text-text-subtle">@if ($payable->booking_number){{ $payable->booking_number }}@else{{ $payable->source->label() }}@endif @if ($payable->service_date)· {{ $format($payable->service_date) }}@endif</p>
                         </td>
                         <td class="px-md py-sm">
                             <span @class(['text-danger font-medium' => $payable->isOverdue($today)])>{{ $format($payable->due_date) }}</span>

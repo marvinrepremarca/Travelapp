@@ -48,6 +48,7 @@ it('renders every backoffice screen within the query budget', function (string $
     'quotes.index',
     'quotes.create',
     'bookings.index',
+    'finance.revenue',
     'finance.payables',
     'finance.cash',
     'finance.profitability',

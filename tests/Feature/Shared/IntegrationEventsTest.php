@@ -87,8 +87,10 @@ it('recognizes the sales made while accounting was off once it is turned on agai
     enableCapabilities(Capability::Accounting);
     $processed = app(CatchUpIntegrationEvents::class)->run();
 
-    expect($processed)->toBe(1)
-        ->and(SupplierPayable::query()->count())->toBe(1);
+    // Contabilidad reconoce dos cosas por servicio confirmado: la cuenta por pagar y el ingreso.
+    expect($processed)->toBe(2)
+        ->and(SupplierPayable::query()->count())->toBe(1)
+        ->and(App\Modules\Finance\Models\RevenueEntry::query()->count())->toBe(1);
 });
 
 it('never processes an event twice when catching up repeatedly', function (): void {

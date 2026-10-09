@@ -29,6 +29,11 @@ final readonly class BookingItemConfirmed implements IntegrationEvent, ShouldDis
         public int $netAmountMinor,
         public string $netCurrency,
         public CarbonImmutable $serviceDate,
+        // Precio de venta y cliente para que Contabilidad reconozca el ingreso (ADR-0007). Opcionales: los
+        // eventos guardados antes de agregarlos se reconstruyen con null.
+        public ?int $saleAmountMinor = null,
+        public ?string $saleCurrency = null,
+        public ?string $customerName = null,
     ) {}
 
     public static function eventName(): string

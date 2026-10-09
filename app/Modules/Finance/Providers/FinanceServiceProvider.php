@@ -8,7 +8,9 @@ use App\Modules\Bookings\Events\BookingItemCancelled;
 use App\Modules\Bookings\Events\BookingItemConfirmed;
 use App\Modules\Finance\Contracts\CashRegister;
 use App\Modules\Finance\Contracts\FinanceMetrics;
+use App\Modules\Finance\Listeners\RecognizeBookingRevenue;
 use App\Modules\Finance\Listeners\RegisterSupplierPayable;
+use App\Modules\Finance\Listeners\ReverseBookingRevenue;
 use App\Modules\Finance\Listeners\VoidSupplierPayable;
 use App\Modules\Finance\Livewire\BankAccountForm;
 use App\Modules\Finance\Livewire\BankAccountsIndex;
@@ -16,6 +18,7 @@ use App\Modules\Finance\Livewire\CashRegisterScreen;
 use App\Modules\Finance\Livewire\PayablesIndex;
 use App\Modules\Finance\Livewire\ProfitabilityScreen;
 use App\Modules\Finance\Livewire\ReconciliationScreen;
+use App\Modules\Finance\Livewire\RevenueScreen;
 use App\Modules\Finance\Services\CashDesk;
 use App\Modules\Finance\Services\EloquentFinanceMetrics;
 use App\Modules\Finance\Services\NullCashRegister;
@@ -55,12 +58,16 @@ final class FinanceServiceProvider extends ServiceProvider
         Livewire::component('finance.bank-accounts', BankAccountsIndex::class);
         Livewire::component('finance.bank-account-form', BankAccountForm::class);
         Livewire::component('finance.reconciliation', ReconciliationScreen::class);
+        Livewire::component('finance.revenue', RevenueScreen::class);
 
         // Las obligaciones con proveedores siguen la vida de los servicios del expediente.
         // Con Contabilidad apagada quedan en la bitácora y se registran al encenderla (ADR-0007).
         $subscriptions = $this->app->make(CapabilitySubscriptions::class);
         $subscriptions->listen(Capability::Accounting, BookingItemConfirmed::class, RegisterSupplierPayable::class, CatchUpPolicy::Replay);
         $subscriptions->listen(Capability::Accounting, BookingItemCancelled::class, VoidSupplierPayable::class, CatchUpPolicy::Replay);
+        // Base de causación: el ingreso nace al confirmar el servicio y se reversa si se cancela.
+        $subscriptions->listen(Capability::Accounting, BookingItemConfirmed::class, RecognizeBookingRevenue::class, CatchUpPolicy::Replay);
+        $subscriptions->listen(Capability::Accounting, BookingItemCancelled::class, ReverseBookingRevenue::class, CatchUpPolicy::Replay);
         Capabilities::bindContract($this->app, Capability::Accounting, FinanceMetrics::class, EloquentFinanceMetrics::class, NullFinanceMetrics::class);
     }
 }
