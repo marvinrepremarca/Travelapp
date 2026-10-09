@@ -49,6 +49,7 @@ return [
             'Los tableros reciben los indicadores de cada capacidad por separado: las tarjetas de una capacidad apagada desaparecen y sus cifras cuentan cero, sin afectar a las demás.',
             'Contabilidad funciona sola: reconoce cada venta al confirmarse el servicio (y la reversa si se cancela), admite ventas y cuentas por pagar registradas a mano y concilia lo reconocido contra lo cobrado y lo facturado.',
             'Facturación funciona sola: además de facturar expedientes pagados, emite facturas manuales a cualquier cliente (ingreso propio con IVA y recaudo para terceros sin IVA), aunque Reservas esté apagada.',
+            'Cobros funciona sola: recibe abonos de clientes sin expediente (anticipos y ventas externas) en efectivo o transferencia; el efectivo entra a la caja solo si Contabilidad está encendida.',
         ],
         'how_to' => 'Para cambiar las capacidades activas, el administrador técnico ajusta la configuración del despliegue y verifica con la comprobación de capacidades.',
     ],

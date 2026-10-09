@@ -14,3 +14,6 @@
 ### Agregado
 - El estado de cuenta incluye **penalidades** (lo que el cliente debe tras cancelar) y **reembolsos**; un saldo negativo es saldo a favor del cliente.
 - **Reembolsos**: el asesor solicita hasta lo pagado de más (descontando servicios vigentes, penalidades y reembolsos en curso); la solicitud crea una **aprobación de finanzas** en Workflow y la decisión llega por el evento `ApprovalResolved`. Finanzas registra el pago del reembolso con su comprobante. Los reembolsos no se borran y quedan auditados.
+
+## 2026-10-25
+- Abonos de clientes sin expediente (ADR-0007): anticipos y ventas externas en efectivo o transferencia; pantalla Abonos de clientes; funciona con Reservas apagada.

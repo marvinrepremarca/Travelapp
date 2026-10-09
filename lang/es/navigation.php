@@ -45,6 +45,7 @@ return [
         'quotes' => ['label' => 'Cotizaciones', 'hint' => 'Opciones para el cliente; se envían, el cliente las acepta y se convierten en expediente.'],
         'bookings' => ['label' => 'Expedientes', 'hint' => 'Confirmar servicios, asignar pasajeros, cobrar (Pagos), cancelar y descargar vouchers.'],
         'revenue' => ['label' => 'Ingresos', 'hint' => 'Ventas reconocidas al confirmar servicios y ventas registradas a mano, conciliadas con lo cobrado y lo facturado.'],
+        'customer_payments' => ['label' => 'Abonos de clientes', 'hint' => 'Anticipos y ventas sin expediente: efectivo o transferencia.'],
         'payables' => ['label' => 'Cuentas por pagar', 'hint' => 'Lo que se debe a cada proveedor por servicios confirmados; liquidación con comprobante (finanzas).'],
         'bank_accounts' => ['label' => 'Cuentas bancarias', 'hint' => 'Cuentas de la agencia y el formato del extracto CSV de cada banco (finanzas).'],
         'reconciliation' => ['label' => 'Conciliación bancaria', 'hint' => 'Carga el extracto del banco y cruza cada movimiento con abonos, pagos a proveedores y consignaciones.'],

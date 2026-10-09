@@ -13,6 +13,7 @@ use App\Modules\Payments\Contracts\ReceivedPayments;
 use App\Modules\Payments\Contracts\UpcomingBalances;
 use App\Modules\Payments\Listeners\ApplyRefundDecision;
 use App\Modules\Payments\Livewire\BookingPayments;
+use App\Modules\Payments\Livewire\CustomerPaymentsScreen;
 use App\Modules\Payments\Services\EloquentBookingCollections;
 use App\Modules\Payments\Services\EloquentCollectionTotals;
 use App\Modules\Payments\Services\EloquentReceivedPayments;
@@ -67,6 +68,7 @@ final class PaymentsServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'payments');
 
         Livewire::component('payments.booking', BookingPayments::class);
+        Livewire::component('payments.customers', CustomerPaymentsScreen::class);
 
         // La decisión de finanzas sobre un reembolso llega por evento del módulo Workflow.
         $this->app->make(CapabilitySubscriptions::class)->listen(Capability::Collections, ApprovalResolved::class, ApplyRefundDecision::class, CatchUpPolicy::Replay);

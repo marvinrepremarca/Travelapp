@@ -35,6 +35,11 @@ final readonly class SendPaymentNotices
 
     public function handleReceived(PaymentReceived $event): void
     {
+        // Los abonos sin expediente (anticipos, ventas externas) no tienen datos de viaje para el aviso.
+        if ($event->bookingUlid === null) {
+            return;
+        }
+
         $account = $this->accounts->account($event->bookingUlid);
 
         $this->notifier->notify($account->customerId, $account->ownerId, $account->branchId, NoticeTemplate::PaymentReceived, [
