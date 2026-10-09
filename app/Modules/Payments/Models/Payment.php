@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Payments\Models;
 
+use App\Modules\Customers\Models\Customer;
 use App\Modules\Payments\Enums\PaymentMethod;
 use App\Modules\Payments\Enums\PaymentStatus;
 use App\Modules\Shared\Concerns\HasVisibilityScope;
@@ -12,6 +13,7 @@ use Brick\Money\Money;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use LogicException;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -22,7 +24,9 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @property int $id
  * @property string $ulid
- * @property string $booking_ulid
+ * @property string|null $booking_ulid
+ * @property int|null $customer_id
+ * @property string|null $concept
  * @property int $owner_id
  * @property int|null $branch_id
  * @property PaymentMethod $method
@@ -67,6 +71,12 @@ final class Payment extends Model
     public function getRouteKeyName(): string
     {
         return 'ulid';
+    }
+
+    /** @return BelongsTo<Customer, $this> */
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
     }
 
     public function amount(): Money

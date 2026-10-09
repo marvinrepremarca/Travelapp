@@ -72,6 +72,7 @@ it('renders every backoffice screen within the query budget', function (string $
     'portal.shop',
     'invoicing.index',
     'invoicing.create',
+    'payments.customers',
     'communications.inbox',
     'integrations.whatsapp-simulator',
     'search.flights',

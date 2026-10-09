@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Modules\Payments\Http\Controllers\GatewayWebhookController;
 use App\Modules\Payments\Livewire\BookingPayments;
+use App\Modules\Payments\Livewire\CustomerPaymentsScreen;
 use App\Modules\Payments\Providers\PaymentsServiceProvider;
 use App\Modules\Shared\Capabilities\Capabilities;
 use App\Modules\Shared\Enums\Capability;
@@ -14,6 +15,7 @@ Route::middleware(['web', 'auth'])
     ->name('payments.')
     ->group(function (): void {
         // Cobros de un expediente: necesita también Reservas.
+        Route::get('/customers', CustomerPaymentsScreen::class)->name('customers');
         Route::get('/bookings/{booking}', BookingPayments::class)->middleware(Capabilities::middleware(Capability::Bookings))->name('booking');
     });
 

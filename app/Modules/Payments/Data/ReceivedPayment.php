@@ -13,7 +13,7 @@ final readonly class ReceivedPayment
 {
     public function __construct(
         public string $ulid,
-        public string $bookingUlid,
+        public ?string $bookingUlid,
         public PaymentMethod $method,
         public Money $amount,
         public CarbonImmutable $approvedAt,

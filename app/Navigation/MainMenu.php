@@ -45,6 +45,7 @@ final readonly class MainMenu
         ],
         'operations' => [
             ['bookings', 'bookings.index', null],
+            ['customer_payments', 'payments.customers', null],
             ['revenue', 'finance.revenue', Permission::FinanceAccess],
             ['payables', 'finance.payables', Permission::FinanceAccess],
             ['cash', 'finance.cash', null],

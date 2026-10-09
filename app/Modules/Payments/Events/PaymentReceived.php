@@ -21,7 +21,7 @@ final readonly class PaymentReceived implements IntegrationEvent, ShouldDispatch
 
     public function __construct(
         public string $paymentUlid,
-        public string $bookingUlid,
+        public ?string $bookingUlid,
         public int $amountMinor,
         public string $currency,
         public PaymentMethod $method,

@@ -237,6 +237,7 @@ return [
     ],
 
     'payments' => [
+        'per_page' => (int) env('TRAVEL_PAYMENTS_PER_PAGE', 20),
         'gateway' => env('TRAVEL_PAYMENT_GATEWAY', 'fake'),
         // El saldo debe estar pago esta cantidad de días antes del primer servicio.
         'balance_due_days_before' => (int) env('TRAVEL_BALANCE_DUE_DAYS_BEFORE', 15),
