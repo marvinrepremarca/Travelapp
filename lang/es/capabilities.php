@@ -51,6 +51,7 @@ return [
             'Facturación funciona sola: además de facturar expedientes pagados, emite facturas manuales a cualquier cliente (ingreso propio con IVA y recaudo para terceros sin IVA), aunque Reservas esté apagada.',
             'Cobros funciona sola: recibe abonos de clientes sin expediente (anticipos y ventas externas) en efectivo o transferencia; el efectivo entra a la caja solo si Contabilidad está encendida.',
             'Reservas funciona sola: crea expedientes directos sin cotización, con servicios cuyo precio de venta calcula el sistema; los anticipos del cliente se aplican después al saldo del expediente.',
+            'Cotizaciones y Comercial funcionan cada una sola de punta a punta: se cotiza, envía y acepta sin prospectos ni expedientes, y el embudo de prospectos llega a ganado sin cotizaciones; desde WhatsApp se va a la ficha del cliente si Cotizaciones está apagada.',
         ],
         'how_to' => 'Para cambiar las capacidades activas, el administrador técnico ajusta la configuración del despliegue y verifica con la comprobación de capacidades.',
     ],

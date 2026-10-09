@@ -244,3 +244,22 @@ it('goes from the chat to a quote creating the customer from the lead', function
         ->assertHasNoErrors();
     expect(App\Modules\Quotes\Models\Quote::query()->sole()->customer_id)->toBe($customer->id);
 });
+
+it('goes from the chat to the customer record when quoting is off', function (): void {
+    $advisor = agent();
+    actingAs($advisor);
+    customerSays('Hola', 'Laura Pérez', 'Cartagena', '10/11/2026', 'no', '2');
+    $ulid = conversation()->ulid;
+    Livewire::test(ConversationsInbox::class)->call('select', $ulid)->call('take');
+    $lead = Lead::query()->where('ulid', conversation()->lead_ulid)->sole();
+    $customer = App\Modules\Customers\Models\Customer::factory()->ownedBy($advisor)->create();
+    $lead->customer_id = $customer->id;
+    $lead->save();
+    disableCapabilities(App\Modules\Shared\Enums\Capability::Quoting);
+
+    Livewire::test(ConversationsInbox::class)
+        ->call('select', $ulid)
+        ->assertSee(__('communications.open_customer'))
+        ->call('quote')
+        ->assertRedirect(route('customers.show', $customer->ulid));
+});
