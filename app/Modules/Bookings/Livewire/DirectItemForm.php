@@ -70,7 +70,7 @@ final class DirectItemForm extends Component
                 destinationCountry: $data['destination_country'] ? mb_strtoupper($data['destination_country']) : null,
                 serviceDate: CarbonImmutable::parse($data['service_date']),
                 nights: (int) $data['nights'],
-                passengerAges: array_values(array_map(intval(...), array_map(trim(...), explode(self::AGES_SEPARATOR, $data['ages'])))),
+                passengerAges: array_map(intval(...), array_map(trim(...), explode(self::AGES_SEPARATOR, $data['ages']))),
                 supplierNet: Money::of($data['net_amount'], mb_strtoupper($data['net_currency'])),
                 channel: SalesChannel::from($data['channel']),
             ), CarbonImmutable::now());

@@ -7,8 +7,6 @@ namespace App\Modules\Quotes\Services;
 use App\Modules\Catalog\Contracts\CatalogRates;
 use App\Modules\Catalog\Models\CatalogProduct;
 use App\Modules\Pricing\Contracts\PriceCalculator;
-use App\Modules\Pricing\Data\PriceBreakdown;
-use App\Modules\Pricing\Data\PriceComponent;
 use App\Modules\Pricing\Data\PriceRequest;
 use App\Modules\Quotes\Data\QuoteItemData;
 use App\Modules\Quotes\Enums\QuoteItemKind;

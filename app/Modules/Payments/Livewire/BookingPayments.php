@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\Payments\Livewire;
 
-use App\Modules\Payments\Actions\ApplyAdvanceAction;
 use App\Modules\Bookings\Contracts\BookingAccounts;
 use App\Modules\Bookings\Data\BookingAccount;
 use App\Modules\Identity\Models\User;
+use App\Modules\Payments\Actions\ApplyAdvanceAction;
 use App\Modules\Payments\Actions\CreatePaymentLinkAction;
 use App\Modules\Payments\Actions\PayRefundAction;
 use App\Modules\Payments\Actions\RecordPaymentAction;
