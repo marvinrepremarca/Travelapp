@@ -10,7 +10,7 @@
             <div><dt class="text-caption text-text-subtle">{{ __('invoicing.customer') }}</dt><dd class="font-medium">{{ $invoice->customer_name }}</dd>
                 <dd class="text-caption text-text-subtle">{{ $invoice->customer_document_type->label() }} · {{ __('invoicing.masked_document', ['last' => mb_substr($invoice->customer_document_number, -4)]) }}</dd></div>
             <div><dt class="text-caption text-text-subtle">{{ __('invoicing.booking') }}</dt>
-                <dd><x-ui.capability-link route="bookings.show" :params="$invoice->booking_ulid" class="font-medium text-brand underline">{{ $invoice->booking_number }}</x-ui.capability-link></dd></div>
+                <dd>@if ($invoice->booking_ulid)<x-ui.capability-link route="bookings.show" :params="$invoice->booking_ulid" class="font-medium text-brand underline">{{ $invoice->booking_number }}</x-ui.capability-link>@else{{ __('invoicing.manual.without_booking') }}@endif</dd></div>
             <div><dt class="text-caption text-text-subtle">{{ __('invoicing.issued_at') }}</dt><dd>{{ $invoice->issued_at->timezone($timezone)->locale(app()->getLocale())->isoFormat('lll') }}</dd></div>
             @if ($invoice->related)
                 <div><dt class="text-caption text-text-subtle">{{ __('invoicing.related') }}</dt>
@@ -118,7 +118,7 @@
                 <x-ui.field :label="__('invoicing.debit_notes.reason')" for="debitReason">
                     <x-ui.input name="debitReason" wire:model="debitReason" required />
                 </x-ui.field>
-                <div><x-ui.button type="submit" wire:loading.attr="disabled" wire:target="issueDebit" wire:confirm="{{ __('invoicing.confirm_issue', ['booking' => $invoice->booking_number]) }}">{{ __('invoicing.debit_notes.issue') }}</x-ui.button></div>
+                <div><x-ui.button type="submit" wire:loading.attr="disabled" wire:target="issueDebit" wire:confirm="{{ __('invoicing.confirm_issue', ['booking' => $invoice->booking_number ?? $invoice->number]) }}">{{ __('invoicing.debit_notes.issue') }}</x-ui.button></div>
             </form>
         </x-ui.card>
     @endif

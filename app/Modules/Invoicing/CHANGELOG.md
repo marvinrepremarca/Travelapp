@@ -15,3 +15,6 @@
 - **Nota crédito** total o parcial por línea, sin acreditar más de lo que queda (cuenta notas emitidas y solicitudes pendientes). El IVA se acredita en proporción y el saldo exacto de la línea toma el IVA restante. Pasa por **aprobación de finanzas** (Workflow, *Nota crédito / anulación de factura*) y se emite sola al aprobarse con consecutivo NC-.
 - **Nota débito** con cargos de recaudo para terceros o ingreso propio; el IVA del ingreso propio sale de las reglas vigentes de Pricing (contrato `IncomeTaxes`). Consecutivo ND-.
 - La factura muestra sus notas, las solicitudes y el **neto con notas**. Las notas copian los datos congelados del cliente y también se envían al puerto de facturación electrónica.
+
+## 2026-10-24
+- Factura manual a un cliente sin expediente (ADR-0007): ingreso propio con IVA y recaudo para terceros; funciona con Reservas apagada.

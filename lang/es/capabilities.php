@@ -48,6 +48,7 @@ return [
             'Ninguna pantalla lleva a una capacidad apagada: el enlace se muestra como texto. Con Contabilidad apagada los abonos en efectivo se registran sin caja; con Producto propio apagada se cotizan solo servicios de proveedor o manuales.',
             'Los tableros reciben los indicadores de cada capacidad por separado: las tarjetas de una capacidad apagada desaparecen y sus cifras cuentan cero, sin afectar a las demás.',
             'Contabilidad funciona sola: reconoce cada venta al confirmarse el servicio (y la reversa si se cancela), admite ventas y cuentas por pagar registradas a mano y concilia lo reconocido contra lo cobrado y lo facturado.',
+            'Facturación funciona sola: además de facturar expedientes pagados, emite facturas manuales a cualquier cliente (ingreso propio con IVA y recaudo para terceros sin IVA), aunque Reservas esté apagada.',
         ],
         'how_to' => 'Para cambiar las capacidades activas, el administrador técnico ajusta la configuración del despliegue y verifica con la comprobación de capacidades.',
     ],

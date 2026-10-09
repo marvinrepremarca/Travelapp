@@ -21,7 +21,7 @@ final readonly class InvoiceIssued implements IntegrationEvent, ShouldDispatchAf
     public function __construct(
         public string $invoiceUlid,
         public InvoiceType $type,
-        public string $bookingUlid,
+        public ?string $bookingUlid,
     ) {}
 
     public static function eventName(): string

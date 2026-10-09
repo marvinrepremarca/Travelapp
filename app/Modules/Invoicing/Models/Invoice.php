@@ -31,8 +31,8 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property int $sequence
  * @property string $number
  * @property int|null $related_invoice_id
- * @property string $booking_ulid
- * @property string $booking_number
+ * @property string|null $booking_ulid
+ * @property string|null $booking_number
  * @property string|null $booking_invoice_key
  * @property int $customer_id
  * @property string $customer_name
