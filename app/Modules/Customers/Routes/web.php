@@ -6,9 +6,10 @@ use App\Modules\Customers\Livewire\CustomerForm;
 use App\Modules\Customers\Livewire\CustomerShow;
 use App\Modules\Customers\Livewire\CustomersIndex;
 use App\Modules\Customers\Livewire\TravelerForm;
+use App\Modules\Shared\Enums\Permission;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['web', 'auth'])
+Route::middleware(['web', 'auth', 'can:' . Permission::CustomersView->value])
     ->prefix('customers')
     ->name('customers.')
     ->group(function (): void {

@@ -12,87 +12,89 @@ use App\Modules\Shared\Exceptions\BusinessRuleException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Spatie\Permission\Models\Role as RoleModel;
 
-/** Matriz de roles y permisos que administra el Gerente de la agencia. */
+/** Permisos de un rol que administra el Gerente de la agencia. */
 #[Layout('components.layouts.backoffice')]
 final class RolePermissions extends Component
 {
     private const GUARD = 'web';
 
-    /** @var array<string, list<string>> rol → permisos marcados */
+    #[Locked]
+    public string $role = '';
+
+    /** @var list<string> permisos marcados */
     public array $granted = [];
 
-    public function mount(): void
+    public function mount(string $role): void
     {
         $this->authorizeRoles();
+        $this->role = (Role::tryFrom($role) ?? abort(404))->value;
         $this->loadGranted();
     }
 
-    public function save(string $role, UpdateRolePermissionsAction $update): void
+    public function save(UpdateRolePermissionsAction $update): void
     {
         $this->authorizeRoles();
-        $target = Role::from($role);
-        $permissions = array_values(array_filter(array_map(
-            Permission::tryFrom(...),
-            $this->granted[$role] ?? [],
-        )));
+        $permissions = array_values(array_filter(array_map(Permission::tryFrom(...), $this->granted)));
 
-        try {
-            $update->execute($this->actor(), $target, $permissions);
-        } catch (BusinessRuleException $violation) {
-            $this->addError("granted.{$role}", $violation->getMessage());
-
-            return;
-        }
-
-        session()->flash('status', __('identity.role_permissions.saved', ['role' => $target->label()]));
-        $this->loadGranted();
+        $this->apply($update, $permissions, 'identity.role_permissions.saved');
     }
 
-    public function restoreDefaults(string $role, UpdateRolePermissionsAction $update): void
+    public function restoreDefaults(UpdateRolePermissionsAction $update): void
     {
         $this->authorizeRoles();
-        $target = Role::from($role);
-        $defaults = array_values(array_filter($target->permissions(), static fn(Permission $permission): bool => $permission !== Permission::RolesManage));
+        $defaults = array_values(array_filter($this->target()->permissions(), static fn(Permission $permission): bool => $permission !== Permission::RolesManage));
 
-        try {
-            $update->execute($this->actor(), $target, $defaults);
-        } catch (BusinessRuleException $violation) {
-            $this->addError("granted.{$role}", $violation->getMessage());
-
-            return;
-        }
-
-        session()->flash('status', __('identity.role_permissions.restored', ['role' => $target->label()]));
-        $this->loadGranted();
+        $this->apply($update, $defaults, 'identity.role_permissions.restored');
     }
 
     public function render(): View
     {
-        $title = __('identity.role_permissions.title');
-        $usersByRole = RoleModel::query()->where('guard_name', self::GUARD)->withCount('users')->pluck('users_count', 'name');
+        $target = $this->target();
+        $title = __('identity.role_permissions.edit_title', ['role' => $target->label()]);
+        $usersCount = RoleModel::query()->where('guard_name', self::GUARD)->where('name', $target->value)->withCount('users')->value('users_count');
 
         return view('identity::livewire.role-permissions', [
-            'roles' => Role::cases(),
+            'target' => $target,
             'permissions' => Permission::cases(),
-            'usersByRole' => $usersByRole,
-            'locked' => Role::AgencyOwner,
+            'usersCount' => (int) $usersCount,
+            'isLocked' => $target === Role::AgencyOwner,
             'reserved' => Permission::RolesManage,
         ])->title($title)->layoutData(['heading' => $title]);
     }
 
-    private function loadGranted(): void
+    /** @param list<Permission> $permissions */
+    private function apply(UpdateRolePermissionsAction $update, array $permissions, string $message): void
     {
-        $granted = [];
-        foreach (RoleModel::query()->where('guard_name', self::GUARD)->with('permissions:id,name')->get() as $role) {
-            /** @var list<string> $names */
-            $names = $role->permissions->pluck('name')->sort()->values()->all();
-            $granted[(string) $role->name] = $names;
+        $target = $this->target();
+
+        try {
+            $update->execute($this->actor(), $target, $permissions);
+        } catch (BusinessRuleException $violation) {
+            $this->addError('granted', $violation->getMessage());
+
+            return;
         }
 
-        $this->granted = $granted;
+        session()->flash('status', __($message, ['role' => $target->label()]));
+        $this->loadGranted();
+    }
+
+    private function loadGranted(): void
+    {
+        $model = RoleModel::query()->where('guard_name', self::GUARD)->where('name', $this->role)->with('permissions:id,name')->first();
+
+        /** @var list<string> $names */
+        $names = $model?->permissions->pluck('name')->sort()->values()->all() ?? [];
+        $this->granted = $names;
+    }
+
+    private function target(): Role
+    {
+        return Role::from($this->role);
     }
 
     private function authorizeRoles(): void

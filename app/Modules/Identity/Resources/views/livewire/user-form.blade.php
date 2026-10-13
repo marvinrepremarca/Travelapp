@@ -1,8 +1,33 @@
+@php
+    use App\Modules\Shared\Enums\Tone;
+@endphp
+<div>
+@if ($issuedPassword !== null)
+    <x-ui.card :title="__('identity.users.temporary_password_title', ['name' => $issuedUserName])">
+        <div class="flex flex-col gap-md" x-data>
+            <x-ui.alert>{{ __('identity.users.temporary_password_once') }}</x-ui.alert>
+            <x-ui.field :label="__('identity.users.temporary_password_label')" for="issued-password">
+                <x-ui.input name="issued-password" x-ref="password" value="{{ $issuedPassword }}" readonly autocomplete="off" />
+            </x-ui.field>
+            <div class="flex flex-wrap justify-end gap-sm">
+                <x-ui.button variant="secondary" type="button" x-on:click="navigator.clipboard.writeText($refs.password.value)">{{ __('identity.users.copy_password') }}</x-ui.button>
+                <x-ui.button type="button" wire:click="finishIssuing">{{ __('identity.users.temporary_password_done') }}</x-ui.button>
+            </div>
+        </div>
+    </x-ui.card>
+@else
 <form wire:submit="save" class="flex max-w-form flex-col gap-lg" novalidate>
+    @if ($errors->any())
+        <x-ui.alert :tone="Tone::Danger" role="alert">{{ __('identity.users.form_has_errors') }}</x-ui.alert>
+    @endif
     <x-ui.card>
         <div class="flex flex-col gap-md">
             @unless ($isEditing)
-                <x-ui.alert>{{ __('identity.users.invitation_help') }}</x-ui.alert>
+                <label class="flex items-center gap-sm text-body">
+                    <input type="checkbox" wire:model.live="withTemporaryPassword" class="rounded-control border-border">
+                    {{ __('identity.users.with_temporary_password') }}
+                </label>
+                <x-ui.alert>{{ $withTemporaryPassword ? __('identity.users.temporary_password_help') : __('identity.users.invitation_help') }}</x-ui.alert>
             @endunless
             <x-ui.field :label="__('identity.users.fields.name')" for="name">
                 <x-ui.input name="name" wire:model="name" autocomplete="off" required />
@@ -25,8 +50,10 @@
     <div class="flex justify-end gap-sm">
         <x-ui.link-button :href="route('identity.users.index')" variant="secondary">{{ __('shared.cancel') }}</x-ui.link-button>
         <x-ui.button type="submit" wire:loading.attr="disabled" wire:target="save">
-            <span wire:loading.remove wire:target="save">{{ $isEditing ? __('shared.save') : __('identity.users.send_invitation') }}</span>
+            <span wire:loading.remove wire:target="save">{{ $isEditing ? __('shared.save') : ($withTemporaryPassword ? __('identity.users.create_with_temporary_password') : __('identity.users.send_invitation')) }}</span>
             <span wire:loading wire:target="save">{{ __('shared.saving') }}</span>
         </x-ui.button>
     </div>
 </form>
+@endif
+</div>

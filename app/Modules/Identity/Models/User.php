@@ -26,6 +26,8 @@ use Spatie\Permission\Traits\HasRoles;
  * Usuario interno de la agencia.
  *
  * @property int $id
+ * @property bool $must_change_password
+ * @property string|null $temporary_password
  * @property string $ulid
  * @property string $name
  * @property string $email
@@ -57,9 +59,11 @@ final class User extends Authenticatable implements ScopedViewer
         'two_factor_secret' => null,
         'two_factor_recovery_codes' => null,
         'two_factor_confirmed_at' => null,
+        'must_change_password' => false,
+        'temporary_password' => null,
     ];
 
-    protected $hidden = ['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'];
+    protected $hidden = ['password', 'temporary_password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'];
 
     public function getRouteKeyName(): string
     {
@@ -69,6 +73,11 @@ final class User extends Authenticatable implements ScopedViewer
     public function isActive(): bool
     {
         return $this->is_active;
+    }
+
+    public function mustChangePassword(): bool
+    {
+        return $this->must_change_password;
     }
 
     public function hasTwoFactorEnabled(): bool
@@ -150,6 +159,8 @@ final class User extends Authenticatable implements ScopedViewer
             'password' => 'hashed',
             'visibility_scope' => VisibilityScope::class,
             'is_active' => 'boolean',
+            'must_change_password' => 'boolean',
+            'temporary_password' => 'encrypted',
         ];
     }
 }

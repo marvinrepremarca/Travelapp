@@ -28,9 +28,9 @@ it('grants and revokes permissions of a role immediately and audits the change',
     actingAs($owner);
     expect($agent->fresh()?->can(Permission::MarginsView->value))->toBeFalse();
 
-    Livewire::test(RolePermissions::class)
-        ->set('granted.' . Role::TravelAgent->value, [Permission::MarginsView->value, Permission::CustomersReassign->value])
-        ->call('save', Role::TravelAgent->value)
+    Livewire::test(RolePermissions::class, ['role' => Role::TravelAgent->value])
+        ->set('granted', [Permission::MarginsView->value, Permission::CustomersReassign->value])
+        ->call('save')
         ->assertHasNoErrors();
 
     expect($agent->fresh()?->can(Permission::MarginsView->value))->toBeTrue();
@@ -38,9 +38,9 @@ it('grants and revokes permissions of a role immediately and audits the change',
     expect($activity->causer_id)->toBe($owner->id)
         ->and($activity->properties['granted'])->toEqualCanonicalizing([Permission::MarginsView->value, Permission::CustomersReassign->value]);
 
-    Livewire::test(RolePermissions::class)
-        ->set('granted.' . Role::TravelAgent->value, [])
-        ->call('save', Role::TravelAgent->value);
+    Livewire::test(RolePermissions::class, ['role' => Role::TravelAgent->value])
+        ->set('granted', [])
+        ->call('save');
     expect($agent->fresh()?->can(Permission::MarginsView->value))->toBeFalse();
 });
 
@@ -52,20 +52,20 @@ it('keeps the agency owner role untouchable and role management reserved', funct
         ->and(fn() => $update->execute($owner, Role::Finance, [Permission::RolesManage]))->toThrow(RolePermissionsViolation::class);
 
     actingAs($owner);
-    Livewire::test(RolePermissions::class)
-        ->set('granted.' . Role::BranchManager->value, [Permission::RolesManage->value])
-        ->call('save', Role::BranchManager->value)
-        ->assertHasErrors('granted.' . Role::BranchManager->value);
+    Livewire::test(RolePermissions::class, ['role' => Role::BranchManager->value])
+        ->set('granted', [Permission::RolesManage->value])
+        ->call('save')
+        ->assertHasErrors('granted');
     expect($owner->fresh()?->can(Permission::RolesManage->value))->toBeTrue();
 });
 
 it('restores the default permissions of a role', function (): void {
     actingAs(userWithRole(Role::AgencyOwner));
-    $component = Livewire::test(RolePermissions::class)
-        ->set('granted.' . Role::Finance->value, [])
-        ->call('save', Role::Finance->value);
+    $component = Livewire::test(RolePermissions::class, ['role' => Role::Finance->value])
+        ->set('granted', [])
+        ->call('save');
 
-    $component->call('restoreDefaults', Role::Finance->value)->assertHasNoErrors();
+    $component->call('restoreDefaults')->assertHasNoErrors();
 
     expect(financeUser()->can(Permission::FinanceAccess->value))->toBeTrue();
 });
@@ -79,4 +79,32 @@ it('does not overwrite configured permissions when seeding again', function (): 
     expect(agent()->can(Permission::MarginsView->value))->toBeTrue()
         ->and(userWithRole(Role::SystemAdmin)->can(Permission::RolesManage->value))->toBeFalse()
         ->and($owner->fresh()?->can(Permission::ComplianceManage->value))->toBeTrue();
+});
+
+it('lists every role and opens each one on its own page', function (): void {
+    actingAs(userWithRole(Role::AgencyOwner));
+
+    $response = $this->get(route('identity.roles'))->assertOk();
+    foreach (Role::cases() as $role) {
+        $response->assertSee(route('identity.roles.edit', $role->value), false);
+    }
+
+    $this->get(route('identity.roles.edit', Role::Finance->value))->assertOk()->assertSee(Role::Finance->label());
+    $this->get(route('identity.roles.edit', 'unknown'))->assertNotFound();
+});
+
+it('hides and blocks the business areas a role has no access to', function (): void {
+    $admin = userWithRole(Role::SystemAdmin);
+    actingAs($admin);
+
+    $this->get(route('suppliers.index'))->assertForbidden();
+    $this->get(route('customers.index'))->assertForbidden();
+    $this->get(route('workflow.tasks'))->assertForbidden();
+    $this->get(route('identity.users.index'))->assertOk()
+        ->assertDontSee(route('suppliers.index'), false)
+        ->assertDontSee(route('crm.leads.index'), false);
+
+    app(UpdateRolePermissionsAction::class)->execute(userWithRole(Role::AgencyOwner), Role::SystemAdmin, [Permission::UsersView, Permission::SuppliersView]);
+
+    $this->get(route('suppliers.index'))->assertOk();
 });

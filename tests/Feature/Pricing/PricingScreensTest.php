@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Modules\Identity\Enums\Role;
 use App\Modules\Organization\Actions\UpdateSettingsAction;
 use App\Modules\Pricing\Database\Seeders\TaxReferenceSeeder;
+use App\Modules\Pricing\Enums\FeeBasis;
 use App\Modules\Pricing\Enums\MarkupKind;
 use App\Modules\Pricing\Livewire\PriceSimulator;
 use App\Modules\Pricing\Livewire\PricingRulesManager;
@@ -12,6 +13,7 @@ use App\Modules\Pricing\Models\FeeRule;
 use App\Modules\Pricing\Models\MarkupRule;
 use App\Modules\Pricing\Models\TaxRule;
 use App\Modules\Shared\Enums\ProductType;
+use App\Modules\Shared\Enums\SalesChannel;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -50,6 +52,10 @@ it('creates percentage and fixed markups, fees and taxes', function (): void {
         ->set('tab', PricingRulesManager::TAB_FEES)
         ->set('fee.name', 'Gestión')
         ->set('fee.amount', '30000')
+        ->set('fee.basis', FeeBasis::PerBooking->value)
+        ->set('fee.currency', 'COP')
+        ->set('fee.basis', FeeBasis::PerBooking->value)
+        ->set('fee.currency', 'COP')
         ->set('fee.valid_from', '2026-01-01')
         ->call('addFee')
         ->assertHasNoErrors()
@@ -118,6 +124,7 @@ it('simulates a price with breakdown, hiding the margin from agents by default',
     actingAs(agent());
 
     Livewire::test(PriceSimulator::class)
+        ->set('net_currency', 'COP')->set('sale_currency', 'COP')->set('product_type', ProductType::Hotel->value)->set('sales_channel', SalesChannel::Branch->value)
         ->set('net', '1000000')
         ->call('calculate')
         ->assertHasNoErrors()
@@ -126,7 +133,7 @@ it('simulates a price with breakdown, hiding the margin from agents by default',
         ->assertDontSee(__('pricing.simulator.margin', ['amount' => '$ 100.000']));
 
     actingAs(productManager());
-    Livewire::test(PriceSimulator::class)->set('net', '1000000')->call('calculate')
+    Livewire::test(PriceSimulator::class)->set('net_currency', 'COP')->set('sale_currency', 'COP')->set('product_type', ProductType::Hotel->value)->set('sales_channel', SalesChannel::Branch->value)->set('net', '1000000')->call('calculate')
         ->assertSee(__('pricing.simulator.margin', ['amount' => app(App\Modules\Shared\Money\MoneyPresenter::class)->format(Brick\Money\Money::of('100000', 'COP'))]));
 });
 
@@ -141,7 +148,7 @@ it('shows the margin to agents when the agency allows it', function (): void {
     MarkupRule::factory()->percentage(1000)->create();
     actingAs(agent());
 
-    Livewire::test(PriceSimulator::class)->set('net', '1000')->call('calculate')->assertSee(__('pricing.simulator.margin', ['amount' => '']), false);
+    Livewire::test(PriceSimulator::class)->set('net_currency', 'COP')->set('sale_currency', 'COP')->set('product_type', ProductType::Hotel->value)->set('sales_channel', SalesChannel::Branch->value)->set('net', '1000')->call('calculate')->assertSee(__('pricing.simulator.margin', ['amount' => '']), false);
 
     unset($owner);
 });
@@ -150,6 +157,7 @@ it('validates the simulator and reports missing exchange rates', function (): vo
     actingAs(agent());
 
     Livewire::test(PriceSimulator::class)
+        ->set('net_currency', 'COP')->set('sale_currency', 'COP')->set('product_type', ProductType::Hotel->value)->set('sales_channel', SalesChannel::Branch->value)
         ->set('net', '0')
         ->set('passengers', '0')
         ->call('calculate')

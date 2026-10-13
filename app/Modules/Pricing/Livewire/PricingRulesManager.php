@@ -37,10 +37,10 @@ final class PricingRulesManager extends Component
     public string $tab = self::TAB_MARKUPS;
 
     /** @var array<string, string> */
-    public array $markup = ['name' => '', 'product_type' => '', 'supplier_id' => '', 'destination_country' => '', 'sales_channel' => '', 'kind' => 'percentage', 'value' => '', 'currency' => 'COP', 'min_margin' => '', 'priority' => '0', 'valid_from' => '', 'valid_until' => ''];
+    public array $markup = ['name' => '', 'product_type' => '', 'supplier_id' => '', 'destination_country' => '', 'sales_channel' => '', 'kind' => '', 'value' => '', 'currency' => '', 'min_margin' => '', 'priority' => '0', 'valid_from' => '', 'valid_until' => ''];
 
     /** @var array<string, string> */
-    public array $fee = ['name' => '', 'product_type' => '', 'sales_channel' => '', 'basis' => 'per_booking', 'amount' => '', 'currency' => 'COP', 'valid_from' => '', 'valid_until' => ''];
+    public array $fee = ['name' => '', 'product_type' => '', 'sales_channel' => '', 'basis' => '', 'amount' => '', 'currency' => '', 'valid_from' => '', 'valid_until' => ''];
 
     /** @var array<string, mixed> */
     public array $tax = ['name' => '', 'rate' => '', 'exempt' => [], 'valid_from' => '', 'valid_until' => ''];

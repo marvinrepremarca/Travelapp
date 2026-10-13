@@ -26,6 +26,7 @@ use App\Modules\Quotes\Models\QuoteItem;
 use App\Modules\Search\Contracts\SupplierGateway;
 use App\Modules\Search\Data\FlightSearchCriteria;
 use App\Modules\Search\Data\ProviderBookingRequest;
+use App\Modules\Search\Enums\CabinClass;
 use App\Modules\Search\Exceptions\ProviderUnavailable;
 use App\Modules\Search\Livewire\FlightSearch;
 use App\Modules\Search\Livewire\HotelSearch;
@@ -53,7 +54,7 @@ function quoteWithFlight(User $agent, string $destination = 'CTG'): Quote
 
     Livewire::test(FlightSearch::class)
         ->set('criteria.origin', 'BOG')
-        ->set('criteria.destination', $destination)
+        ->set('criteria.destination', $destination)->set('criteria.cabin', CabinClass::Economy->value)
         ->set('criteria.departure_date', '2026-11-10')
         ->set('criteria.ages', '40')
         ->call('search')
@@ -118,7 +119,7 @@ it('refuses to add offers without a draft in scope or for unknown offers', funct
     $foreign = app(CreateQuoteAction::class)->execute(agent(), Customer::factory()->create(), 'Ajena', 'COP', SalesChannel::Branch);
     actingAs($agent);
     $screen = Livewire::test(FlightSearch::class)
-        ->set('criteria.origin', 'BOG')->set('criteria.destination', 'CTG')->set('criteria.departure_date', '2026-11-10')->set('criteria.ages', '40')
+        ->set('criteria.origin', 'BOG')->set('criteria.destination', 'CTG')->set('criteria.cabin', CabinClass::Economy->value)->set('criteria.departure_date', '2026-11-10')->set('criteria.ages', '40')
         ->call('search')
         ->assertSee(__('search.no_drafts'));
 

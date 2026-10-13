@@ -23,13 +23,14 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property string $account_number
  * @property string $holder_name
  * @property string $currency
+ * @property bool $is_active
  */
 final class SupplierBankAccount extends Model
 {
     use HasUlids;
     use LogsActivity;
 
-    protected $fillable = ['bank_name', 'account_type', 'account_number', 'holder_name', 'currency'];
+    protected $fillable = ['bank_name', 'account_type', 'account_number', 'holder_name', 'currency', 'is_active'];
 
     protected $hidden = ['account_number'];
 
@@ -48,7 +49,7 @@ final class SupplierBankAccount extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['bank_name', 'account_type', 'holder_name', 'currency'])
+            ->logOnly(['bank_name', 'account_type', 'holder_name', 'currency', 'is_active'])
             ->logOnlyDirty()
             ->useLogName(AuditLogName::Suppliers->value);
     }
@@ -59,6 +60,7 @@ final class SupplierBankAccount extends Model
         return [
             'account_type' => BankAccountType::class,
             'account_number' => 'encrypted',
+            'is_active' => 'boolean',
         ];
     }
 }

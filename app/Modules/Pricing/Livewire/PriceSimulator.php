@@ -28,13 +28,13 @@ final class PriceSimulator extends Component
 {
     public string $net = '';
 
-    public string $net_currency = 'COP';
+    public string $net_currency = '';
 
-    public string $sale_currency = 'COP';
+    public string $sale_currency = '';
 
-    public string $product_type = 'hotel';
+    public string $product_type = '';
 
-    public string $sales_channel = 'branch';
+    public string $sales_channel = '';
 
     public string $supplier_id = '';
 

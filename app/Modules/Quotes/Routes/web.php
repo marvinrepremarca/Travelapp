@@ -9,9 +9,10 @@ use App\Modules\Quotes\Livewire\QuoteShow;
 use App\Modules\Quotes\Livewire\QuotesIndex;
 use App\Modules\Quotes\Providers\QuotesServiceProvider;
 use App\Modules\Quotes\Services\QuoteLinks;
+use App\Modules\Shared\Enums\Permission;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['web', 'auth'])
+Route::middleware(['web', 'auth', 'can:' . Permission::QuotesView->value])
     ->prefix('quotes')
     ->name('quotes.')
     ->group(function (): void {

@@ -26,9 +26,9 @@ final class ExchangeRatesManager extends Component
 {
     use WithPagination;
 
-    public string $base = 'USD';
+    public string $base = '';
 
-    public string $quote = 'COP';
+    public string $quote = '';
 
     public string $rate = '';
 

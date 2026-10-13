@@ -7,6 +7,7 @@ use App\Modules\Integrations\Adapters\Fake\FakeHotels;
 use App\Modules\Pricing\Actions\RecordExchangeRateAction;
 use App\Modules\Pricing\Enums\ExchangeRateSource;
 use App\Modules\Pricing\Models\MarkupRule;
+use App\Modules\Search\Enums\CabinClass;
 use App\Modules\Search\Livewire\FlightSearch;
 use App\Modules\Search\Livewire\HotelSearch;
 use Brick\Math\BigDecimal;
@@ -32,7 +33,7 @@ it('searches flights and shows sale prices from pricing rules', function (): voi
 
     Livewire::test(FlightSearch::class)
         ->set('criteria.origin', 'bog')
-        ->set('criteria.destination', 'ctg')
+        ->set('criteria.destination', 'ctg')->set('criteria.cabin', CabinClass::Economy->value)
         ->set('criteria.departure_date', '2026-11-10')
         ->set('criteria.ages', '35, 33')
         ->call('search')
@@ -47,7 +48,7 @@ it('warns when the sale price cannot be calculated without exchange rate', funct
 
     Livewire::test(FlightSearch::class)
         ->set('criteria.origin', 'BOG')
-        ->set('criteria.destination', 'CTG')
+        ->set('criteria.destination', 'CTG')->set('criteria.cabin', CabinClass::Economy->value)
         ->set('criteria.departure_date', '2026-11-10')
         ->set('criteria.ages', '35')
         ->call('search')
@@ -60,7 +61,7 @@ it('shows partial and empty results', function (): void {
 
     Livewire::test(FlightSearch::class)
         ->set('criteria.origin', 'BOG')
-        ->set('criteria.destination', FakeFlights::FAILING_DESTINATION)
+        ->set('criteria.destination', FakeFlights::FAILING_DESTINATION)->set('criteria.cabin', CabinClass::Economy->value)
         ->set('criteria.departure_date', '2026-11-10')
         ->set('criteria.ages', '35')
         ->call('search')
@@ -73,7 +74,7 @@ it('validates flight searches', function (): void {
 
     Livewire::test(FlightSearch::class)
         ->set('criteria.origin', 'BO')
-        ->set('criteria.destination', 'BO')
+        ->set('criteria.destination', 'BO')->set('criteria.cabin', CabinClass::Economy->value)
         ->set('criteria.departure_date', '2026-09-01')
         ->set('criteria.return_date', '2026-08-01')
         ->set('criteria.ages', '1,2,3,4,5,6,7,8,9,10')

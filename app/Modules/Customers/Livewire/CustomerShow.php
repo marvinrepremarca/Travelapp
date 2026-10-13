@@ -19,6 +19,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -40,7 +41,7 @@ final class CustomerShow extends Component
 
     public string $newOwnerId = '';
 
-    public string $consentChannel = 'phone';
+    public string $consentChannel = '';
 
     public function mount(Customer $customer): void
     {
@@ -76,7 +77,9 @@ final class CustomerShow extends Component
         $customer = $this->customer();
         Gate::authorize('update', $customer);
 
-        $record->execute($customer, ConsentPurpose::Marketing, ! $customer->hasConsent(ConsentPurpose::Marketing), ConsentChannel::from($this->consentChannel), $this->actor());
+        $validated = $this->validate(['consentChannel' => ['required', Rule::enum(ConsentChannel::class)]], attributes: ['consentChannel' => __('customers.fields.consent_channel')]);
+
+        $record->execute($customer, ConsentPurpose::Marketing, ! $customer->hasConsent(ConsentPurpose::Marketing), ConsentChannel::from($validated['consentChannel']), $this->actor());
     }
 
     public function reassign(ReassignCustomerAction $reassign): void

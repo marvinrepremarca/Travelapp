@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 use App\Modules\Search\Livewire\FlightSearch;
 use App\Modules\Search\Livewire\HotelSearch;
+use App\Modules\Shared\Enums\Permission;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['web', 'auth', 'throttle:search'])
+Route::middleware(['web', 'auth', 'can:' . Permission::SearchAccess->value, 'throttle:search'])
     ->prefix('search')
     ->name('search.')
     ->group(function (): void {

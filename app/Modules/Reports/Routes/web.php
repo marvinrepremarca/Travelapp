@@ -17,7 +17,7 @@ Route::middleware(['web', 'auth'])
     ->group(function (): void {
         // Con carga diferida el componente monta después: el permiso se exige también en la ruta.
         Route::get('/management', ManagementDashboard::class)->middleware('can:' . Permission::MarginsView->value)->name('management');
-        Route::get('/advisor', AdvisorDashboard::class)->name('advisor');
+        Route::get('/advisor', AdvisorDashboard::class)->middleware('can:' . Permission::AdvisorDashboardView->value)->name('advisor');
         Route::get('/finance', FinanceDashboard::class)->middleware(['can:' . Permission::FinanceAccess->value, Capabilities::middleware(Capability::Accounting)])->name('finance');
         Route::get('/export/{report}', ReportExportController::class)->name('export');
     });

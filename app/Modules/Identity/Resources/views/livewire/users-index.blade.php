@@ -28,6 +28,18 @@
         @if ($users->isEmpty())
             <x-ui.empty-state :title="__('identity.users.empty_title')" :description="__('identity.users.empty_description')" />
         @else
+            @if ($revealedPassword !== null)
+                <x-ui.card :title="__('identity.users.temporary_password_title', ['name' => $revealedUserName])" class="mb-md">
+                    <div class="flex flex-col gap-md" x-data>
+                        <x-ui.alert>{{ __('identity.users.temporary_password_reveal_help') }}</x-ui.alert>
+                        <x-ui.input name="revealed-password" x-ref="password" value="{{ $revealedPassword }}" readonly autocomplete="off" />
+                        <div class="flex flex-wrap justify-end gap-sm">
+                            <x-ui.button variant="secondary" type="button" x-on:click="navigator.clipboard.writeText($refs.password.value)">{{ __('identity.users.copy_password') }}</x-ui.button>
+                            <x-ui.button type="button" wire:click="hideTemporaryPassword">{{ __('identity.users.temporary_password_done') }}</x-ui.button>
+                        </div>
+                    </div>
+                </x-ui.card>
+            @endif
             <x-ui.table :caption="__('identity.users.title')">
                 <x-slot:head>
                     <tr>
@@ -36,7 +48,7 @@
                         <th scope="col" class="px-md py-sm">{{ __('identity.users.fields.branch_id') }}</th>
                         <th scope="col" class="px-md py-sm">{{ __('identity.users.two_factor') }}</th>
                         <th scope="col" class="px-md py-sm">{{ __('identity.users.status') }}</th>
-                        @if ($canManage)
+                        @if ($canManage || $canViewTemporaryPasswords)
                             <th scope="col" class="px-md py-sm"><span class="sr-only">{{ __('shared.actions') }}</span></th>
                         @endif
                     </tr>
@@ -60,19 +72,26 @@
                                 {{ $user->is_active ? __('identity.users.active') : __('identity.users.inactive') }}
                             </x-ui.badge>
                         </td>
-                        @if ($canManage)
+                        @if ($canManage || $canViewTemporaryPasswords)
                             <td class="px-md py-sm">
                                 <div class="flex flex-wrap justify-end gap-sm">
-                                    <a href="{{ route('identity.users.edit', $user) }}" wire:navigate class="text-brand underline">
-                                        {{ __('shared.edit') }}<span class="sr-only"> {{ $user->name }}</span>
-                                    </a>
-                                    <x-ui.button variant="ghost" wire:click="resendInvitation('{{ $user->ulid }}')" wire:loading.attr="disabled">
-                                        {{ __('identity.users.resend_invitation') }}<span class="sr-only"> {{ $user->name }}</span>
-                                    </x-ui.button>
-                                    <x-ui.button variant="ghost" wire:click="toggleActive('{{ $user->ulid }}')" wire:loading.attr="disabled"
-                                        wire:confirm="{{ $user->is_active ? __('identity.users.confirm_deactivate', ['name' => $user->name]) : __('identity.users.confirm_activate', ['name' => $user->name]) }}">
-                                        {{ $user->is_active ? __('identity.users.deactivate') : __('identity.users.activate') }}<span class="sr-only"> {{ $user->name }}</span>
-                                    </x-ui.button>
+                                    @if ($canViewTemporaryPasswords && $user->must_change_password)
+                                        <x-ui.button variant="ghost" wire:click="revealTemporaryPassword('{{ $user->ulid }}')" wire:loading.attr="disabled">
+                                            {{ __('identity.users.reveal_temporary_password') }}<span class="sr-only"> {{ $user->name }}</span>
+                                        </x-ui.button>
+                                    @endif
+                                    @if ($canManage)
+                                        <a href="{{ route('identity.users.edit', $user) }}" wire:navigate class="text-brand underline">
+                                            {{ __('shared.edit') }}<span class="sr-only"> {{ $user->name }}</span>
+                                        </a>
+                                        <x-ui.button variant="ghost" wire:click="resendInvitation('{{ $user->ulid }}')" wire:loading.attr="disabled">
+                                            {{ __('identity.users.resend_invitation') }}<span class="sr-only"> {{ $user->name }}</span>
+                                        </x-ui.button>
+                                        <x-ui.button variant="ghost" wire:click="toggleActive('{{ $user->ulid }}')" wire:loading.attr="disabled"
+                                            wire:confirm="{{ $user->is_active ? __('identity.users.confirm_deactivate', ['name' => $user->name]) : __('identity.users.confirm_activate', ['name' => $user->name]) }}">
+                                            {{ $user->is_active ? __('identity.users.deactivate') : __('identity.users.activate') }}<span class="sr-only"> {{ $user->name }}</span>
+                                        </x-ui.button>
+                                    @endif
                                 </div>
                             </td>
                         @endif

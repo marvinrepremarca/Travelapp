@@ -24,7 +24,7 @@ final class BranchesIndex extends Component
     public string $search = '';
 
     #[Url(except: 'all')]
-    public string $status = 'all';
+    public string $status = '';
 
     public function mount(): void
     {

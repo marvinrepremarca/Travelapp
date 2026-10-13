@@ -31,7 +31,7 @@ final class LeadForm extends Component
 
     public string $phone = '';
 
-    public string $channel = 'whatsapp';
+    public string $channel = '';
 
     public string $destination = '';
 

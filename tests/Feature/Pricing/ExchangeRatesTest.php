@@ -113,10 +113,10 @@ it('lets finance record rates from the screen and everyone browse them', functio
 
 it('validates the manual rate and forbids non finance users', function (): void {
     actingAs(financeUser());
-    Livewire::test(ExchangeRatesManager::class)->set('rate', 'abc')->set('base', 'COP')->call('record')->assertHasErrors(['rate', 'base']);
+    Livewire::test(ExchangeRatesManager::class)->set('rate', 'abc')->set('base', 'COP')->set('quote', 'COP')->call('record')->assertHasErrors(['rate', 'base']);
 
     actingAs(agent());
-    Livewire::test(ExchangeRatesManager::class)->set('rate', '1')->set('base', 'EUR')->call('record')->assertForbidden();
+    Livewire::test(ExchangeRatesManager::class)->set('rate', '1')->set('base', 'EUR')->set('quote', 'COP')->call('record')->assertForbidden();
 });
 
 it('downloads the official rate from the screen and shows source failures', function (): void {

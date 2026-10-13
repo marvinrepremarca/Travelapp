@@ -37,11 +37,20 @@ enum Role: string
     /** @return list<Permission> */
     public function permissions(): array
     {
+        // El administrador del sistema solo administra la plataforma: no entra a las áreas del negocio por defecto.
+        return $this === self::SystemAdmin || $this === self::AgencyOwner
+            ? $this->basePermissions()
+            : [...Permission::areaAccess(), ...$this->basePermissions()];
+    }
+
+    /** @return list<Permission> */
+    private function basePermissions(): array
+    {
         return match ($this) {
             self::SystemAdmin => [Permission::UsersView, Permission::UsersManage, Permission::AuditView, Permission::IntegrationsManage],
             self::AgencyOwner => Permission::cases(),
-            self::BranchManager => [Permission::UsersView, Permission::MarginsView, Permission::ApprovalsDiscounts, Permission::CustomersReassign],
-            self::Finance => [Permission::FinanceAccess, Permission::MarginsView, Permission::ApprovalsRefunds, Permission::ApprovalsInvoiceVoids, Permission::SuppliersManage, Permission::ComplianceManage],
+            self::BranchManager => [Permission::UsersView, Permission::MarginsView, Permission::ApprovalsDiscounts, Permission::CustomersReassign, Permission::SupplierRecordsManage, Permission::TemporaryPasswordsView],
+            self::Finance => [Permission::FinanceAccess, Permission::MarginsView, Permission::ApprovalsRefunds, Permission::ApprovalsInvoiceVoids, Permission::SuppliersManage, Permission::SupplierRecordsManage, Permission::ComplianceManage],
             self::ProductManager => [Permission::SuppliersManage, Permission::PricingManage, Permission::CatalogManage, Permission::MarginsView, Permission::OperationsManage],
             self::Operations => [Permission::OperationsManage],
             self::TravelAgent => [],

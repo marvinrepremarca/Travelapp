@@ -10,9 +10,10 @@ use App\Modules\Bookings\Livewire\DirectBookingForm;
 use App\Modules\Bookings\Livewire\DirectItemForm;
 use App\Modules\Shared\Capabilities\Capabilities;
 use App\Modules\Shared\Enums\Capability;
+use App\Modules\Shared\Enums\Permission;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['web', 'auth'])
+Route::middleware(['web', 'auth', 'can:' . Permission::BookingsView->value])
     ->prefix('bookings')
     ->name('bookings.')
     ->group(function (): void {

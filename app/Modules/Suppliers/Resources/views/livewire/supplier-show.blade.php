@@ -98,9 +98,36 @@
         <x-ui.card :title="__('suppliers.contacts')">
             <ul class="flex flex-col gap-sm">
                 @forelse ($supplier->contacts as $contact)
-                    <li wire:key="contact-{{ $contact->id }}">
-                        <p class="font-medium">{{ $contact->name }} @if ($contact->position) · {{ $contact->position }} @endif</p>
-                        <p class="text-caption text-text-subtle">{{ $contact->email }} {{ $contact->phone }}</p>
+                    <li wire:key="contact-{{ $contact->id }}" class="flex flex-col gap-xs">
+                        @if ($editingContactId === $contact->id)
+                            <form wire:submit="updateContact" class="flex flex-col gap-sm" novalidate>
+                                <x-ui.field :label="__('suppliers.contact_fields.name')" for="contactEdit.name"><x-ui.input name="contactEdit.name" wire:model="contactEdit.name" required /></x-ui.field>
+                                <x-ui.field :label="__('suppliers.contact_fields.position')" for="contactEdit.position"><x-ui.input name="contactEdit.position" wire:model="contactEdit.position" /></x-ui.field>
+                                <x-ui.field :label="__('suppliers.contact_fields.email')" for="contactEdit.email"><x-ui.input name="contactEdit.email" type="email" wire:model="contactEdit.email" /></x-ui.field>
+                                <x-ui.field :label="__('suppliers.contact_fields.phone')" for="contactEdit.phone"><x-ui.input name="contactEdit.phone" type="tel" wire:model="contactEdit.phone" /></x-ui.field>
+                                <div class="flex justify-end gap-sm">
+                                    <x-ui.button variant="ghost" wire:click="cancelEditContact">{{ __('shared.cancel') }}</x-ui.button>
+                                    <x-ui.button type="submit" wire:loading.attr="disabled" wire:target="updateContact">{{ __('shared.save') }}</x-ui.button>
+                                </div>
+                            </form>
+                        @else
+                            <p class="font-medium">
+                                {{ $contact->name }} @if ($contact->position) · {{ $contact->position }} @endif
+                                @unless ($contact->is_active) <x-ui.badge :tone="Tone::Warning">{{ __('suppliers.record_inactive') }}</x-ui.badge> @endunless
+                            </p>
+                            <p class="text-caption text-text-subtle">{{ $contact->email }} {{ $contact->phone }}</p>
+                            @if ($canManageRecords)
+                                <div class="flex flex-wrap gap-sm">
+                                    <x-ui.button variant="ghost" wire:click="startEditContact({{ $contact->id }})" wire:loading.attr="disabled">
+                                        {{ __('shared.edit') }}<span class="sr-only"> {{ $contact->name }}</span>
+                                    </x-ui.button>
+                                    <x-ui.button variant="ghost" wire:click="toggleContact({{ $contact->id }})" wire:loading.attr="disabled"
+                                        wire:confirm="{{ $contact->is_active ? __('suppliers.confirm_deactivate_contact') : __('suppliers.confirm_reactivate_record') }}">
+                                        {{ $contact->is_active ? __('suppliers.deactivate_record') : __('suppliers.reactivate_record') }}<span class="sr-only"> {{ $contact->name }}</span>
+                                    </x-ui.button>
+                                </div>
+                            @endif
+                        @endif
                     </li>
                 @empty
                     <li class="text-text-subtle">{{ __('suppliers.no_contacts') }}</li>
@@ -117,21 +144,57 @@
             @endif
         </x-ui.card>
 
-        @if ($canSeeBank)
+        @if ($canSeeBank || $canManageRecords)
             <x-ui.card :title="__('suppliers.bank_accounts')">
                 <ul class="flex flex-col gap-sm">
                     @forelse ($supplier->bankAccounts as $account)
                         <li wire:key="account-{{ $account->ulid }}" class="flex flex-col gap-xs">
-                            <p class="font-medium">{{ $account->bank_name }} · {{ $account->account_type->label() }} · {{ $account->currency }}</p>
-                            <p class="text-caption text-text-subtle">{{ $revealed[$account->ulid] ?? $account->maskedNumber() }} · {{ $account->holder_name }}</p>
-                            <x-ui.button variant="ghost" wire:click="revealAccount('{{ $account->ulid }}')" wire:loading.attr="disabled">
-                                {{ __('suppliers.reveal_account') }}<span class="sr-only"> {{ $account->bank_name }}</span>
-                            </x-ui.button>
+                            @if ($editingAccountUlid === $account->ulid)
+                                <form wire:submit="updateAccount" class="flex flex-col gap-sm" novalidate>
+                                    <x-ui.field :label="__('suppliers.account_fields.bank_name')" for="accountEdit.bank_name"><x-ui.input name="accountEdit.bank_name" wire:model="accountEdit.bank_name" required /></x-ui.field>
+                                    <x-ui.field :label="__('suppliers.account_fields.account_type')" for="accountEdit.account_type">
+                                        <x-ui.select name="accountEdit.account_type" wire:model="accountEdit.account_type"
+                                            :options="collect($accountTypes)->mapWithKeys(fn ($type) => [$type->value => $type->label()])->all()" required />
+                                    </x-ui.field>
+                                    <x-ui.field :label="__('suppliers.account_fields.number')" for="accountEdit.number" :hint="__('suppliers.account_number_keep')">
+                                        <x-ui.input name="accountEdit.number" wire:model="accountEdit.number" autocomplete="off" hint />
+                                    </x-ui.field>
+                                    <x-ui.field :label="__('suppliers.account_fields.holder_name')" for="accountEdit.holder_name"><x-ui.input name="accountEdit.holder_name" wire:model="accountEdit.holder_name" required /></x-ui.field>
+                                    <x-ui.field :label="__('suppliers.account_fields.currency')" for="accountEdit.currency"><x-ui.input name="accountEdit.currency" wire:model="accountEdit.currency" maxlength="3" required /></x-ui.field>
+                                    <div class="flex justify-end gap-sm">
+                                        <x-ui.button variant="ghost" wire:click="cancelEditAccount">{{ __('shared.cancel') }}</x-ui.button>
+                                        <x-ui.button type="submit" wire:loading.attr="disabled" wire:target="updateAccount">{{ __('shared.save') }}</x-ui.button>
+                                    </div>
+                                </form>
+                            @else
+                                <p class="font-medium">
+                                    {{ $account->bank_name }} · {{ $account->account_type->label() }} · {{ $account->currency }}
+                                    @unless ($account->is_active) <x-ui.badge :tone="Tone::Warning">{{ __('suppliers.record_inactive') }}</x-ui.badge> @endunless
+                                </p>
+                                <p class="text-caption text-text-subtle">{{ $revealed[$account->ulid] ?? $account->maskedNumber() }} · {{ $account->holder_name }}</p>
+                                <div class="flex flex-wrap gap-sm">
+                                    @if ($canSeeBank)
+                                        <x-ui.button variant="ghost" wire:click="revealAccount('{{ $account->ulid }}')" wire:loading.attr="disabled">
+                                            {{ __('suppliers.reveal_account') }}<span class="sr-only"> {{ $account->bank_name }}</span>
+                                        </x-ui.button>
+                                    @endif
+                                    @if ($canManageRecords)
+                                        <x-ui.button variant="ghost" wire:click="startEditAccount('{{ $account->ulid }}')" wire:loading.attr="disabled">
+                                            {{ __('shared.edit') }}<span class="sr-only"> {{ $account->bank_name }}</span>
+                                        </x-ui.button>
+                                        <x-ui.button variant="ghost" wire:click="toggleAccount('{{ $account->ulid }}')" wire:loading.attr="disabled"
+                                            wire:confirm="{{ $account->is_active ? __('suppliers.confirm_deactivate_account') : __('suppliers.confirm_reactivate_record') }}">
+                                            {{ $account->is_active ? __('suppliers.deactivate_record') : __('suppliers.reactivate_record') }}<span class="sr-only"> {{ $account->bank_name }}</span>
+                                        </x-ui.button>
+                                    @endif
+                                </div>
+                            @endif
                         </li>
                     @empty
                         <li class="text-text-subtle">{{ __('suppliers.no_accounts') }}</li>
                     @endforelse
                 </ul>
+                @if ($canSeeBank)
                 <x-ui.field :label="__('customers.reveal_reason')" for="revealReason" class="mt-md">
                     <x-ui.input name="revealReason" wire:model="revealReason" />
                 </x-ui.field>
@@ -146,6 +209,7 @@
                     <x-ui.field :label="__('suppliers.account_fields.currency')" for="account.currency"><x-ui.input name="account.currency" wire:model="account.currency" maxlength="3" /></x-ui.field>
                     <x-ui.button type="submit" variant="secondary" wire:loading.attr="disabled" wire:target="addBankAccount">{{ __('suppliers.add_account') }}</x-ui.button>
                 </form>
+                @endif
             </x-ui.card>
         @endif
     </div>

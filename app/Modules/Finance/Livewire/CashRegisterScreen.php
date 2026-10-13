@@ -37,7 +37,7 @@ final class CashRegisterScreen extends Component
     public string $branch = '';
 
     /** @var array<string, string> */
-    public array $form = ['opening' => '', 'expense_type' => 'expense', 'expense_amount' => '', 'expense_description' => '', 'counted' => '', 'note' => ''];
+    public array $form = ['opening' => '', 'expense_type' => '', 'expense_amount' => '', 'expense_description' => '', 'counted' => '', 'note' => ''];
 
     public function mount(): void
     {

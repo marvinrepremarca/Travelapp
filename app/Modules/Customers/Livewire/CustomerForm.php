@@ -37,7 +37,7 @@ final class CustomerForm extends Component
     #[Locked]
     public ?string $customerUlid = null;
 
-    public string $type = 'person';
+    public string $type = '';
 
     public string $first_name = '';
 
@@ -45,7 +45,7 @@ final class CustomerForm extends Component
 
     public string $legal_name = '';
 
-    public string $document_type = 'cc';
+    public string $document_type = '';
 
     /** En edición queda vacío: solo se escribe para cambiar el documento. */
     public string $document_number = '';
@@ -66,7 +66,7 @@ final class CustomerForm extends Component
 
     public bool $consent_marketing = false;
 
-    public string $consent_channel = 'in_person';
+    public string $consent_channel = '';
 
     public bool $possibleDuplicate = false;
 
@@ -199,7 +199,7 @@ final class CustomerForm extends Component
             'city' => ['nullable', 'string', 'max:100'],
             'country' => ['nullable', 'string', 'size:2', 'alpha'],
             'notes' => ['nullable', 'string', 'max:2000'],
-            'consent_channel' => ['required', Rule::enum(ConsentChannel::class)],
+            'consent_channel' => $isEditing ? ['nullable'] : ['required', Rule::enum(ConsentChannel::class)],
         ];
     }
 
