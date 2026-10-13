@@ -23,7 +23,9 @@ final class RequireTwoFactorForRole
     private const ALLOWED_ROUTES = [
         'identity.security',
         'logout',
+        // GET muestra el formulario y POST (password.confirm.store) lo envía: ambos deben pasar o el flujo se cicla.
         'password.confirm',
+        'password.confirm.store',
         'password.confirmation',
         'two-factor.*',
         'user-password.update',
