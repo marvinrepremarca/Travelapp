@@ -24,4 +24,10 @@ final class SupplierPolicy
     {
         return $user->can(Permission::SuppliersManage->value);
     }
+
+    /** Corregir errores de digitación y desactivar contactos o cuentas (gerencia, producto y finanzas). */
+    public function manageRecords(User $user): bool
+    {
+        return $user->can(Permission::SupplierRecordsManage->value);
+    }
 }

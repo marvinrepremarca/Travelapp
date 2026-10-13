@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Suppliers\Livewire;
 
+use App\Modules\Shared\Support\IsoCatalog;
 use App\Modules\Suppliers\Actions\SaveSupplierAction;
 use App\Modules\Suppliers\Data\SupplierData;
 use App\Modules\Suppliers\Enums\PaymentTerms;
@@ -29,7 +30,7 @@ final class SupplierForm extends Component
 
     public string $tax_id = '';
 
-    public string $country = 'CO';
+    public string $country = '';
 
     public bool $is_tourism_provider = true;
 
@@ -43,11 +44,11 @@ final class SupplierForm extends Component
 
     public string $website = '';
 
-    public string $payment_terms = 'credit';
+    public string $payment_terms = '';
 
     public string $payment_days = '';
 
-    public string $payment_currency = 'COP';
+    public string $payment_currency = '';
 
     public string $notes = '';
 
@@ -83,12 +84,15 @@ final class SupplierForm extends Component
         Gate::authorize('manage', Supplier::class);
         $supplier = $this->supplierUlid === null ? null : Supplier::query()->where('ulid', $this->supplierUlid)->firstOrFail();
 
+        $this->country = mb_strtoupper($this->country);
+        $this->payment_currency = mb_strtoupper($this->payment_currency);
+
         $validated = $this->validate([
             'legal_name' => ['required', 'string', 'max:255'],
             'trade_name' => ['required', 'string', 'max:255'],
             'tax_id' => ['required', 'string', 'max:30', 'regex:/^[A-Za-z0-9.\-\s]+$/',
                 Rule::unique('suppliers', 'tax_id')->where('country', mb_strtoupper($this->country))->ignore($this->supplierUlid, 'ulid')],
-            'country' => ['required', 'string', 'size:2', 'alpha'],
+            'country' => ['required', 'string', Rule::in(array_keys(app(IsoCatalog::class)->countries()))],
             'is_tourism_provider' => ['boolean'],
             'rnt_number' => ['nullable', 'alpha_num', 'max:20'],
             'rnt_expires_on' => ['nullable', 'date'],
@@ -97,7 +101,7 @@ final class SupplierForm extends Component
             'website' => ['nullable', 'url:https', 'max:255'],
             'payment_terms' => ['required', Rule::enum(PaymentTerms::class)],
             'payment_days' => ['required', 'integer', 'min:0', 'max:' . config()->integer('travel.suppliers.max_payment_days')],
-            'payment_currency' => ['required', 'string', 'size:3', 'alpha'],
+            'payment_currency' => ['required', 'string', Rule::in(array_keys(app(IsoCatalog::class)->currencies()))],
             'notes' => ['nullable', 'string', 'max:2000'],
         ], attributes: $this->attributes());
 
@@ -134,6 +138,8 @@ final class SupplierForm extends Component
 
         return view('suppliers::livewire.supplier-form', [
             'terms' => PaymentTerms::cases(),
+            'countries' => app(IsoCatalog::class)->countries(),
+            'currencies' => app(IsoCatalog::class)->currencies(),
         ])->title($title)->layoutData(['heading' => $title]);
     }
 

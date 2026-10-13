@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Modules\Pricing\Models\MarkupRule;
 use App\Modules\Search\Database\Seeders\AirportsSeeder;
+use App\Modules\Search\Enums\CabinClass;
 use App\Modules\Search\Livewire\FlightSearch;
 use App\Modules\Search\Livewire\HotelSearch;
 use App\Modules\Search\Models\Airport;
@@ -75,6 +76,7 @@ it('searches flights choosing places by name', function (): void {
         ->assertSet('lookup.origin', 'Bogotá (BOG)')
         ->set('lookup.destination', 'cartagena')
         ->set('criteria.departure_date', '2026-11-10')
+        ->set('criteria.cabin', CabinClass::Economy->value)
         ->set('criteria.ages', '35')
         ->call('search')
         ->assertHasNoErrors()
@@ -88,6 +90,7 @@ it('asks to choose from the list when the place is ambiguous or unknown', functi
         ->set('lookup.origin', 'nueva york')
         ->set('lookup.destination', 'ciudad inexistente')
         ->set('criteria.departure_date', '2026-11-10')
+        ->set('criteria.cabin', CabinClass::Economy->value)
         ->set('criteria.ages', '35')
         ->call('search')
         ->assertHasErrors(['criteria.origin', 'criteria.destination'])

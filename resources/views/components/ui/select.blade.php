@@ -14,9 +14,7 @@ $describedBy = collect([$hint ? "{$name}-hint" : null, $invalid ? "{$name}-error
         'border-border' => ! $invalid,
     ]) }}
 >
-    @if ($placeholder !== null)
-        <option value="">{{ $placeholder }}</option>
-    @endif
+    <option value="">{{ $placeholder ?? __('shared.select') }}</option>
     @foreach ($options as $value => $label)
         <option value="{{ $value }}" wire:key="{{ $name }}-option-{{ $value }}">{{ $label }}</option>
     @endforeach

@@ -13,7 +13,11 @@ use App\Modules\Suppliers\Actions\AddCommissionAction;
 use App\Modules\Suppliers\Actions\AddContactAction;
 use App\Modules\Suppliers\Actions\EndCommissionAction;
 use App\Modules\Suppliers\Actions\RevealBankAccountAction;
+use App\Modules\Suppliers\Actions\SetBankAccountActiveAction;
 use App\Modules\Suppliers\Actions\SetSupplierActiveAction;
+use App\Modules\Suppliers\Actions\SetSupplierContactActiveAction;
+use App\Modules\Suppliers\Actions\UpdateBankAccountAction;
+use App\Modules\Suppliers\Actions\UpdateSupplierContactAction;
 use App\Modules\Suppliers\Enums\BankAccountType;
 use App\Modules\Suppliers\Enums\CommissionBase;
 use App\Modules\Suppliers\Exceptions\SupplierRuleViolation;
@@ -37,10 +41,10 @@ final class SupplierShow extends Component
     public array $contact = ['name' => '', 'position' => '', 'email' => '', 'phone' => ''];
 
     /** @var array<string, string> */
-    public array $commission = ['product_type' => '', 'rate' => '', 'base' => 'gross', 'valid_from' => '', 'valid_until' => ''];
+    public array $commission = ['product_type' => '', 'rate' => '', 'base' => '', 'valid_from' => '', 'valid_until' => ''];
 
     /** @var array<string, string> */
-    public array $account = ['bank_name' => '', 'account_type' => 'checking', 'number' => '', 'holder_name' => '', 'currency' => 'COP'];
+    public array $account = ['bank_name' => '', 'account_type' => '', 'number' => '', 'holder_name' => '', 'currency' => 'COP'];
 
     /**
      * Números de cuenta revelados en esta vista; no se guardan.
@@ -50,6 +54,18 @@ final class SupplierShow extends Component
     public array $revealed = [];
 
     public string $revealReason = '';
+
+    /** Contacto que se está corrigiendo; null cuando no hay edición abierta. */
+    public ?int $editingContactId = null;
+
+    /** @var array<string, string> */
+    public array $contactEdit = ['name' => '', 'position' => '', 'email' => '', 'phone' => ''];
+
+    /** Cuenta que se está corrigiendo; el número nunca se precarga (se deja vacío para conservar el actual). */
+    public ?string $editingAccountUlid = null;
+
+    /** @var array<string, string> */
+    public array $accountEdit = ['bank_name' => '', 'account_type' => '', 'number' => '', 'holder_name' => '', 'currency' => ''];
 
     public function mount(Supplier $supplier): void
     {
@@ -141,6 +157,101 @@ final class SupplierShow extends Component
         $this->reset('account');
     }
 
+    public function startEditContact(int $contactId): void
+    {
+        Gate::authorize('manageRecords', Supplier::class);
+        $contact = $this->supplier()->contacts()->whereKey($contactId)->first() ?? abort(404);
+
+        $this->editingContactId = $contact->id;
+        $this->contactEdit = [
+            'name' => $contact->name,
+            'position' => (string) $contact->position,
+            'email' => (string) $contact->email,
+            'phone' => (string) $contact->phone,
+        ];
+    }
+
+    public function cancelEditContact(): void
+    {
+        $this->reset('editingContactId', 'contactEdit');
+    }
+
+    public function updateContact(UpdateSupplierContactAction $update): void
+    {
+        Gate::authorize('manageRecords', Supplier::class);
+        $contact = $this->supplier()->contacts()->whereKey($this->editingContactId)->first() ?? abort(404);
+
+        $data = $this->validate([
+            'contactEdit.name' => ['required', 'string', 'max:255'],
+            'contactEdit.position' => ['nullable', 'string', 'max:100'],
+            'contactEdit.email' => ['nullable', 'email', 'max:255'],
+            'contactEdit.phone' => ['nullable', 'string', 'max:30'],
+        ], attributes: $this->prefixed('contactEdit', 'suppliers.contact_fields'))['contactEdit'];
+
+        $update->execute($contact, $data['name'], $data['position'] ?: null, $data['email'] ?: null, $data['phone'] ?: null);
+        $this->cancelEditContact();
+    }
+
+    public function toggleContact(int $contactId, SetSupplierContactActiveAction $setActive): void
+    {
+        Gate::authorize('manageRecords', Supplier::class);
+        $contact = $this->supplier()->contacts()->whereKey($contactId)->first() ?? abort(404);
+
+        $setActive->execute($contact, ! $contact->is_active);
+    }
+
+    public function startEditAccount(string $accountUlid): void
+    {
+        Gate::authorize('manageRecords', Supplier::class);
+        $account = $this->supplier()->bankAccounts()->where('ulid', $accountUlid)->first() ?? abort(404);
+
+        $this->editingAccountUlid = $account->ulid;
+        $this->accountEdit = [
+            'bank_name' => $account->bank_name,
+            'account_type' => $account->account_type->value,
+            'number' => '',
+            'holder_name' => $account->holder_name,
+            'currency' => $account->currency,
+        ];
+    }
+
+    public function cancelEditAccount(): void
+    {
+        $this->reset('editingAccountUlid', 'accountEdit');
+    }
+
+    public function updateAccount(UpdateBankAccountAction $update): void
+    {
+        Gate::authorize('manageRecords', Supplier::class);
+        $account = $this->supplier()->bankAccounts()->where('ulid', $this->editingAccountUlid)->first() ?? abort(404);
+
+        $data = $this->validate([
+            'accountEdit.bank_name' => ['required', 'string', 'max:100'],
+            'accountEdit.account_type' => ['required', Rule::enum(BankAccountType::class)],
+            'accountEdit.number' => ['nullable', 'string', 'max:34', 'regex:/^[A-Za-z0-9\s.\-]+$/'],
+            'accountEdit.holder_name' => ['required', 'string', 'max:255'],
+            'accountEdit.currency' => ['required', 'string', 'size:3', 'alpha'],
+        ], attributes: $this->prefixed('accountEdit', 'suppliers.account_fields'))['accountEdit'];
+
+        try {
+            $update->execute($account, $data['bank_name'], BankAccountType::from($data['account_type']), $data['number'] ?: null, $data['holder_name'], $data['currency'], $this->actor());
+        } catch (SupplierRuleViolation $violation) {
+            $this->addError('accountEdit.number', $violation->getMessage());
+
+            return;
+        }
+
+        $this->cancelEditAccount();
+    }
+
+    public function toggleAccount(string $accountUlid, SetBankAccountActiveAction $setActive): void
+    {
+        Gate::authorize('manageRecords', Supplier::class);
+        $account = $this->supplier()->bankAccounts()->where('ulid', $accountUlid)->first() ?? abort(404);
+
+        $setActive->execute($account, ! $account->is_active, $this->actor());
+    }
+
     public function revealAccount(string $accountUlid, RevealBankAccountAction $reveal): void
     {
         $this->validate(['revealReason' => ['required', 'string', 'max:255']], attributes: ['revealReason' => __('customers.reveal_reason')]);
@@ -163,6 +274,7 @@ final class SupplierShow extends Component
             'standing' => $supplier->standingOn($today, config()->integer('travel.suppliers.rnt_expiry_warning_days')),
             'today' => $today,
             'canManage' => Gate::allows('manage', Supplier::class),
+            'canManageRecords' => Gate::allows('manageRecords', Supplier::class),
             'canSeeBank' => $this->actor()->can(Permission::FinanceAccess->value),
             'productTypes' => ProductType::cases(),
             'bases' => CommissionBase::cases(),

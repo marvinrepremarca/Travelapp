@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Identity\Livewire;
 
+use App\Modules\Identity\Actions\CreateUserWithTemporaryPasswordAction;
 use App\Modules\Identity\Actions\InviteUserAction;
 use App\Modules\Identity\Actions\UpdateUserAction;
 use App\Modules\Identity\Data\UserData;
@@ -36,6 +37,17 @@ final class UserForm extends Component
     public string $branch_id = '';
 
     public string $visibility_scope = '';
+
+    /** Alta sin correo: el sistema genera una contraseña temporal y el administrador la entrega en persona. */
+    public bool $withTemporaryPassword = false;
+
+    /**
+     * Contraseña temporal recién generada, mostrada una sola vez. Es protegida (no pública) para que
+     * Livewire no la incluya en el snapshot que viaja al navegador en cada petición.
+     */
+    protected ?string $issuedPassword = null;
+
+    protected ?string $issuedUserName = null;
 
     public function mount(?User $user = null): void
     {
@@ -70,7 +82,7 @@ final class UserForm extends Component
         }
     }
 
-    public function save(InviteUserAction $invite, UpdateUserAction $update): void
+    public function save(InviteUserAction $invite, CreateUserWithTemporaryPasswordAction $createWithPassword, UpdateUserAction $update): void
     {
         $target = $this->target();
         Gate::authorize($target instanceof User ? 'update' : 'create', $target ?? User::class);
@@ -85,9 +97,17 @@ final class UserForm extends Component
         );
 
         try {
-            $saved = $target instanceof User
-                ? $update->execute($target, $data, $this->actor())
-                : $invite->execute($data, $this->actor());
+            if ($target instanceof User) {
+                $saved = $update->execute($target, $data, $this->actor());
+            } elseif ($this->withTemporaryPassword) {
+                ['user' => $saved, 'password' => $this->issuedPassword] = $createWithPassword->execute($data, $this->actor());
+                $this->issuedUserName = $saved->name;
+                $this->reset('name', 'email', 'role', 'branch_id', 'visibility_scope', 'withTemporaryPassword');
+
+                return;
+            } else {
+                $saved = $invite->execute($data, $this->actor());
+            }
         } catch (UserManagementViolation $violation) {
             $this->addError($violation->errorCode() === 'branch_required' ? 'branch_id' : 'role', $violation->getMessage());
 
@@ -95,6 +115,12 @@ final class UserForm extends Component
         }
 
         session()->flash('status', __($target instanceof User ? 'identity.users.saved' : 'identity.users.invited', ['name' => $saved->name, 'email' => $saved->email]));
+        $this->redirectRoute('identity.users.index', navigate: true);
+    }
+
+    /** Sale del panel de contraseña temporal (ya mostrada) hacia el listado. */
+    public function finishIssuing(): void
+    {
         $this->redirectRoute('identity.users.index', navigate: true);
     }
 
@@ -107,6 +133,8 @@ final class UserForm extends Component
             'branches' => Branch::query()->active()->orderBy('name')->pluck('name', 'id')->all(),
             'scopes' => collect(VisibilityScope::cases())->mapWithKeys(fn(VisibilityScope $scope): array => [$scope->value => $scope->label()])->all(),
             'isEditing' => $this->userUlid !== null,
+            'issuedPassword' => $this->issuedPassword,
+            'issuedUserName' => $this->issuedUserName,
         ])->title($title)->layoutData(['heading' => $title]);
     }
 

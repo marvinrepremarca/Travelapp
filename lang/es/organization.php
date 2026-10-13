@@ -88,6 +88,7 @@ return [
         'saved' => 'Los datos de la agencia se guardaron.',
         'rnt_expiring' => 'El Registro Nacional de Turismo vence pronto o ya venció. Renuévalo para seguir operando.',
         'website_hint' => 'Dirección completa con https://',
+        'color_picker' => 'Selector de :field',
         'color_hint' => 'Formato #rrggbb (por ejemplo #1d4ed8). Debe tener buen contraste con texto blanco.',
         'logo_hint' => 'PNG, JPG o WebP de máximo :kb KB.',
         'logo_alt' => 'Logo de :name',

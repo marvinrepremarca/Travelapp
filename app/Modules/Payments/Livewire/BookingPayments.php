@@ -39,7 +39,7 @@ final class BookingPayments extends Component
     public string $bookingUlid;
 
     /** @var array<string, string> */
-    public array $form = ['method' => 'bank_transfer', 'amount' => '', 'reference' => '', 'note' => ''];
+    public array $form = ['method' => '', 'amount' => '', 'reference' => '', 'note' => ''];
 
     /** @var array<string, string> */
     public array $refund = ['amount' => '', 'reason' => ''];

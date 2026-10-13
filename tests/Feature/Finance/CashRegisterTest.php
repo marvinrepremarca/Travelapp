@@ -122,6 +122,7 @@ it('runs the daily cash from the screen', function (): void {
         ->call('open')
         ->assertHasNoErrors()
         ->assertSee(__('finance.cash.close_title'))
+        ->set('form.expense_type', CashMovementType::Expense->value)
         ->set('form.expense_amount', '15000')
         ->set('form.expense_description', 'Taxi a la notaría')
         ->call('expense')

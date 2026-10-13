@@ -20,6 +20,8 @@ enum Permission: string
     case MarginsView = 'pricing.margins.view';
     case CustomersReassign = 'crm.customers.reassign';
     case SuppliersManage = 'suppliers.manage';
+    case SupplierRecordsManage = 'suppliers.records.manage';
+    case TemporaryPasswordsView = 'identity.temporary_passwords.view';
     case PricingManage = 'pricing.manage';
     case CatalogManage = 'catalog.manage';
     case ApprovalsDiscounts = 'workflow.approvals.discounts';

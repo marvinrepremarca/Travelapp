@@ -51,7 +51,9 @@ it('creates a person with encrypted document, consent evidence and audit without
     actingAs($agent);
 
     fillPerson(Livewire::test(CustomerForm::class))
+        ->set('consent_channel', ConsentChannel::WhatsApp->value)
         ->set('consent_data_processing', true)
+        ->set('consent_channel', ConsentChannel::WhatsApp->value)
         ->set('consent_channel', ConsentChannel::WhatsApp->value)
         ->call('save')
         ->assertHasNoErrors();
@@ -82,6 +84,7 @@ it('does not register a customer without data processing consent', function (): 
     actingAs(agent());
 
     fillPerson(Livewire::test(CustomerForm::class))
+        ->set('consent_channel', ConsentChannel::WhatsApp->value)
         ->call('save')
         ->assertHasErrors(['consent_data_processing' => __('customers.errors.consent_required')]);
 
@@ -94,6 +97,7 @@ it('rejects a duplicated document even written differently and without revealing
 
     fillPerson(Livewire::test(CustomerForm::class), '1-020-304-050')
         ->set('consent_data_processing', true)
+        ->set('consent_channel', ConsentChannel::WhatsApp->value)
         ->call('save')
         ->assertHasErrors(['document_number' => __('customers.errors.duplicate_document')]);
 });
@@ -117,8 +121,10 @@ it('creates a company with NIT and rejects person documents for companies', func
         ->set('type', CustomerType::Company->value)
         ->set('legal_name', 'Constructora Andes S.A.S.')
         ->set('document_type', DocumentType::Nit->value)
+        ->set('consent_channel', ConsentChannel::Email->value)
         ->set('document_number', '900.123.456')
         ->set('consent_data_processing', true)
+        ->set('consent_channel', ConsentChannel::WhatsApp->value)
         ->call('save')
         ->assertHasNoErrors();
 
@@ -135,7 +141,9 @@ it('validates the customer form', function (string $field, string $value): void 
     actingAs(agent());
 
     fillPerson(Livewire::test(CustomerForm::class))
+        ->set('consent_channel', ConsentChannel::WhatsApp->value)
         ->set('consent_data_processing', true)
+        ->set('consent_channel', ConsentChannel::WhatsApp->value)
         ->set($field, $value)
         ->call('save')
         ->assertHasErrors($field);
@@ -242,10 +250,10 @@ it('records marketing consent changes as new evidence', function (): void {
     $customer = Customer::factory()->ownedBy($agent)->create();
     actingAs($agent);
 
-    Livewire::test(CustomerShow::class, ['customer' => $customer])->call('toggleMarketing');
+    Livewire::test(CustomerShow::class, ['customer' => $customer])->set('consentChannel', ConsentChannel::Phone->value)->call('toggleMarketing');
     expect($customer->hasConsent(ConsentPurpose::Marketing))->toBeTrue();
 
-    Livewire::test(CustomerShow::class, ['customer' => $customer])->call('toggleMarketing');
+    Livewire::test(CustomerShow::class, ['customer' => $customer])->set('consentChannel', ConsentChannel::Phone->value)->call('toggleMarketing');
     expect($customer->hasConsent(ConsentPurpose::Marketing))->toBeFalse()
         ->and(CustomerConsent::query()->where('purpose', ConsentPurpose::Marketing)->count())->toBe(2);
 
@@ -345,6 +353,7 @@ it('registers customers by hand without touching leads when the commercial capab
 
     $component = fillPerson(Livewire::withQueryParams(['lead' => $lead->ulid])->test(CustomerForm::class)->assertSet('first_name', ''))
         ->set('consent_data_processing', true)
+        ->set('consent_channel', ConsentChannel::WhatsApp->value)
         ->call('save');
 
     $customer = Customer::query()->sole();

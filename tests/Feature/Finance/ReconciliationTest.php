@@ -271,6 +271,7 @@ it('reconciles from the screen: upload, confirm suggestion, ignore and undo', fu
     $csv = "Fecha;Descripción;Referencia;Valor\n02/10/2026;Transferencia;TRX-5;250.000\n02/10/2026;Comisión;;-9.000\n";
 
     $screen = Livewire::test(ReconciliationScreen::class)
+        ->set('status', StatementLineStatus::Pending->value)
         ->assertSee(__('finance.reconciliation.empty'))
         ->call('import')
         ->assertHasErrors('statementFile')

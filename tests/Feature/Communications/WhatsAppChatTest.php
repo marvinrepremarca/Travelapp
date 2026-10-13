@@ -14,6 +14,9 @@ use App\Modules\Communications\Models\Conversation;
 use App\Modules\Communications\Models\ConversationMessage;
 use App\Modules\Communications\Services\PhoneNumbers;
 use App\Modules\Crm\Models\Lead;
+use App\Modules\Customers\Enums\ConsentChannel;
+use App\Modules\Customers\Enums\CustomerType;
+use App\Modules\Customers\Enums\DocumentType;
 use App\Modules\Integrations\Adapters\FakeWhatsApp\FakeWhatsAppChannel;
 use App\Modules\Integrations\Livewire\WhatsAppSimulator;
 use App\Modules\Shared\Enums\SalesChannel;
@@ -224,6 +227,9 @@ it('goes from the chat to a quote creating the customer from the lead', function
         ->assertSet('first_name', 'Laura')
         ->assertSet('last_name', 'Pérez')
         ->assertSet('phone', '+573005551234')
+        ->set('type', CustomerType::Person->value)
+        ->set('document_type', DocumentType::CitizenId->value)
+        ->set('consent_channel', ConsentChannel::WhatsApp->value)
         ->set('document_number', '1020304050')
         ->set('consent_data_processing', true)
         ->call('save')

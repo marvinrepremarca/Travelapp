@@ -5,9 +5,11 @@ declare(strict_types=1);
 use App\Modules\Audit\Models\SensitiveDataAccess;
 use App\Modules\Identity\Enums\Role;
 use App\Modules\Shared\Enums\ProductType;
+use App\Modules\Shared\Support\IsoCatalog;
 use App\Modules\Shared\ValueObjects\Percentage;
 use App\Modules\Suppliers\Actions\AddBankAccountAction;
 use App\Modules\Suppliers\Actions\AddCommissionAction;
+use App\Modules\Suppliers\Actions\AddContactAction;
 use App\Modules\Suppliers\Actions\EndCommissionAction;
 use App\Modules\Suppliers\Contracts\SupplierDirectory;
 use App\Modules\Suppliers\Enums\BankAccountType;
@@ -63,8 +65,10 @@ it('creates a colombian tourism supplier only with RNT', function (): void {
         ->set('legal_name', 'Hotel del Mar S.A.S.')
         ->set('trade_name', 'Hotel del Mar')
         ->set('tax_id', '900.111.222')
+        ->set('country', 'CO')
         ->set('payment_terms', PaymentTerms::Prepaid->value)
         ->set('payment_days', '7')
+        ->set('payment_currency', 'COP')
         ->call('save')
         ->assertHasErrors(['rnt_number' => __('suppliers.errors.rnt_required')]);
 
@@ -85,6 +89,8 @@ it('creates a foreign supplier without RNT', function (): void {
         ->set('tax_id', 'US-998877')
         ->set('country', 'us')
         ->set('payment_days', '30')
+        ->set('payment_terms', PaymentTerms::Credit->value)->set('payment_currency', 'COP')
+        ->set('payment_currency', 'COP')
         ->set('payment_currency', 'usd')
         ->call('save')
         ->assertHasNoErrors();
@@ -97,7 +103,7 @@ it('validates supplier data', function (string $field, string $value): void {
     actingAs(supplierManager());
 
     Livewire::test(SupplierForm::class)
-        ->set('legal_name', 'X')->set('trade_name', 'X')->set('tax_id', '800999999')->set('payment_days', '15')
+        ->set('legal_name', 'X')->set('trade_name', 'X')->set('tax_id', '800999999')->set('payment_days', '15')->set('payment_terms', PaymentTerms::Credit->value)->set('country', 'CO')->set('payment_currency', 'COP')
         ->set('rnt_number', '1')->set('rnt_expires_on', '2030-01-01')
         ->set($field, $value)
         ->call('save')
@@ -216,6 +222,7 @@ it('manages commissions and contacts from the supplier screen', function (): voi
         ->assertSee('10.50 %')
         ->set('commission.product_type', ProductType::Hotel->value)
         ->set('commission.rate', '9')
+        ->set('commission.base', CommissionBase::Net->value)
         ->set('commission.valid_from', '2026-02-01')
         ->call('addCommission')
         ->assertHasErrors('commission.valid_from')
@@ -278,7 +285,7 @@ it('hides bank accounts from non finance users and blocks the actions', function
 
     Livewire::test(SupplierShow::class, ['supplier' => $supplier])
         ->assertDontSee(__('suppliers.bank_accounts'))
-        ->set('account.bank_name', 'X')->set('account.number', '111')->set('account.holder_name', 'X')
+        ->set('account.bank_name', 'X')->set('account.account_type', BankAccountType::Checking->value)->set('account.number', '111')->set('account.holder_name', 'X')
         ->call('addBankAccount')
         ->assertHasErrors(['account.number' => __('suppliers.errors.bank_data_forbidden')]);
 
@@ -292,4 +299,69 @@ it('labels supplier enums and exposes error codes', function (): void {
     }
 
     expect(SupplierRuleViolation::rntRequired()->errorCode())->toBe('rnt_required');
+});
+
+it('offers countries and currencies by name and stores their ISO codes', function (): void {
+    actingAs(supplierManager());
+
+    $catalog = app(IsoCatalog::class);
+
+    expect($catalog->countries())->toHaveKey('CO', 'Colombia')
+        ->and($catalog->currencies())->toHaveKey('COP', 'Peso colombiano (COP)');
+
+    Livewire::test(SupplierForm::class)
+        ->assertSee('Colombia')
+        ->assertSee('Peso colombiano (COP)')
+        ->set('legal_name', 'Hotel Andino')
+        ->set('trade_name', 'Andino')
+        ->set('tax_id', '900555666')
+        ->set('country', 'US')
+        ->set('payment_days', '30')
+        ->set('payment_terms', PaymentTerms::Credit->value)->set('payment_currency', 'COP')
+        ->set('payment_currency', 'COP')
+        ->set('payment_currency', 'USD')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(Supplier::query()->sole())->country->toBe('US')->payment_currency->toBe('USD');
+});
+
+it('lets the branch manager correct and deactivate contacts and bank accounts', function (): void {
+    $supplier = Supplier::factory()->create();
+    $manager = userWithRole(Role::BranchManager);
+    app(AddContactAction::class)->execute($supplier, 'Ana Reservas', null, 'ana@hotel.test', null);
+    app(AddBankAccountAction::class)->execute($supplier, 'Banco Andino', BankAccountType::Checking, '1234567890', 'Hotel Andino', 'COP', userWithRole(Role::Finance));
+    $contact = $supplier->contacts()->sole();
+    $account = $supplier->bankAccounts()->sole();
+    actingAs($manager);
+
+    Livewire::test(SupplierShow::class, ['supplier' => $supplier])
+        ->call('startEditContact', $contact->id)
+        ->set('contactEdit.name', 'Ana Restrepo')
+        ->call('updateContact')
+        ->assertHasNoErrors()
+        ->call('toggleContact', $contact->id)
+        ->call('startEditAccount', $account->ulid)
+        ->set('accountEdit.bank_name', 'Banco Andino S.A.')
+        ->set('accountEdit.number', '')
+        ->call('updateAccount')
+        ->assertHasNoErrors()
+        ->call('toggleAccount', $account->ulid);
+
+    expect($contact->fresh())->name->toBe('Ana Restrepo')->is_active->toBeFalse()
+        ->and($account->fresh())->bank_name->toBe('Banco Andino S.A.')->is_active->toBeFalse()
+        ->and($account->fresh()->account_number)->toBe('1234567890');
+});
+
+it('forbids agents from correcting or deactivating supplier records', function (): void {
+    $supplier = Supplier::factory()->create();
+    app(AddContactAction::class)->execute($supplier, 'Ana Reservas', null, 'ana@hotel.test', null);
+    $contact = $supplier->contacts()->sole();
+    actingAs(agent());
+
+    Livewire::test(SupplierShow::class, ['supplier' => $supplier])
+        ->assertDontSee(__('suppliers.deactivate_record'))
+        ->call('toggleContact', $contact->id)
+        ->assertForbidden();
+    expect($contact->fresh()->is_active)->toBeTrue();
 });

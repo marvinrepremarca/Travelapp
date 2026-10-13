@@ -53,12 +53,20 @@
 
         <x-ui.card :title="__('organization.agency.brand_section')">
             <div class="grid gap-md md:grid-cols-2">
-                <x-ui.field :label="__('organization.agency.fields.brand_primary_color')" for="brand_primary_color" :hint="__('organization.agency.color_hint')">
-                    <x-ui.input name="brand_primary_color" wire:model="brand_primary_color" hint />
-                </x-ui.field>
-                <x-ui.field :label="__('organization.agency.fields.brand_accent_color')" for="brand_accent_color" :hint="__('organization.agency.color_hint')">
-                    <x-ui.input name="brand_accent_color" wire:model="brand_accent_color" hint />
-                </x-ui.field>
+                @foreach (['brand_primary_color', 'brand_accent_color'] as $colorField)
+                    <x-ui.field :label="__('organization.agency.fields.' . $colorField)" :for="$colorField" :hint="__('organization.agency.color_hint')">
+                        <div class="flex items-center gap-sm">
+                            <input
+                                type="color"
+                                wire:model.live.debounce.300ms="{{ $colorField }}"
+                                value="{{ $this->$colorField !== '' ? $this->$colorField : config()->string('travel.organization.brand_picker_fallback') }}"
+                                aria-label="{{ __('organization.agency.color_picker', ['field' => __('organization.agency.fields.' . $colorField)]) }}"
+                                class="h-2xl w-2xl shrink-0 cursor-pointer rounded-control border border-border bg-surface p-xs"
+                            >
+                            <x-ui.input :name="$colorField" wire:model.live.debounce.300ms="{{ $colorField }}" class="flex-1" hint />
+                        </div>
+                    </x-ui.field>
+                @endforeach
                 <x-ui.field :label="__('organization.agency.fields.logo')" for="logo" :hint="__('organization.agency.logo_hint', ['kb' => config('travel.organization.logo_max_kb')])">
                     <x-ui.input name="logo" type="file" wire:model="logo" accept="image/png,image/jpeg,image/webp" hint />
                 </x-ui.field>

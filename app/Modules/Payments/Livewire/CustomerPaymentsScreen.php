@@ -35,7 +35,7 @@ final class CustomerPaymentsScreen extends Component
     public string $customerSearch = '';
 
     /** @var array{method: string, amount: string, concept: string, reference: string} */
-    public array $form = ['method' => 'cash', 'amount' => '', 'concept' => '', 'reference' => ''];
+    public array $form = ['method' => '', 'amount' => '', 'concept' => '', 'reference' => ''];
 
     public function chooseCustomer(string $ulid): void
     {

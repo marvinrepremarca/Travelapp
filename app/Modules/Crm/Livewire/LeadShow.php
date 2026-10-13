@@ -27,7 +27,7 @@ final class LeadShow extends Component
     #[Locked]
     public string $leadUlid;
 
-    public string $interactionType = 'call';
+    public string $interactionType = '';
 
     public string $interactionSummary = '';
 

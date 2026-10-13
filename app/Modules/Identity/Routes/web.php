@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Modules\Identity\Livewire\ChangeTemporaryPassword;
 use App\Modules\Identity\Livewire\RolePermissions;
 use App\Modules\Identity\Livewire\SecuritySettings;
 use App\Modules\Identity\Livewire\UserForm;
@@ -16,6 +17,7 @@ Route::middleware(['web', 'auth'])
         Route::get('/users/create', UserForm::class)->name('users.create');
         Route::get('/users/{user}/edit', UserForm::class)->name('users.edit');
         Route::get('/roles', RolePermissions::class)->name('roles');
+        Route::get('/password/change', ChangeTemporaryPassword::class)->name('password.change');
 
         Route::get('/security', SecuritySettings::class)->middleware('password.confirm')->name('security');
     });

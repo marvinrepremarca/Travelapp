@@ -10,8 +10,8 @@
             <x-ui.field :label="__('suppliers.fields.tax_id')" for="tax_id">
                 <x-ui.input name="tax_id" wire:model="tax_id" required />
             </x-ui.field>
-            <x-ui.field :label="__('suppliers.fields.country')" for="country" :hint="__('customers.country_hint')">
-                <x-ui.input name="country" wire:model.live="country" maxlength="2" hint required />
+            <x-ui.field :label="__('suppliers.fields.country')" for="country">
+                <x-ui.select name="country" wire:model="country" :options="$countries" required />
             </x-ui.field>
             <label class="flex items-center gap-sm text-body md:col-span-2">
                 <input type="checkbox" wire:model.live="is_tourism_provider" class="rounded-control border-border">
@@ -36,7 +36,7 @@
                 <x-ui.input name="payment_days" type="number" min="0" wire:model="payment_days" required />
             </x-ui.field>
             <x-ui.field :label="__('suppliers.fields.payment_currency')" for="payment_currency">
-                <x-ui.input name="payment_currency" wire:model="payment_currency" maxlength="3" required />
+                <x-ui.select name="payment_currency" wire:model="payment_currency" :options="$currencies" required />
             </x-ui.field>
         </div>
     </x-ui.card>

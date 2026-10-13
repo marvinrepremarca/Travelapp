@@ -50,12 +50,12 @@ it('requires a contact and validates dates', function (): void {
     actingAs(agent());
 
     Livewire::test(LeadForm::class)
-        ->set('contact_name', 'Sin contacto')
+        ->set('contact_name', 'Sin contacto')->set('channel', SalesChannel::Branch->value)
         ->call('save')
         ->assertHasErrors(['email' => __('crm.errors.lead_contact_required')]);
 
     Livewire::test(LeadForm::class)
-        ->set('contact_name', 'Fechas')
+        ->set('contact_name', 'Fechas')->set('channel', SalesChannel::Branch->value)
         ->set('email', 'a@b.test')
         ->set('travel_start', '2026-12-20')
         ->set('travel_end', '2026-12-10')

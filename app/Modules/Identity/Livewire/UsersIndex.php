@@ -9,6 +9,8 @@ use App\Modules\Identity\Actions\SetUserActiveAction;
 use App\Modules\Identity\Enums\Role;
 use App\Modules\Identity\Exceptions\UserManagementViolation;
 use App\Modules\Identity\Models\User;
+use App\Modules\Shared\Enums\AuditLogName;
+use App\Modules\Shared\Enums\Permission;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
@@ -69,6 +71,40 @@ final class UsersIndex extends Component
         session()->flash('status', __('identity.users.invitation_resent', ['email' => $target->email]));
     }
 
+    /**
+     * Muestra la contraseña temporal aún vigente (hasta que el usuario define la suya).
+     * Es protegida para que no viaje en el snapshot de Livewire; se consulta y audita en cada petición.
+     */
+    protected ?string $revealedPassword = null;
+
+    protected ?string $revealedUserName = null;
+
+    public function revealTemporaryPassword(string $ulid): void
+    {
+        $actor = $this->actor();
+        abort_unless($actor->can(Permission::TemporaryPasswordsView->value), 403);
+
+        $target = $this->findVisible($ulid);
+        $password = $target->must_change_password ? $target->temporary_password : null;
+
+        if ($password === null) {
+            $this->addError('actions', __('identity.users.temporary_password_unavailable'));
+
+            return;
+        }
+
+        activity()->performedOn($target)->causedBy($actor)->useLog(AuditLogName::Identity->value)->event('temporary_password_revealed')->log(__('identity.users.audit_temporary_revealed'));
+
+        $this->revealedPassword = $password;
+        $this->revealedUserName = $target->name;
+    }
+
+    public function hideTemporaryPassword(): void
+    {
+        $this->revealedPassword = null;
+        $this->revealedUserName = null;
+    }
+
     public function render(): View
     {
         $users = User::query()
@@ -85,6 +121,9 @@ final class UsersIndex extends Component
             'users' => $users,
             'roles' => Role::cases(),
             'canManage' => Gate::allows('create', User::class),
+            'canViewTemporaryPasswords' => $this->actor()->can(Permission::TemporaryPasswordsView->value),
+            'revealedPassword' => $this->revealedPassword,
+            'revealedUserName' => $this->revealedUserName,
         ])->title(__('identity.users.title'))
             ->layoutData(['heading' => __('identity.users.title')]);
     }

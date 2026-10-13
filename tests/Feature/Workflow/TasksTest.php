@@ -67,6 +67,7 @@ it('validates the reminder against the due date', function (): void {
     Livewire::test(TasksBoard::class)
         ->set('title', 'Tarea')
         ->set('due_at', '2026-10-20T09:00')
+        ->set('priority', TaskPriority::Normal->value)
         ->set('remind_at', '2026-10-21T09:00')
         ->call('create')
         ->assertHasErrors(['remind_at' => __('workflow.errors.reminder_after_due')]);

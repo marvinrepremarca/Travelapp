@@ -36,7 +36,7 @@ final class FlightSearch extends Component
     private const AGES_SEPARATOR = ',';
 
     /** @var array<string, string> */
-    public array $criteria = ['origin' => '', 'destination' => '', 'departure_date' => '', 'return_date' => '', 'ages' => '', 'cabin' => 'economy'];
+    public array $criteria = ['origin' => '', 'destination' => '', 'departure_date' => '', 'return_date' => '', 'ages' => '', 'cabin' => ''];
 
     public bool $searched = false;
 

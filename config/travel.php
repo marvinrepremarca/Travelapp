@@ -64,6 +64,8 @@ return [
         'logo_max_kb' => (int) env('TRAVEL_LOGO_MAX_KB', 1024),
         // Color del texto que se pinta sobre el color de marca (debe cumplir contraste AA).
         'brand_text_color' => '#ffffff',
+        // Color que muestra el selector cuando la agencia aún no tiene color guardado (solo visual, no se guarda).
+        'brand_picker_fallback' => '#1d4ed8',
         'rnt_expiry_warning_days' => (int) env('TRAVEL_RNT_EXPIRY_WARNING_DAYS', 60),
         'branches_per_page' => (int) env('TRAVEL_BRANCHES_PER_PAGE', 20),
     ],
