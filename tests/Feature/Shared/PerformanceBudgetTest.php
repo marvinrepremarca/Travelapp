@@ -36,6 +36,7 @@ it('renders every backoffice screen within the query budget', function (string $
     'pricing.rules',
     'pricing.simulator',
     'identity.users.index',
+    'identity.roles',
     'organization.settings',
     'organization.branches.index',
     'organization.holidays',

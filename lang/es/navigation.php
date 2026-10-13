@@ -30,6 +30,7 @@ return [
     'items' => [
         'agency' => ['label' => 'Datos de la agencia', 'hint' => 'NIT, RNT, contacto, logo y colores. Aparecen en cotizaciones y vouchers.'],
         'branches' => ['label' => 'Sucursales', 'hint' => 'Oficinas de venta. Cada usuario y cada venta pertenece a una.'],
+        'roles' => ['label' => 'Roles y permisos', 'hint' => 'Qué puede hacer cada rol; solo la gerencia de la agencia lo administra.'],
         'users' => ['label' => 'Usuarios y roles', 'hint' => 'Asesores, finanzas, producto… El rol define qué ve y qué puede hacer cada uno.'],
         'settings' => ['label' => 'Parámetros', 'hint' => 'Vigencia de cotizaciones, moneda, zona horaria, visibilidad de márgenes, spread de cambio.'],
         'holidays' => ['label' => 'Festivos', 'hint' => 'Calendario para plazos y vencimientos.'],

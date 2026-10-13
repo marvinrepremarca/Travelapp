@@ -16,3 +16,6 @@
 
 ### Cambiado
 - Los roles con 2FA obligatorio se configuran con `TRAVEL_TWO_FACTOR_REQUIRED_ROLES` (por defecto `system_admin,agency_owner,finance`). Vacío desactiva la exigencia: **solo para el ambiente local de pruebas**, nunca en producción.
+
+## 2026-10-13
+- Roles y permisos (identity.roles): el Gerente de la agencia administra los permisos de los demás roles; su rol no se edita y administrar roles queda reservado a él (se retira del Administrador del sistema). Cambios auditados; el seeder ya no sobrescribe la configuración.
