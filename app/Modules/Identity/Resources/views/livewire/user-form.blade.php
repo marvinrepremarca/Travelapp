@@ -1,6 +1,7 @@
 @php
     use App\Modules\Shared\Enums\Tone;
 @endphp
+<div>
 @if ($issuedPassword !== null)
     <x-ui.card :title="__('identity.users.temporary_password_title', ['name' => $issuedUserName])">
         <div class="flex flex-col gap-md" x-data>
@@ -55,3 +56,4 @@
     </div>
 </form>
 @endif
+</div>
