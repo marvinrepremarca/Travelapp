@@ -5,9 +5,10 @@ declare(strict_types=1);
 use App\Modules\Crm\Livewire\LeadForm;
 use App\Modules\Crm\Livewire\LeadsBoard;
 use App\Modules\Crm\Livewire\LeadShow;
+use App\Modules\Shared\Enums\Permission;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['web', 'auth'])
+Route::middleware(['web', 'auth', 'can:' . Permission::LeadsView->value])
     ->prefix('crm')
     ->name('crm.')
     ->group(function (): void {

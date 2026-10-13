@@ -9,6 +9,7 @@ use App\Modules\Finance\Livewire\PayablesIndex;
 use App\Modules\Finance\Livewire\ProfitabilityScreen;
 use App\Modules\Finance\Livewire\ReconciliationScreen;
 use App\Modules\Finance\Livewire\RevenueScreen;
+use App\Modules\Shared\Enums\Permission;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'auth'])
@@ -17,7 +18,7 @@ Route::middleware(['web', 'auth'])
     ->group(function (): void {
         Route::get('/payables', PayablesIndex::class)->name('payables');
         Route::get('/revenue', RevenueScreen::class)->name('revenue');
-        Route::get('/cash', CashRegisterScreen::class)->name('cash');
+        Route::get('/cash', CashRegisterScreen::class)->middleware('can:' . Permission::CashAccess->value)->name('cash');
         Route::get('/profitability', ProfitabilityScreen::class)->name('profitability');
         Route::get('/bank-accounts', BankAccountsIndex::class)->name('bank-accounts');
         Route::get('/bank-accounts/create', BankAccountForm::class)->name('bank-accounts.create');

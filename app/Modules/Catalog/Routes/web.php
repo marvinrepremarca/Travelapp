@@ -5,9 +5,10 @@ declare(strict_types=1);
 use App\Modules\Catalog\Livewire\CatalogIndex;
 use App\Modules\Catalog\Livewire\ProductForm;
 use App\Modules\Catalog\Livewire\ProductShow;
+use App\Modules\Shared\Enums\Permission;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['web', 'auth'])
+Route::middleware(['web', 'auth', 'can:' . Permission::CatalogView->value])
     ->prefix('catalog')
     ->name('catalog.')
     ->group(function (): void {

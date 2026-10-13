@@ -7,9 +7,10 @@ use App\Modules\Communications\Livewire\ConversationsInbox;
 use App\Modules\Communications\Providers\CommunicationsServiceProvider;
 use App\Modules\Shared\Capabilities\Capabilities;
 use App\Modules\Shared\Enums\Capability;
+use App\Modules\Shared\Enums\Permission;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['web', 'auth'])
+Route::middleware(['web', 'auth', 'can:' . Permission::ConversationsView->value])
     ->prefix('communications')
     ->name('communications.')
     ->group(function (): void {

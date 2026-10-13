@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Modules\Identity\Actions\InviteUserAction;
 use App\Modules\Identity\Actions\SetUserActiveAction;
+use App\Modules\Identity\Actions\UpdateRolePermissionsAction;
 use App\Modules\Identity\Data\UserData;
 use App\Modules\Identity\Enums\Role;
 use App\Modules\Identity\Exceptions\UserManagementViolation;
@@ -174,9 +175,12 @@ it('prevents privilege escalation when assigning roles', function (): void {
 
     expect(app(AssignableRoles::class)->canAssign($admin, Role::Finance))->toBeFalse()
         ->and(app(AssignableRoles::class)->canAssign($admin, Role::AgencyOwner))->toBeFalse()
-        ->and(app(AssignableRoles::class)->canAssign($admin, Role::TravelAgent))->toBeTrue()
+        ->and(app(AssignableRoles::class)->canAssign($admin, Role::TravelAgent))->toBeFalse()
         ->and(app(AssignableRoles::class)->canAssign(agent(), Role::TravelAgent))->toBeFalse()
         ->and(app(AssignableRoles::class)->for(agencyOwner()))->toBe(Role::cases());
+
+    app(UpdateRolePermissionsAction::class)->execute(agencyOwner(), Role::TravelAgent, []);
+    expect(app(AssignableRoles::class)->canAssign($admin, Role::TravelAgent))->toBeTrue();
 
     actingAs($admin);
     Livewire::test(UserForm::class)

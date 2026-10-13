@@ -1,3 +1,6 @@
+@php
+    use App\Modules\Shared\Enums\Tone;
+@endphp
 @if ($issuedPassword !== null)
     <x-ui.card :title="__('identity.users.temporary_password_title', ['name' => $issuedUserName])">
         <div class="flex flex-col gap-md" x-data>
@@ -13,6 +16,9 @@
     </x-ui.card>
 @else
 <form wire:submit="save" class="flex max-w-form flex-col gap-lg" novalidate>
+    @if ($errors->any())
+        <x-ui.alert :tone="Tone::Danger" role="alert">{{ __('identity.users.form_has_errors') }}</x-ui.alert>
+    @endif
     <x-ui.card>
         <div class="flex flex-col gap-md">
             @unless ($isEditing)

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Modules\Identity\Livewire\ChangeTemporaryPassword;
 use App\Modules\Identity\Livewire\RolePermissions;
+use App\Modules\Identity\Livewire\RolesIndex;
 use App\Modules\Identity\Livewire\SecuritySettings;
 use App\Modules\Identity\Livewire\UserForm;
 use App\Modules\Identity\Livewire\UsersIndex;
@@ -16,7 +17,8 @@ Route::middleware(['web', 'auth'])
         Route::get('/users', UsersIndex::class)->name('users.index');
         Route::get('/users/create', UserForm::class)->name('users.create');
         Route::get('/users/{user}/edit', UserForm::class)->name('users.edit');
-        Route::get('/roles', RolePermissions::class)->name('roles');
+        Route::get('/roles', RolesIndex::class)->name('roles');
+        Route::get('/roles/{role}', RolePermissions::class)->name('roles.edit');
         Route::get('/password/change', ChangeTemporaryPassword::class)->name('password.change');
 
         Route::get('/security', SecuritySettings::class)->middleware('password.confirm')->name('security');

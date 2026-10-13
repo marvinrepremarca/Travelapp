@@ -37,6 +37,15 @@ enum Role: string
     /** @return list<Permission> */
     public function permissions(): array
     {
+        // El administrador del sistema solo administra la plataforma: no entra a las áreas del negocio por defecto.
+        return $this === self::SystemAdmin || $this === self::AgencyOwner
+            ? $this->basePermissions()
+            : [...Permission::areaAccess(), ...$this->basePermissions()];
+    }
+
+    /** @return list<Permission> */
+    private function basePermissions(): array
+    {
         return match ($this) {
             self::SystemAdmin => [Permission::UsersView, Permission::UsersManage, Permission::AuditView, Permission::IntegrationsManage],
             self::AgencyOwner => Permission::cases(),

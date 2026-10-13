@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Modules\Shared\Enums\Permission;
 use App\Modules\Suppliers\Livewire\SupplierForm;
 use App\Modules\Suppliers\Livewire\SupplierShow;
 use App\Modules\Suppliers\Livewire\SuppliersIndex;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['web', 'auth'])
+Route::middleware(['web', 'auth', 'can:' . Permission::SuppliersView->value])
     ->prefix('suppliers')
     ->name('suppliers.')
     ->group(function (): void {
