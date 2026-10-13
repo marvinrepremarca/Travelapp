@@ -24,6 +24,7 @@ final readonly class MainMenu
             ['agency', 'organization.agency', Permission::OrganizationManage],
             ['branches', 'organization.branches.index', Permission::BranchesManage],
             ['users', 'identity.users.index', Permission::UsersView],
+            ['roles', 'identity.roles', Permission::RolesManage],
             ['settings', 'organization.settings', Permission::OrganizationManage],
             ['holidays', 'organization.holidays', Permission::OrganizationManage],
             ['bank_accounts', 'finance.bank-accounts', Permission::FinanceAccess],

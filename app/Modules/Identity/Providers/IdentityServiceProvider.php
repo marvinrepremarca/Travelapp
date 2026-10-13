@@ -7,6 +7,7 @@ namespace App\Modules\Identity\Providers;
 use App\Modules\Identity\Auth\ResetUserPassword;
 use App\Modules\Identity\Auth\UniformPasswordResetLinkResponse;
 use App\Modules\Identity\Auth\UpdateUserPassword;
+use App\Modules\Identity\Livewire\RolePermissions;
 use App\Modules\Identity\Livewire\SecuritySettings;
 use App\Modules\Identity\Livewire\UserForm;
 use App\Modules\Identity\Livewire\UsersIndex;
@@ -53,6 +54,7 @@ final class IdentityServiceProvider extends ServiceProvider
         Livewire::component('identity.users-index', UsersIndex::class);
         Livewire::component('identity.user-form', UserForm::class);
         Livewire::component('identity.security-settings', SecuritySettings::class);
+        Livewire::component('identity.role-permissions', RolePermissions::class);
 
         Gate::policy(User::class, UserPolicy::class);
 

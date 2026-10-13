@@ -38,7 +38,7 @@ enum Role: string
     public function permissions(): array
     {
         return match ($this) {
-            self::SystemAdmin => [Permission::UsersView, Permission::UsersManage, Permission::RolesManage, Permission::AuditView, Permission::IntegrationsManage],
+            self::SystemAdmin => [Permission::UsersView, Permission::UsersManage, Permission::AuditView, Permission::IntegrationsManage],
             self::AgencyOwner => Permission::cases(),
             self::BranchManager => [Permission::UsersView, Permission::MarginsView, Permission::ApprovalsDiscounts, Permission::CustomersReassign],
             self::Finance => [Permission::FinanceAccess, Permission::MarginsView, Permission::ApprovalsRefunds, Permission::ApprovalsInvoiceVoids, Permission::SuppliersManage, Permission::ComplianceManage],
