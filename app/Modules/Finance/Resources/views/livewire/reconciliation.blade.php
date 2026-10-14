@@ -65,14 +65,14 @@
                                             @endif
                                         </x-ui.field>
                                         @if ($lineOptions !== [])
-                                            <x-ui.button type="button" wire:click="match('{{ $line->ulid }}')" wire:loading.attr="disabled" wire:target="match('{{ $line->ulid }}')">{{ __('finance.reconciliation.confirm') }}</x-ui.button>
+                                            <x-ui.icon-button icon="check" tone="success" :label="__('finance.reconciliation.confirm')" wire:click="match('{{ $line->ulid }}')" wire:loading.attr="disabled" wire:target="match('{{ $line->ulid }}')" />
                                         @endif
                                     </div>
                                     <div class="flex flex-col gap-sm md:flex-row md:items-end">
                                         <x-ui.field :label="__('finance.reconciliation.note')" for="notes.{{ $line->ulid }}" :hint="__('finance.reconciliation.ignore_hint')">
                                             <x-ui.input name="notes.{{ $line->ulid }}" wire:model="notes.{{ $line->ulid }}" hint />
                                         </x-ui.field>
-                                        <x-ui.button type="button" variant="secondary" wire:click="ignore('{{ $line->ulid }}')" wire:loading.attr="disabled" wire:target="ignore('{{ $line->ulid }}')">{{ __('finance.reconciliation.ignore') }}</x-ui.button>
+                                        <x-ui.icon-button icon="close" tone="danger" :label="__('finance.reconciliation.ignore')" wire:click="ignore('{{ $line->ulid }}')" wire:loading.attr="disabled" wire:target="ignore('{{ $line->ulid }}')" />
                                     </div>
                                 </div>
                             @else
@@ -84,7 +84,7 @@
                                             {{ $line->note }}
                                         @endif
                                     </span>
-                                    <x-ui.button type="button" variant="secondary" wire:click="reopen('{{ $line->ulid }}')" wire:confirm="{{ __('finance.reconciliation.confirm_reopen') }}" wire:loading.attr="disabled" wire:target="reopen('{{ $line->ulid }}')">{{ __('finance.reconciliation.reopen') }}</x-ui.button>
+                                    <x-ui.icon-button icon="undo" tone="neutral" :label="__('finance.reconciliation.reopen')" wire:click="reopen('{{ $line->ulid }}')" wire:confirm="{{ __('finance.reconciliation.confirm_reopen') }}" wire:loading.attr="disabled" wire:target="reopen('{{ $line->ulid }}')" />
                                 </div>
                             @endif
                         </li>

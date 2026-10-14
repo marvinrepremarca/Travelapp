@@ -42,7 +42,6 @@ final class DocumentForm extends Component
     public function mount(?ComplianceDocument $document = null): void
     {
         $this->authorizeCompliance();
-        $this->type = ComplianceDocumentType::Rnt->value;
         $this->responsible_id = (string) $this->actor()->id;
         if ($document?->exists) {
             $this->documentUlid = $document->ulid;

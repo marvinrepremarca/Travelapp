@@ -10,10 +10,13 @@ use App\Modules\Catalog\Actions\AddSeasonAction;
 use App\Modules\Catalog\Actions\RemovePackageComponentAction;
 use App\Modules\Catalog\Actions\SetProductActiveAction;
 use App\Modules\Catalog\Actions\ToggleDepartureAction;
+use App\Modules\Catalog\Actions\UpdateDepartureAction;
+use App\Modules\Catalog\Actions\UpdateSeasonAction;
 use App\Modules\Catalog\Exceptions\CatalogRuleViolation;
 use App\Modules\Catalog\Models\CatalogDeparture;
 use App\Modules\Catalog\Models\CatalogPackageComponent;
 use App\Modules\Catalog\Models\CatalogProduct;
+use App\Modules\Catalog\Models\CatalogSeason;
 use App\Modules\Catalog\Services\EloquentCatalogRates;
 use App\Modules\Shared\Enums\PassengerType;
 use App\Modules\Shared\Enums\ProductType;
@@ -47,6 +50,16 @@ final class ProductShow extends Component
     /** @var array<string, string> */
     public array $component = ['product' => '', 'day_offset' => '0'];
 
+    /** Temporada o salida en edición; null = alta. */
+    #[Locked]
+    public ?string $editingSeason = null;
+
+    #[Locked]
+    public ?string $editingDeparture = null;
+
+    /** Las temporadas vencidas se ocultan para que la lista no crezca sin límite. */
+    public bool $showPastSeasons = false;
+
     public function mount(CatalogProduct $product): void
     {
         Gate::authorize('view', $product);
@@ -60,7 +73,7 @@ final class ProductShow extends Component
         $setActive->execute($product, ! $product->is_active);
     }
 
-    public function addSeason(AddSeasonAction $add): void
+    public function addSeason(AddSeasonAction $add, UpdateSeasonAction $update): void
     {
         Gate::authorize('manage', CatalogProduct::class);
         $product = $this->ownProduct();
@@ -82,29 +95,45 @@ final class ProductShow extends Component
         }
 
         try {
-            $add->execute($product, $data['name'], CarbonImmutable::parse($data['starts_on']), CarbonImmutable::parse($data['ends_on']), $amounts);
+            $startsOn = CarbonImmutable::parse($data['starts_on']);
+            $endsOn = CarbonImmutable::parse($data['ends_on']);
+            $this->editingSeason === null
+                ? $add->execute($product, $data['name'], $startsOn, $endsOn, $amounts)
+                : $update->execute($this->ownSeason($this->editingSeason), $data['name'], $startsOn, $endsOn, $amounts);
         } catch (CatalogRuleViolation $violation) {
             $this->addError('season.starts_on', $violation->getMessage());
 
             return;
         }
 
-        $this->reset('season');
+        $this->reset('season', 'editingSeason');
     }
 
-    public function addDeparture(AddDepartureAction $add): void
+    public function addDeparture(AddDepartureAction $add, UpdateDepartureAction $update): void
     {
         Gate::authorize('manage', CatalogProduct::class);
         $product = $this->ownProduct();
         $data = $this->validate([
             'departure.service_date' => ['required', 'date', 'after_or_equal:today'],
             'departure.starts_at' => ['required', 'date_format:H:i',
-                Rule::unique('catalog_departures', 'starts_at')->where('product_id', $product->id)->where('service_date', $this->departure['service_date'])],
+                Rule::unique('catalog_departures', 'starts_at')->where('product_id', $product->id)->where('service_date', $this->departure['service_date'])->ignore($this->editingDeparture, 'ulid')],
             'departure.capacity' => ['required', 'integer', 'min:1', 'max:' . config()->integer('travel.catalog.max_departure_capacity')],
         ], attributes: $this->prefixed('departure', 'catalog.departure_fields'))['departure'];
 
-        $add->execute($product, CarbonImmutable::parse($data['service_date']), $data['starts_at'], (int) $data['capacity']);
-        $this->reset('departure');
+        $serviceDate = CarbonImmutable::parse($data['service_date']);
+        if ($this->editingDeparture === null) {
+            $add->execute($product, $serviceDate, $data['starts_at'], (int) $data['capacity']);
+        } else {
+            try {
+                $update->execute($this->ownDeparture($this->editingDeparture), $serviceDate, $data['starts_at'], (int) $data['capacity']);
+            } catch (CatalogRuleViolation $violation) {
+                $this->addError('departure.capacity', $violation->getMessage());
+
+                return;
+            }
+        }
+
+        $this->reset('departure', 'editingDeparture');
     }
 
     public function addComponent(AddPackageComponentAction $add): void
@@ -141,12 +170,40 @@ final class ProductShow extends Component
     public function toggleDeparture(string $departureUlid, ToggleDepartureAction $toggle): void
     {
         Gate::authorize('manage', CatalogProduct::class);
-        $departure = CatalogDeparture::query()
-            ->where('product_id', $this->product()->id)
-            ->where('ulid', $departureUlid)
-            ->first() ?? abort(404);
+        $toggle->execute($this->ownDeparture($departureUlid));
+    }
 
-        $toggle->execute($departure);
+    public function editSeason(string $seasonUlid): void
+    {
+        Gate::authorize('manage', CatalogProduct::class);
+        $season = $this->ownSeason($seasonUlid);
+        $this->resetValidation();
+        $this->editingSeason = $season->ulid;
+        $this->season = ['name' => $season->name, 'starts_on' => $season->starts_on->toDateString(), 'ends_on' => $season->ends_on->toDateString()];
+        foreach (PassengerType::cases() as $type) {
+            $rate = $season->rates->firstWhere('passenger_type', $type);
+            $this->season[$type->value] = $rate === null ? '' : (string) Money::ofMinor($rate->net_amount_minor, $this->product->currency)->getAmount();
+        }
+    }
+
+    public function editDeparture(string $departureUlid): void
+    {
+        Gate::authorize('manage', CatalogProduct::class);
+        $departure = $this->ownDeparture($departureUlid);
+        $this->resetValidation();
+        $this->editingDeparture = $departure->ulid;
+        $this->departure = ['service_date' => $departure->service_date->toDateString(), 'starts_at' => substr($departure->starts_at, 0, 5), 'capacity' => (string) $departure->capacity];
+    }
+
+    public function cancelEdit(): void
+    {
+        $this->resetValidation();
+        $this->reset('season', 'departure', 'editingSeason', 'editingDeparture');
+    }
+
+    public function updatedShowPastSeasons(): void
+    {
+        $this->resetPage('seasonsPage');
     }
 
     public function render(MoneyPresenter $presenter, EloquentCatalogRates $rates): View
@@ -162,17 +219,23 @@ final class ProductShow extends Component
             ], $presenter);
         }
 
-        $product->load(['seasons' => static fn($query) => $query->with('rates')->orderBy('starts_on')]);
+        $seasons = CatalogSeason::query()
+            ->where('product_id', $product->id)
+            ->when(! $this->showPastSeasons, static fn($query) => $query->where('ends_on', '>=', CarbonImmutable::now($product->timezone)->toDateString()))
+            ->with('rates')
+            ->orderBy('starts_on')
+            ->paginate(config()->integer('travel.catalog.seasons_per_page'), pageName: 'seasonsPage');
         $departures = CatalogDeparture::query()
             ->where('product_id', $product->id)
             ->where('service_date', '>=', CarbonImmutable::now($product->timezone)->toDateString())
             ->orderBy('service_date')
             ->orderBy('starts_at')
-            ->paginate(config()->integer('travel.catalog.departures_per_page'));
+            ->paginate(config()->integer('travel.catalog.departures_per_page'), pageName: 'departuresPage');
 
         return $this->screen('catalog::livewire.product-show', [
             'product' => $product,
             'departures' => $departures,
+            'seasons' => $seasons,
             'fromPrice' => $fromPrice,
             'passengerTypes' => PassengerType::cases(),
         ], $presenter);
@@ -209,6 +272,16 @@ final class ProductShow extends Component
     private function ownProduct(): CatalogProduct
     {
         return $this->product->isPackage() ? abort(404) : $this->product;
+    }
+
+    private function ownSeason(string $ulid): CatalogSeason
+    {
+        return CatalogSeason::query()->where('product_id', $this->ownProduct()->id)->where('ulid', $ulid)->with('rates')->first() ?? abort(404);
+    }
+
+    private function ownDeparture(string $ulid): CatalogDeparture
+    {
+        return CatalogDeparture::query()->where('product_id', $this->product()->id)->where('ulid', $ulid)->first() ?? abort(404);
     }
 
     /** @return array<string, string> */

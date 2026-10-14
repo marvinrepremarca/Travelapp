@@ -78,8 +78,8 @@
                         <p><x-ui.badge :tone="$payment->status->tone()">{{ $payment->status->label() }}</x-ui.badge></p>
                         @if ($canValidate && $payment->method === PaymentMethod::BankTransfer && $payment->status === PaymentStatus::Pending)
                             <div class="mt-xs flex gap-xs">
-                                <x-ui.button variant="secondary" wire:click="validateTransfer('{{ $payment->ulid }}', true)" wire:loading.attr="disabled">{{ __('payments.list.approve') }}</x-ui.button>
-                                <x-ui.button variant="ghost" wire:click="validateTransfer('{{ $payment->ulid }}', false)" wire:loading.attr="disabled" wire:confirm="{{ __('payments.list.confirm_reject') }}">{{ __('payments.list.reject') }}</x-ui.button>
+                                <x-ui.icon-button icon="check" tone="success" :label="__('payments.list.approve')" wire:click="validateTransfer('{{ $payment->ulid }}', true)" wire:loading.attr="disabled" />
+                                <x-ui.icon-button icon="close" tone="danger" :label="__('payments.list.reject')" wire:click="validateTransfer('{{ $payment->ulid }}', false)" wire:loading.attr="disabled" wire:confirm="{{ __('payments.list.confirm_reject') }}" />
                             </div>
                         @endif
                     </td>

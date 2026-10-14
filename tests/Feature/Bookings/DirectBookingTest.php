@@ -12,6 +12,8 @@ use App\Modules\Bookings\Exceptions\BookingRuleViolation;
 use App\Modules\Bookings\Livewire\DirectBookingForm;
 use App\Modules\Bookings\Livewire\DirectItemForm;
 use App\Modules\Bookings\Models\Booking;
+use App\Modules\Catalog\Actions\AddSeasonAction;
+use App\Modules\Catalog\Models\CatalogProduct;
 use App\Modules\Customers\Models\Customer;
 use App\Modules\Finance\Models\RevenueEntry;
 use App\Modules\Identity\Models\User;
@@ -99,6 +101,8 @@ it('creates a direct booking and adds a service from the screens with quoting of
         ->set('item.nights', '2')
         ->set('item.ages', '40, 38')
         ->set('item.net_amount', '600000')
+        ->set('item.net_currency', $booking->sale_currency)
+        ->set('item.channel', SalesChannel::Branch->value)
         ->call('add')
         ->assertHasNoErrors()
         ->assertRedirect(route('bookings.show', $booking));
@@ -147,4 +151,28 @@ it('applies a customer advance to a later booking within its balance', function 
         ->and($tooBig->fresh()?->booking_ulid)->toBeNull()
         ->and(app(BookingAccounts::class)->account($booking->ulid)->customerId)->toBe($customer->id)
         ->and(Payment::query()->where('booking_ulid', $booking->ulid)->count())->toBe(1);
+});
+
+it('fills a direct service and its supplier net from a catalog product', function (): void {
+    $agent = agent();
+    $booking = app(CreateDirectBookingAction::class)->execute($agent, Customer::factory()->ownedBy($agent)->create(), 'Islas', 'COP');
+    $product = CatalogProduct::factory()->create(['name' => 'Islas del Rosario', 'currency' => 'COP']);
+    app(AddSeasonAction::class)->execute($product, 'Alta', CarbonImmutable::parse('2026-12-01'), CarbonImmutable::parse('2026-12-31'), ['adult' => 150_000_00, 'child' => 90_000_00]);
+    actingAs($agent);
+
+    Livewire::test(DirectItemForm::class, ['booking' => $booking])
+        ->call('priceFromCatalog')
+        ->assertHasErrors(['catalogProduct', 'item.service_date', 'item.ages'])
+        ->set('catalogProduct', $product->ulid)
+        ->assertSet('item.description', 'Islas del Rosario')
+        ->assertSet('item.product_type', $product->product_type->value)
+        ->assertSet('item.net_currency', 'COP')
+        ->set('item.service_date', '2026-12-10')
+        ->set('item.ages', '40, 8')
+        ->call('priceFromCatalog')
+        ->assertHasNoErrors()
+        ->assertSet('item.net_amount', '240000.00')
+        ->set('item.service_date', '2027-03-01')
+        ->call('priceFromCatalog')
+        ->assertHasErrors('catalogProduct');
 });

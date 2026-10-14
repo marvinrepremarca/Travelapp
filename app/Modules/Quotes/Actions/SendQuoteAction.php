@@ -59,7 +59,7 @@ final readonly class SendQuoteAction
             ]);
         });
 
-        (new QuoteSent($quote->ulid, $version->version))->publish();
+        (new QuoteSent($quote->ulid, $version->version, $quote->lead_ulid))->publish();
 
         return $version;
     }

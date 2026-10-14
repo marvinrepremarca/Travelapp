@@ -7,11 +7,19 @@
     $formatInstant = fn ($instant) => $instant->timezone($timezone)->locale(app()->getLocale())->isoFormat('lll');
 @endphp
 <div class="flex flex-col gap-lg">
+    @if ($notice)<x-ui.alert :tone="Tone::Success" role="status">{{ $notice }}</x-ui.alert>@endif
+    @if ($quote->isForProspect() && $quote->status !== QuoteStatus::Cancelled)
+        <x-ui.customer-picker :title="__('quotes.prospect.assign_title')" error="customer_ulid" :matches="$customerMatches" :search="$customerSearch">
+            <p class="text-caption text-text-subtle">{{ __('quotes.prospect.assign_help') }}</p>
+            <x-ui.capability-link route="customers.create" :params="array_filter(['lead' => $quote->lead_ulid, 'quote' => $quote->ulid])" class="text-brand underline">{{ __('quotes.prospect.register') }}</x-ui.capability-link>
+        </x-ui.customer-picker>
+    @endif
     <x-ui.card>
         <div class="flex flex-col gap-md">
             <div class="flex flex-wrap items-center gap-sm">
                 <x-ui.badge :tone="$quote->status->tone()">{{ $quote->status->label() }}</x-ui.badge>
-                <span class="text-caption text-text-subtle">{{ $quote->customer->display_name }} · {{ $quote->sales_channel->label() }} · {{ $currency }}</span>
+                @if ($quote->isForProspect())<x-ui.badge :tone="Tone::Neutral">{{ __('quotes.prospect.badge') }}</x-ui.badge>@endif
+                <span class="text-caption text-text-subtle">{{ $quote->recipientName() }} · {{ $quote->sales_channel->label() }} · {{ $currency }}</span>
             </div>
             @if ($quote->status === QuoteStatus::Sent && $quote->valid_until)
                 <p>{{ __('quotes.validity', ['date' => $formatInstant($quote->valid_until)]) }}</p>
@@ -19,7 +27,7 @@
             @if ($quote->status === QuoteStatus::Expired)
                 <x-ui.alert :tone="Tone::Warning">{{ __('quotes.expired_notice') }}</x-ui.alert>
             @endif
-            @if ($quote->status === QuoteStatus::Accepted && Route::has('bookings.from-quote'))
+            @if ($quote->status === QuoteStatus::Accepted && ! $quote->isForProspect() && Route::has('bookings.from-quote'))
                 <div class="flex justify-end">
                     @if ($convertUrl = \App\Modules\Shared\Capabilities\Capabilities::routeUrl('bookings.from-quote', $quote->ulid))<x-ui.link-button :href="$convertUrl">{{ __('bookings.convert.from_quote_link') }}</x-ui.link-button>@endif
                 </div>
@@ -31,13 +39,12 @@
             @endif
             @error('quote')<x-ui.alert :tone="Tone::Danger">{{ $message }}</x-ui.alert>@enderror
             @if ($customerLink)
-                <div class="flex flex-col gap-xs" x-data="{ copied: false }">
+                <div class="flex flex-col gap-xs">
                     <label for="customer-link" class="text-caption text-text-subtle">{{ __('quotes.public.link_label') }}</label>
                     <div class="flex flex-col gap-sm md:flex-row">
                         <x-ui.input name="customer-link" :value="$customerLink" readonly x-ref="link" />
-                        <x-ui.button type="button" variant="secondary" x-on:click="navigator.clipboard.writeText($refs.link.value); copied = true">{{ __('quotes.public.copy_link') }}</x-ui.button>
+                        <x-ui.copy-button :text="$customerLink" :label="__('quotes.public.copy_link')" />
                     </div>
-                    <p class="text-caption text-success" x-show="copied" x-cloak role="status">{{ __('quotes.public.copied') }}</p>
                 </div>
             @endif
 

@@ -69,6 +69,15 @@
     </div>
 
     <div class="flex flex-col gap-lg">
+        @if ($canQuote)
+            @capability(\App\Modules\Shared\Enums\Capability::Quoting)
+                <x-ui.card :title="__('crm.leads.quote_card')">
+                    <p class="mb-sm text-caption text-text-subtle">{{ __('crm.leads.quote_help') }}</p>
+                    {{-- La cotización precarga los datos del lead; no exige registrarlo como cliente. --}}
+                    <x-ui.link-button :href="route('quotes.create', ['lead' => $lead->ulid])">{{ __('crm.leads.quote') }}</x-ui.link-button>
+                </x-ui.card>
+            @endcapability
+        @endif
         @if ($nextSteps !== [])
             <x-ui.card :title="__('crm.leads.advance')">
                 @error('status') <x-ui.alert :tone="\App\Modules\Shared\Enums\Tone::Danger" class="mb-sm">{{ $message }}</x-ui.alert> @enderror

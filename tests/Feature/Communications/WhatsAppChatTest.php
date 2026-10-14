@@ -246,6 +246,7 @@ it('goes from the chat to a quote creating the customer from the lead', function
         ->test(App\Modules\Quotes\Livewire\QuoteCreate::class)
         ->assertSet('title', 'Viaje a Cartagena')
         ->assertSet('sales_channel', 'whatsapp')
+        ->set('sale_currency', 'COP')
         ->call('save')
         ->assertHasNoErrors();
     expect(App\Modules\Quotes\Models\Quote::query()->sole()->customer_id)->toBe($customer->id);

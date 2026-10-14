@@ -61,8 +61,6 @@ final class BankAccountForm extends Component
         $this->format = array_map(static fn(string|int|null $value): string => (string) $value, $format->toArray());
 
         if (! $account?->exists) {
-            $this->currency = config()->string('travel.agency.default_currency');
-
             return;
         }
 

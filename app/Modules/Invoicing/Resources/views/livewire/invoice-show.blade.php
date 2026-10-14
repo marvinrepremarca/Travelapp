@@ -110,7 +110,7 @@
                             <x-ui.input name="charges.{{ $index }}.amount" type="number" min="0" step="any" wire:model="charges.{{ $index }}.amount" required />
                         </x-ui.field>
                         @if (count($charges) > 1)
-                            <x-ui.button type="button" variant="ghost" wire:click="removeCharge({{ $index }})">{{ __('invoicing.debit_notes.remove_line') }}</x-ui.button>
+                            <x-ui.icon-button icon="delete" tone="danger" :label="__('invoicing.debit_notes.remove_line')" wire:click="removeCharge({{ $index }})"  />
                         @endif
                     </div>
                 @endforeach

@@ -46,14 +46,12 @@
                             </x-ui.badge>
                         </td>
                         <td class="px-md py-sm">
-                            <div class="flex justify-end gap-sm">
-                                <a href="{{ route('organization.branches.edit', $branch) }}" wire:navigate class="text-brand underline">
-                                    {{ __('shared.edit') }}<span class="sr-only"> {{ $branch->name }}</span>
-                                </a>
-                                <x-ui.button variant="ghost" wire:click="toggleActive('{{ $branch->ulid }}')" wire:loading.attr="disabled"
-                                    wire:confirm="{{ $branch->is_active ? __('organization.branches.confirm_deactivate', ['name' => $branch->name]) : __('organization.branches.confirm_activate', ['name' => $branch->name]) }}">
-                                    {{ $branch->is_active ? __('organization.branches.deactivate') : __('organization.branches.activate') }}
-                                </x-ui.button>
+                            <div class="flex justify-end gap-xs">
+                                <x-ui.icon-button icon="edit" :href="route('organization.branches.edit', $branch)" :label="__('shared.edit') . ' · ' . $branch->name" />
+                                <x-ui.icon-button :icon="$branch->is_active ? 'deactivate' : 'activate'" :tone="$branch->is_active ? 'danger' : 'success'"
+                                    :label="($branch->is_active ? __('organization.branches.deactivate') : __('organization.branches.activate')) . ' · ' . $branch->name"
+                                    wire:click="toggleActive('{{ $branch->ulid }}')" wire:loading.attr="disabled"
+                                    wire:confirm="{{ $branch->is_active ? __('organization.branches.confirm_deactivate', ['name' => $branch->name]) : __('organization.branches.confirm_activate', ['name' => $branch->name]) }}" />
                             </div>
                         </td>
                     </tr>

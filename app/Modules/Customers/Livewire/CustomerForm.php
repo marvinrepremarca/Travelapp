@@ -22,6 +22,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -33,6 +34,8 @@ final class CustomerForm extends Component
 {
     /** Pantalla de Cotizaciones a la que se sigue tras crear el cliente desde un prospecto. */
     private const QUOTE_ROUTE = 'quotes.create';
+
+    private const QUOTE_SHOW_ROUTE = 'quotes.show';
 
     #[Locked]
     public ?string $customerUlid = null;
@@ -73,6 +76,10 @@ final class CustomerForm extends Component
     /** Origen del cliente (p. ej. un prospecto): prellena el formulario y, al guardar, se vincula y se sigue a la cotización. */
     #[Url(as: 'lead', except: '')]
     public string $fromLead = '';
+
+    /** Cotización de prospecto a la que se asigna el cliente al guardarlo. */
+    #[Url(as: 'quote', except: '')]
+    public string $fromQuote = '';
 
     public function mount(CustomerOrigins $origins, ?Customer $customer = null): void
     {
@@ -157,8 +164,16 @@ final class CustomerForm extends Component
 
         session()->flash('status', __($isEditing ? 'customers.saved' : 'customers.created', ['name' => $saved->display_name]));
         $followUp = $isEditing ? null : $origins->attach($this->actor(), $this->fromLead, $saved->id);
+
+        // Registrado desde una cotización de prospecto: vuelve a ella y queda asignado como su cliente.
+        if (! $isEditing && Str::isUlid($this->fromQuote) && $capabilities->allowsRoute(self::QUOTE_SHOW_ROUTE)) {
+            $this->redirectRoute(self::QUOTE_SHOW_ROUTE, ['quote' => mb_strtolower($this->fromQuote), 'assign' => $saved->ulid], navigate: true);
+
+            return;
+        }
+
         if ($followUp instanceof CustomerOriginFollowUp && $capabilities->allowsRoute(self::QUOTE_ROUTE)) {
-            $this->redirectRoute(self::QUOTE_ROUTE, ['customer' => $saved->ulid, 'title' => $followUp->quoteTitle, 'channel' => $followUp->channel->value], navigate: true);
+            $this->redirectRoute(self::QUOTE_ROUTE, ['customer' => $saved->ulid, 'title' => $followUp->quoteTitle, 'channel' => $followUp->channel->value, 'lead' => $this->fromLead], navigate: true);
 
             return;
         }

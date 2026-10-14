@@ -34,7 +34,7 @@
                         @endif
                     </td>
                     <td class="px-md py-sm">{{ $document->responsible->name }}</td>
-                    <td class="px-md py-sm"><a href="{{ route('compliance.documents.edit', $document) }}" wire:navigate class="text-brand underline">{{ __('shared.edit') }}<span class="sr-only"> {{ $document->number }}</span></a></td>
+                    <td class="px-md py-sm text-right"><x-ui.icon-button icon="edit" :href="route('compliance.documents.edit', $document)" :label="__('shared.edit') . ' · ' . $document->number" /></td>
                 </tr>
             @endforeach
         </x-ui.table>

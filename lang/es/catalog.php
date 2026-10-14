@@ -55,6 +55,10 @@ return [
         'add' => 'Agregar temporada',
         'range' => ':from al :to',
         'no_rate' => 'Sin tarifa',
+        'edit_title' => 'Editar temporada',
+        'save' => 'Guardar cambios',
+        'show_past' => 'Mostrar temporadas pasadas',
+        'edit_help' => 'Lo ya cotizado o reservado conserva su precio; el cambio aplica a lo que se cotice desde ahora.',
     ],
     'season_fields' => [
         'name' => 'Nombre de la temporada',
@@ -74,6 +78,8 @@ return [
         'sold_out' => 'Agotada',
         'close' => 'Cerrar venta',
         'reopen' => 'Reabrir venta',
+        'edit_title' => 'Editar salida',
+        'save' => 'Guardar cambios',
     ],
     'component_fields' => [
         'product' => 'Producto',
@@ -92,6 +98,8 @@ return [
         'sold_out' => 'No hay cupo suficiente en la salida (disponibles: :available).',
         'departure_not_open' => 'La salida no está abierta a la venta.',
         'overlapping_season' => 'La temporada se cruza con otra del mismo producto.',
+        'capacity_below_reserved' => 'El cupo no puede ser menor que los :reserved cupos ya vendidos.',
+        'departure_has_passengers' => 'La salida ya tiene pasajeros, así que no se puede cambiar la fecha ni la hora. Cierra la venta y programa otra salida.',
         'no_season_for_date' => 'El producto no tiene temporada para el :date.',
         'no_rate_for_passenger_type' => 'El producto no tiene tarifa para :type en esa temporada.',
         'product_inactive' => 'El producto está inactivo.',

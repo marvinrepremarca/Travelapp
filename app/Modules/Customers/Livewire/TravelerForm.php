@@ -37,7 +37,7 @@ final class TravelerForm extends Component
     /** En edición queda vacío: solo se escribe para cambiarla. */
     public string $birth_date = '';
 
-    public string $nationality = 'CO';
+    public string $nationality = '';
 
     public string $passport_number = '';
 

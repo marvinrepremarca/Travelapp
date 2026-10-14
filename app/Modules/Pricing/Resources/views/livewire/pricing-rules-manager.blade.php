@@ -30,9 +30,12 @@
                                 · {{ $rule->valid_from->toDateString() }} – {{ $rule->valid_until?->toDateString() ?? __('suppliers.open_ended') }}
                             </p>
                         </div>
-                        <x-ui.button variant="ghost" wire:click="toggle('{{ PricingRulesManager::TAB_MARKUPS }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled">
-                            {{ $rule->is_active ? __('suppliers.deactivate') : __('suppliers.activate') }}<span class="sr-only"> {{ $rule->name }}</span>
-                        </x-ui.button>
+                        <div class="flex gap-xs">
+                            <x-ui.icon-button icon="edit" :label="__('shared.edit') . ' · ' . $rule->name" wire:click="edit('{{ PricingRulesManager::TAB_MARKUPS }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled" />
+                            <x-ui.icon-button :icon="$rule->is_active ? 'deactivate' : 'activate'" :tone="$rule->is_active ? 'danger' : 'success'"
+                                :label="($rule->is_active ? __('suppliers.deactivate') : __('suppliers.activate')) . ' · ' . $rule->name"
+                                wire:click="toggle('{{ PricingRulesManager::TAB_MARKUPS }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled" />
+                        </div>
                     </li>
                 @empty
                     <li><x-ui.empty-state :title="__('pricing.rules.empty')" /></li>
@@ -44,16 +47,19 @@
                     <x-ui.select name="markup.kind" wire:model.live="markup.kind" :options="collect($kinds)->mapWithKeys(fn ($kind) => [$kind->value => $kind->label()])->all()" />
                 </x-ui.field>
                 <x-ui.field :label="__('pricing.rules.fields.markup.value')" for="markup.value" :hint="__('pricing.rules.value_hint')"><x-ui.input name="markup.value" inputmode="decimal" wire:model="markup.value" hint /></x-ui.field>
-                <x-ui.field :label="__('pricing.rules.fields.markup.currency')" for="markup.currency"><x-ui.input name="markup.currency" wire:model="markup.currency" maxlength="3" /></x-ui.field>
+                <x-ui.field :label="__('pricing.rules.fields.markup.currency')" for="markup.currency"><x-ui.currency-select name="markup.currency" wire:model="markup.currency" /></x-ui.field>
                 <x-ui.field :label="__('pricing.rules.fields.markup.product_type')" for="markup.product_type"><x-ui.select name="markup.product_type" wire:model="markup.product_type" :options="$productOptions" :placeholder="__('pricing.any')" /></x-ui.field>
                 <x-ui.field :label="__('pricing.rules.fields.markup.sales_channel')" for="markup.sales_channel"><x-ui.select name="markup.sales_channel" wire:model="markup.sales_channel" :options="$channelOptions" :placeholder="__('pricing.any')" /></x-ui.field>
                 <x-ui.field :label="__('pricing.rules.fields.markup.supplier_id')" for="markup.supplier_id"><x-ui.select name="markup.supplier_id" wire:model="markup.supplier_id" :options="$suppliers" :placeholder="__('pricing.any')" /></x-ui.field>
-                <x-ui.field :label="__('pricing.rules.fields.markup.destination_country')" for="markup.destination_country"><x-ui.input name="markup.destination_country" wire:model="markup.destination_country" maxlength="2" /></x-ui.field>
+                <x-ui.field :label="__('pricing.rules.fields.markup.destination_country')" for="markup.destination_country"><x-ui.country-select name="markup.destination_country" wire:model="markup.destination_country" /></x-ui.field>
                 <x-ui.field :label="__('pricing.rules.fields.markup.min_margin')" for="markup.min_margin"><x-ui.input name="markup.min_margin" inputmode="decimal" wire:model="markup.min_margin" /></x-ui.field>
                 <x-ui.field :label="__('pricing.rules.fields.markup.priority')" for="markup.priority"><x-ui.input name="markup.priority" type="number" wire:model="markup.priority" /></x-ui.field>
                 <x-ui.field :label="__('pricing.rules.fields.markup.valid_from')" for="markup.valid_from"><x-ui.input name="markup.valid_from" type="date" wire:model="markup.valid_from" /></x-ui.field>
                 <x-ui.field :label="__('pricing.rules.fields.markup.valid_until')" for="markup.valid_until"><x-ui.input name="markup.valid_until" type="date" wire:model="markup.valid_until" /></x-ui.field>
-                <div class="md:col-span-3"><x-ui.button type="submit" wire:loading.attr="disabled" wire:target="addMarkup">{{ __('pricing.rules.add') }}</x-ui.button></div>
+                <div class="flex flex-wrap gap-sm md:col-span-3">
+                    <x-ui.button type="submit" wire:loading.attr="disabled" wire:target="addMarkup">{{ $editingUlid === null ? __('pricing.rules.add') : __('pricing.rules.update') }}</x-ui.button>
+                    @if ($editingUlid !== null)<x-ui.button type="button" variant="secondary" wire:click="cancelEdit">{{ __('shared.cancel') }}</x-ui.button>@endif
+                </div>
             </form>
         </x-ui.card>
     @elseif ($tab === PricingRulesManager::TAB_FEES)
@@ -65,9 +71,12 @@
                             <p class="font-medium">{{ $rule->name }} <x-ui.badge :tone="$rule->is_active ? Tone::Success : Tone::Neutral">{{ $rule->is_active ? __('shared.active') : __('shared.inactive') }}</x-ui.badge></p>
                             <p class="text-caption text-text-subtle">{{ $presenter->format($rule->amount()) }} · {{ $rule->basis->label() }} · {{ $rule->product_type?->label() ?? __('pricing.any') }} · {{ $rule->sales_channel?->label() ?? __('pricing.any') }}</p>
                         </div>
-                        <x-ui.button variant="ghost" wire:click="toggle('{{ PricingRulesManager::TAB_FEES }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled">
-                            {{ $rule->is_active ? __('suppliers.deactivate') : __('suppliers.activate') }}<span class="sr-only"> {{ $rule->name }}</span>
-                        </x-ui.button>
+                        <div class="flex gap-xs">
+                            <x-ui.icon-button icon="edit" :label="__('shared.edit') . ' · ' . $rule->name" wire:click="edit('{{ PricingRulesManager::TAB_FEES }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled" />
+                            <x-ui.icon-button :icon="$rule->is_active ? 'deactivate' : 'activate'" :tone="$rule->is_active ? 'danger' : 'success'"
+                                :label="($rule->is_active ? __('suppliers.deactivate') : __('suppliers.activate')) . ' · ' . $rule->name"
+                                wire:click="toggle('{{ PricingRulesManager::TAB_FEES }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled" />
+                        </div>
                     </li>
                 @empty
                     <li><x-ui.empty-state :title="__('pricing.rules.empty')" /></li>
@@ -77,12 +86,15 @@
                 <x-ui.field :label="__('pricing.rules.fields.fee.name')" for="fee.name"><x-ui.input name="fee.name" wire:model="fee.name" /></x-ui.field>
                 <x-ui.field :label="__('pricing.rules.fields.fee.basis')" for="fee.basis"><x-ui.select name="fee.basis" wire:model="fee.basis" :options="collect($bases)->mapWithKeys(fn ($basis) => [$basis->value => $basis->label()])->all()" /></x-ui.field>
                 <x-ui.field :label="__('pricing.rules.fields.fee.amount')" for="fee.amount"><x-ui.input name="fee.amount" inputmode="decimal" wire:model="fee.amount" /></x-ui.field>
-                <x-ui.field :label="__('pricing.rules.fields.fee.currency')" for="fee.currency"><x-ui.input name="fee.currency" wire:model="fee.currency" maxlength="3" /></x-ui.field>
+                <x-ui.field :label="__('pricing.rules.fields.fee.currency')" for="fee.currency"><x-ui.currency-select name="fee.currency" wire:model="fee.currency" /></x-ui.field>
                 <x-ui.field :label="__('pricing.rules.fields.fee.product_type')" for="fee.product_type"><x-ui.select name="fee.product_type" wire:model="fee.product_type" :options="$productOptions" :placeholder="__('pricing.any')" /></x-ui.field>
                 <x-ui.field :label="__('pricing.rules.fields.fee.sales_channel')" for="fee.sales_channel"><x-ui.select name="fee.sales_channel" wire:model="fee.sales_channel" :options="$channelOptions" :placeholder="__('pricing.any')" /></x-ui.field>
                 <x-ui.field :label="__('pricing.rules.fields.fee.valid_from')" for="fee.valid_from"><x-ui.input name="fee.valid_from" type="date" wire:model="fee.valid_from" /></x-ui.field>
                 <x-ui.field :label="__('pricing.rules.fields.fee.valid_until')" for="fee.valid_until"><x-ui.input name="fee.valid_until" type="date" wire:model="fee.valid_until" /></x-ui.field>
-                <div class="md:col-span-3"><x-ui.button type="submit" wire:loading.attr="disabled" wire:target="addFee">{{ __('pricing.rules.add') }}</x-ui.button></div>
+                <div class="flex flex-wrap gap-sm md:col-span-3">
+                    <x-ui.button type="submit" wire:loading.attr="disabled" wire:target="addFee">{{ $editingUlid === null ? __('pricing.rules.add') : __('pricing.rules.update') }}</x-ui.button>
+                    @if ($editingUlid !== null)<x-ui.button type="button" variant="secondary" wire:click="cancelEdit">{{ __('shared.cancel') }}</x-ui.button>@endif
+                </div>
             </form>
         </x-ui.card>
     @else
@@ -96,9 +108,12 @@
                             <p class="text-caption text-text-subtle">{{ __('suppliers.percent', ['value' => Percentage::fromBasisPoints($rule->rate_basis_points)->toPercentString()]) }} · {{ $rule->valid_from->toDateString() }} – {{ $rule->valid_until?->toDateString() ?? __('suppliers.open_ended') }}
                                 @if ($rule->exempt_product_types) · {{ __('pricing.rules.exempt', ['types' => collect($rule->exempt_product_types)->map(fn ($type) => \App\Modules\Shared\Enums\ProductType::from($type)->label())->implode(', ')]) }} @endif</p>
                         </div>
-                        <x-ui.button variant="ghost" wire:click="toggle('{{ PricingRulesManager::TAB_TAXES }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled">
-                            {{ $rule->is_active ? __('suppliers.deactivate') : __('suppliers.activate') }}<span class="sr-only"> {{ $rule->name }}</span>
-                        </x-ui.button>
+                        <div class="flex gap-xs">
+                            <x-ui.icon-button icon="edit" :label="__('shared.edit') . ' · ' . $rule->name" wire:click="edit('{{ PricingRulesManager::TAB_TAXES }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled" />
+                            <x-ui.icon-button :icon="$rule->is_active ? 'deactivate' : 'activate'" :tone="$rule->is_active ? 'danger' : 'success'"
+                                :label="($rule->is_active ? __('suppliers.deactivate') : __('suppliers.activate')) . ' · ' . $rule->name"
+                                wire:click="toggle('{{ PricingRulesManager::TAB_TAXES }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled" />
+                        </div>
                     </li>
                 @empty
                     <li><x-ui.empty-state :title="__('pricing.rules.empty')" /></li>
@@ -119,7 +134,10 @@
                         @endforeach
                     </div>
                 </fieldset>
-                <div class="md:col-span-2"><x-ui.button type="submit" wire:loading.attr="disabled" wire:target="addTax">{{ __('pricing.rules.add') }}</x-ui.button></div>
+                <div class="flex flex-wrap gap-sm md:col-span-2">
+                    <x-ui.button type="submit" wire:loading.attr="disabled" wire:target="addTax">{{ $editingUlid === null ? __('pricing.rules.add') : __('pricing.rules.update') }}</x-ui.button>
+                    @if ($editingUlid !== null)<x-ui.button type="button" variant="secondary" wire:click="cancelEdit">{{ __('shared.cancel') }}</x-ui.button>@endif
+                </div>
             </form>
         </x-ui.card>
     @endif

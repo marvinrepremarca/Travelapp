@@ -169,3 +169,28 @@ it('validates the simulator and reports missing exchange rates', function (): vo
         ->assertHasErrors('net_currency')
         ->assertSee(__('pricing.simulator.empty'));
 });
+
+it('edits an existing rule instead of creating another one', function (): void {
+    $markup = MarkupRule::factory()->create(['name' => 'Typo', 'is_active' => false]);
+    $fee = FeeRule::query()->create(['name' => 'Fee', 'basis' => FeeBasis::cases()[0]->value, 'amount_minor' => 1000, 'currency' => 'USD', 'valid_from' => '2026-01-01', 'is_active' => true]);
+    actingAs(productManager());
+
+    $component = Livewire::test(PricingRulesManager::class)
+        ->call('edit', PricingRulesManager::TAB_MARKUPS, $markup->ulid)
+        ->assertSet('editingUlid', $markup->ulid)
+        ->assertSet('markup.name', 'Typo')
+        ->set('markup.name', 'Corrected')
+        ->call('addMarkup')
+        ->assertHasNoErrors()
+        ->assertSet('editingUlid', null);
+
+    expect(MarkupRule::query()->count())->toBe(1)
+        ->and($markup->fresh()?->name)->toBe('Corrected')
+        ->and($markup->fresh()?->is_active)->toBeFalse();
+
+    $component->call('edit', PricingRulesManager::TAB_FEES, $fee->ulid)
+        ->assertSet('tab', PricingRulesManager::TAB_FEES)
+        ->call('cancelEdit')
+        ->assertSet('editingUlid', null);
+    $component->call('edit', PricingRulesManager::TAB_FEES, 'unknown')->assertNotFound();
+});

@@ -11,6 +11,16 @@ final class QuoteRuleViolation extends BusinessRuleException
 {
     private string $stableCode = '';
 
+    public static function recipientRequired(): self
+    {
+        return self::make('recipient_required', __('quotes.errors.recipient_required'));
+    }
+
+    public static function customerRequired(): self
+    {
+        return self::make('customer_required', __('quotes.errors.customer_required'));
+    }
+
     public static function notEditable(QuoteStatus $status): self
     {
         return self::make('not_editable', __('quotes.errors.not_editable', ['status' => $status->label()]));

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Modules\Catalog\Actions\AddDepartureAction;
+use App\Modules\Catalog\Actions\AddSeasonAction;
 use App\Modules\Catalog\Enums\DepartureStatus;
 use App\Modules\Catalog\Livewire\CatalogIndex;
 use App\Modules\Catalog\Livewire\ProductForm;
@@ -57,6 +58,7 @@ it('creates and edits a product', function (): void {
         ->set('destination_country', 'co')
         ->set('destination_city', 'Cartagena')
         ->set('duration_minutes', '480')
+        ->set('currency', 'COP')
         ->call('save')
         ->assertHasNoErrors()
         ->assertRedirect();
@@ -202,3 +204,66 @@ it('forbids catalog changes to users without permission', function (string $meth
     'add departure' => ['addDeparture', []],
     'toggle departure' => ['toggleDeparture', ['x']],
 ]);
+
+it('corrects a season and its rates without creating another one', function (): void {
+    $this->travelTo(CarbonImmutable::parse('2026-10-01 10:00'));
+    $product = CatalogProduct::factory()->create();
+    $season = app(AddSeasonAction::class)->execute($product, 'Alt', CarbonImmutable::parse('2026-12-01'), CarbonImmutable::parse('2026-12-31'), ['adult' => 100, 'child' => 50]);
+    app(AddSeasonAction::class)->execute($product, 'Baja', CarbonImmutable::parse('2027-01-01'), CarbonImmutable::parse('2027-01-31'), ['adult' => 80]);
+    actingAs(catalogManager());
+
+    $screen = Livewire::test(ProductShow::class, ['product' => $product])
+        ->call('editSeason', $season->ulid)
+        ->assertSet('season.name', 'Alt')
+        ->set('season.name', 'Alta')
+        ->set('season.child', '')
+        ->set('season.infant', '0.5')
+        ->call('addSeason')
+        ->assertHasNoErrors()
+        ->assertSet('editingSeason', null);
+
+    expect($product->seasons()->count())->toBe(2)
+        ->and($season->fresh()?->name)->toBe('Alta')
+        ->and($season->rates()->pluck('net_amount_minor', 'passenger_type')->all())->toEqualCanonicalizing(['adult' => 100, 'infant' => 50]);
+
+    $screen->call('editSeason', $season->ulid)
+        ->set('season.ends_on', '2027-01-10')
+        ->call('addSeason')
+        ->assertHasErrors('season.starts_on');
+    $screen->call('editSeason', 'unknown')->assertNotFound();
+});
+
+it('hides past seasons unless asked', function (): void {
+    $this->travelTo(CarbonImmutable::parse('2026-10-01 10:00'));
+    $product = CatalogProduct::factory()->create();
+    app(AddSeasonAction::class)->execute($product, 'Vencida', CarbonImmutable::parse('2026-01-01'), CarbonImmutable::parse('2026-02-01'), ['adult' => 100]);
+    actingAs(catalogManager());
+
+    Livewire::test(ProductShow::class, ['product' => $product])
+        ->assertDontSee('Vencida')
+        ->set('showPastSeasons', true)
+        ->assertSee('Vencida');
+});
+
+it('corrects departures but protects sold seats', function (): void {
+    $this->travelTo(CarbonImmutable::parse('2026-10-01 10:00'));
+    $product = CatalogProduct::factory()->create();
+    $departure = app(AddDepartureAction::class)->execute($product, CarbonImmutable::parse('2026-10-20'), '08:30', 20);
+    actingAs(catalogManager());
+
+    $screen = Livewire::test(ProductShow::class, ['product' => $product])
+        ->call('editDeparture', $departure->ulid)
+        ->assertSet('departure.starts_at', '08:30')
+        ->set('departure.starts_at', '09:00')
+        ->set('departure.capacity', '25')
+        ->call('addDeparture')
+        ->assertHasNoErrors();
+    expect($departure->fresh()?->capacity)->toBe(25)
+        ->and(substr((string) $departure->fresh()?->starts_at, 0, 5))->toBe('09:00');
+
+    $departure->forceFill(['reserved_seats' => 10])->save();
+    $screen->call('editDeparture', $departure->ulid)->set('departure.capacity', '5')->call('addDeparture')
+        ->assertHasErrors(['departure.capacity' => __('catalog.errors.capacity_below_reserved', ['reserved' => 10])]);
+    $screen->call('editDeparture', $departure->ulid)->set('departure.service_date', '2026-10-21')->call('addDeparture')
+        ->assertHasErrors(['departure.capacity' => __('catalog.errors.departure_has_passengers')]);
+});

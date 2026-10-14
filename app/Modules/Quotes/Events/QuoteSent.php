@@ -19,6 +19,8 @@ final readonly class QuoteSent implements IntegrationEvent
     public function __construct(
         public string $quoteUlid,
         public int $version,
+        // Prospecto que originó la cotización; nulo en cotizaciones sin prospecto y en eventos anteriores.
+        public ?string $leadUlid = null,
     ) {}
 
     public static function eventName(): string

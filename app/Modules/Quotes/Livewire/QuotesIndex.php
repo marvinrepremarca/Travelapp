@@ -56,6 +56,7 @@ final class QuotesIndex extends Component
             ->when($this->search !== '', fn(Builder $query) => $query->where(fn(Builder $inner) => $inner
                 ->where('number', 'like', '%' . $this->search . '%')
                 ->orWhere('title', 'like', '%' . $this->search . '%')
+                ->orWhere('prospect_name', 'like', '%' . $this->search . '%')
                 ->orWhereHas('customer', fn(Builder $customer) => $customer->where('display_name', 'like', '%' . $this->search . '%'))))
             ->latest('id')
             ->paginate(config()->integer('travel.quotes.per_page'));

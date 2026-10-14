@@ -14,8 +14,10 @@ use App\Modules\Crm\Livewire\LeadShow;
 use App\Modules\Crm\Models\Lead;
 use App\Modules\Customers\Models\Customer;
 use App\Modules\Identity\Models\User;
+use App\Modules\Quotes\Events\QuoteSent;
 use App\Modules\Shared\Enums\SalesChannel;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -128,7 +130,12 @@ it('advances through the funnel and wins linking a customer', function (): void 
     $lead = Lead::factory()->ownedBy($agent)->inStatus(LeadStatus::Contacted)->create();
     actingAs($agent);
 
-    $component = Livewire::test(LeadShow::class, ['lead' => $lead])->call('move', LeadStatus::Quoted->value);
+    $component = Livewire::test(LeadShow::class, ['lead' => $lead])
+        ->call('move', LeadStatus::Quoted->value)
+        ->assertHasErrors(['status' => __('crm.errors.lead_quoted_by_quote')]);
+    expect($lead->fresh()?->status)->toBe(LeadStatus::Contacted);
+
+    (new QuoteSent((string) Str::ulid(), 1, $lead->ulid))->publish();
     expect($lead->fresh()?->status)->toBe(LeadStatus::Quoted);
 
     $component->call('move', LeadStatus::Won->value)->assertHasErrors(['customerUlid' => __('crm.errors.lead_customer_required')]);
@@ -217,4 +224,63 @@ it('grows each funnel stage with show more', function (): void {
         ->assertDontSee(__('crm.leads.show_more', ['stage' => LeadStatus::New->label()]))
         ->set('search', 'x')
         ->assertSet('pages', []);
+});
+
+it('marks the lead quoted only when a quote created from it is sent', function (): void {
+    $agent = agent();
+    $lead = Lead::factory()->ownedBy($agent)->inStatus(LeadStatus::New)->create();
+    $won = Lead::factory()->ownedBy($agent)->inStatus(LeadStatus::Won)->create();
+
+    (new QuoteSent((string) Str::ulid(), 1))->publish();
+    expect($lead->fresh()?->status)->toBe(LeadStatus::New);
+
+    (new QuoteSent((string) Str::ulid(), 1, $lead->ulid))->publish();
+    (new QuoteSent((string) Str::ulid(), 2, $lead->ulid))->publish();
+    (new QuoteSent((string) Str::ulid(), 1, $won->ulid))->publish();
+
+    expect($lead->fresh()?->status)->toBe(LeadStatus::Quoted)
+        ->and($won->fresh()?->status)->toBe(LeadStatus::Won);
+});
+
+it('quotes a lead as a prospect without registering a customer', function (): void {
+    $agent = agent();
+    $lead = Lead::factory()->ownedBy($agent)->inStatus(LeadStatus::Contacted)->create(['contact_name' => 'Marta Gil', 'email' => 'marta@correo.test', 'phone' => '+57 300 000 0000', 'destination' => 'Cartagena']);
+    actingAs($agent);
+
+    Livewire::test(LeadShow::class, ['lead' => $lead])
+        ->assertSee(route('quotes.create', ['lead' => $lead->ulid]))
+        ->assertDontSee(__('crm.leads.move_to', ['status' => LeadStatus::Quoted->label()]));
+
+    Livewire::withQueryParams(['lead' => $lead->ulid])
+        ->test(App\Modules\Quotes\Livewire\QuoteCreate::class)
+        ->assertSee('Marta Gil')
+        ->assertSee('marta@correo.test')
+        ->assertSet('title', $lead->quoteTitle())
+        ->assertSet('sales_channel', $lead->channel->value)
+        ->set('sale_currency', 'COP')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $quote = App\Modules\Quotes\Models\Quote::query()->sole();
+    expect($quote->customer_id)->toBeNull()
+        ->and($quote->lead_ulid)->toBe($lead->ulid)
+        ->and($quote->recipientName())->toBe('Marta Gil')
+        ->and($quote->prospect_email)->toBe('marta@correo.test')
+        ->and(Customer::query()->count())->toBe(0);
+});
+
+it('uses the customer already linked to the lead', function (): void {
+    $agent = agent();
+    $customer = Customer::factory()->ownedBy($agent)->create();
+    $lead = Lead::factory()->ownedBy($agent)->inStatus(LeadStatus::Contacted)->create(['customer_id' => $customer->id]);
+    actingAs($agent);
+
+    Livewire::withQueryParams(['lead' => $lead->ulid])
+        ->test(App\Modules\Quotes\Livewire\QuoteCreate::class)
+        ->assertSet('customer_ulid', $customer->ulid)
+        ->set('sale_currency', 'COP')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(App\Modules\Quotes\Models\Quote::query()->sole()->customer_id)->toBe($customer->id);
 });

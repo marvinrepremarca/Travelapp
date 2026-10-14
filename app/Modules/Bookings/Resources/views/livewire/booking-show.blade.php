@@ -79,17 +79,11 @@
                         <x-ui.badge :tone="$line->status->tone()">{{ $line->status->label() }}</x-ui.badge>
                         <span class="font-medium">{{ $presenter->format($line->saleAmount()) }}</span>
                         @unless ($line->status->isClosed())
-                            <x-ui.button variant="ghost" wire:click="editPolicy('{{ $line->ulid }}')">
-                                {{ __('bookings.policy.edit') }}<span class="sr-only"> {{ $line->description }}</span>
-                            </x-ui.button>
-                            <x-ui.button variant="ghost" wire:click="editPassengers('{{ $line->ulid }}')">
-                                {{ __('bookings.passengers.assign') }}<span class="sr-only"> {{ $line->description }}</span>
-                            </x-ui.button>
+                            <x-ui.icon-button icon="document" :label="__('bookings.policy.edit') . ' · ' . $line->description" wire:click="editPolicy('{{ $line->ulid }}')" />
+                            <x-ui.icon-button icon="users" :label="__('bookings.passengers.assign') . ' · ' . $line->description" wire:click="editPassengers('{{ $line->ulid }}')" />
                         @endunless
                         @if ($line->status->allowedTransitions() !== [])
-                            <x-ui.button variant="ghost" wire:click="manage('{{ $line->ulid }}')">
-                                {{ __('bookings.items.manage') }}<span class="sr-only"> {{ $line->description }}</span>
-                            </x-ui.button>
+                            <x-ui.icon-button icon="settings" :label="__('bookings.items.manage') . ' · ' . $line->description" wire:click="manage('{{ $line->ulid }}')" />
                         @endif
                     </div>
                 </li>

@@ -289,3 +289,38 @@ it('does not manage services of other bookings', function (): void {
 
     Livewire::test(BookingShow::class, ['booking' => $mine])->call('manage', $other->items()->value('ulid'))->assertNotFound();
 });
+
+it('asks for a customer before turning a prospect quote into a booking', function (): void {
+    $agent = agent();
+    $quote = acceptedQuote($agent);
+    $customer = $quote->customer;
+    $quote->forceFill(['customer_id' => null, 'prospect_name' => 'Marta Gil'])->save();
+    actingAs($agent);
+
+    actingAs($agent)->get(route('bookings.from-quote', $quote->ulid))->assertNotFound();
+    Livewire::test(App\Modules\Quotes\Livewire\QuoteShow::class, ['quote' => $quote])
+        ->assertSee(__('quotes.prospect.assign_title'))
+        ->assertSee(route('customers.create', ['lead' => null, 'quote' => $quote->ulid]))
+        ->assertDontSee(__('bookings.convert.from_quote_link'))
+        ->call('chooseCustomer', Customer::factory()->ownedBy(App\Modules\Identity\Models\User::factory()->create())->create()->ulid)
+        ->assertHasErrors('customer_ulid')
+        ->call('chooseCustomer', $customer?->ulid)
+        ->assertHasNoErrors()
+        ->assertSee(__('quotes.prospect.assigned', ['name' => $customer?->display_name]));
+
+    expect($quote->fresh()?->customer_id)->toBe($customer?->id);
+    actingAs($agent)->get(route('bookings.from-quote', $quote->ulid))->assertOk();
+});
+
+it('returns to the prospect quote after registering its customer', function (): void {
+    $agent = agent();
+    $quote = acceptedQuote($agent);
+    $quote->forceFill(['customer_id' => null, 'prospect_name' => 'Marta Gil'])->save();
+    $customer = Customer::factory()->ownedBy($agent)->create();
+    actingAs($agent);
+
+    Livewire::withQueryParams(['assign' => $customer->ulid])
+        ->test(App\Modules\Quotes\Livewire\QuoteShow::class, ['quote' => $quote]);
+
+    expect($quote->fresh()?->customer_id)->toBe($customer->id);
+});

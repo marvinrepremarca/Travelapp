@@ -39,7 +39,7 @@ final class TasksBoard extends Component
 
     public string $description = '';
 
-    public string $priority = 'normal';
+    public string $priority = '';
 
     public string $due_at = '';
 
@@ -84,7 +84,7 @@ final class TasksBoard extends Component
         }
 
         $this->reset('title', 'description', 'due_at', 'remind_at');
-        $this->priority = TaskPriority::Normal->value;
+        $this->priority = '';
         session()->flash('status', __('workflow.tasks.created'));
     }
 

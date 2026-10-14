@@ -58,6 +58,10 @@
     --spacing-sidebar: 16rem;
     --spacing-chart: 9rem;
     --spacing-pie: 9rem;
+    /* Alto mínimo de cada columna del embudo de leads: todas se ven del mismo alto aunque estén vacías. */
+    --spacing-board-column: 24rem;
+    /* Tamaño de los iconos de acción (botones de las tablas, menú). */
+    --spacing-icon: 1.25rem;
 
     /* Forma, elevación, movimiento */
     --radius-control: 0.5rem;

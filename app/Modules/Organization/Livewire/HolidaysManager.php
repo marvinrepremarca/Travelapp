@@ -42,7 +42,6 @@ final class HolidaysManager extends Component
             $this->year = CarbonImmutable::today()->year;
         }
 
-        $this->type = HolidayAdjustmentType::Add->value;
     }
 
     public function addAdjustment(CreateHolidayAdjustmentAction $create): void

@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Modules\Quotes\Livewire;
 
 use App\Modules\Catalog\Models\CatalogProduct;
+use App\Modules\Customers\Models\Customer;
 use App\Modules\Identity\Models\User;
 use App\Modules\Organization\Contracts\AppSettings;
 use App\Modules\Quotes\Actions\AcceptQuoteAction;
 use App\Modules\Quotes\Actions\AddItemAction;
 use App\Modules\Quotes\Actions\AddOptionAction;
+use App\Modules\Quotes\Actions\AssignQuoteCustomerAction;
 use App\Modules\Quotes\Actions\CancelQuoteAction;
 use App\Modules\Quotes\Actions\RemoveItemAction;
 use App\Modules\Quotes\Actions\RemoveOptionAction;
@@ -40,6 +42,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 /** Ficha de la cotización: opciones con ítems (precio del servidor), envío por versiones, aceptación y cancelación. */
@@ -64,12 +67,25 @@ final class QuoteShow extends Component
     /** @var array<string, string> */
     public array $acceptance = ['option' => '', 'note' => ''];
 
+    /** Búsqueda del cliente que se asigna a una cotización de prospecto. */
+    public string $customerSearch = '';
+
+    /** Confirmación de la última acción hecha sin recargar la página. */
+    public ?string $notice = null;
+
+    /** Cliente recién registrado con los datos del prospecto (vuelve desde el formulario de clientes). */
+    #[Url(as: 'assign', except: '')]
+    public string $assignUlid = '';
+
     public function mount(Quote $quote): void
     {
         Gate::authorize('view', $quote);
         $this->quote = $quote;
+        if ($this->assignUlid !== '' && $quote->isForProspect()) {
+            $this->chooseCustomer($this->assignUlid, app(AssignQuoteCustomerAction::class));
+        }
+        $this->assignUlid = '';
         $this->optionUlid = (string) $quote->options()->value('ulid');
-        $this->item['net_currency'] = $quote->sale_currency;
         if (! $this->catalogAvailable()) {
             $this->item['kind'] = QuoteItemKind::Manual->value;
         }
@@ -168,6 +184,22 @@ final class QuoteShow extends Component
         $this->quote->refresh();
     }
 
+    public function chooseCustomer(string $ulid, AssignQuoteCustomerAction $assign): void
+    {
+        $this->authorizeUpdate();
+        abort_unless($this->quote->isForProspect(), 404);
+        $customer = Customer::query()->visibleTo($this->actor())->where('ulid', $ulid)->first();
+        if (! $customer instanceof Customer) {
+            $this->addError('customer_ulid', __('quotes.errors.customer_not_found'));
+
+            return;
+        }
+
+        $assign->execute($this->quote, $customer);
+        $this->customerSearch = '';
+        $this->notice = __('quotes.prospect.assigned', ['name' => $customer->display_name]);
+    }
+
     public function cancel(CancelQuoteAction $cancel): void
     {
         $this->authorizeUpdate();
@@ -198,6 +230,9 @@ final class QuoteShow extends Component
             'catalogProducts' => $editable && $this->catalogAvailable() ? CatalogProduct::query()->where('is_active', true)->orderBy('name')->pluck('name', 'ulid')->all() : [],
             'suppliers' => $editable ? Supplier::query()->where('is_active', true)->orderBy('trade_name')->pluck('trade_name', 'id')->all() : [],
             'kinds' => $this->availableKinds(),
+            'customerMatches' => $quote->isForProspect() && $this->customerSearch !== ''
+                ? Customer::query()->visibleTo($this->actor())->where('display_name', 'like', '%' . $this->customerSearch . '%')->orderBy('display_name')->limit(config()->integer('travel.quotes.per_page'))->get(['id', 'ulid', 'display_name'])
+                : collect(),
             'productTypes' => ProductType::cases(),
             'timezone' => config()->string('travel.agency.timezone'),
         ])->title($quote->number . ' · ' . $quote->title)

@@ -228,6 +228,7 @@ it('manages incidents and the closure from the departure screen', function (): v
         ->call('reportIncident')
         ->assertHasErrors('description')
         ->set('description', 'Un pasajero se sintió mal.')
+        ->set('severity', \App\Modules\Operations\Enums\IncidentSeverity::Medium->value)
         ->call('reportIncident')
         ->assertHasNoErrors()
         ->assertSee('Un pasajero se sintió mal.');

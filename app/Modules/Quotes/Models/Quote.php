@@ -27,7 +27,11 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property int $id
  * @property string $ulid
  * @property string|null $number
- * @property int $customer_id
+ * @property int|null $customer_id
+ * @property string|null $lead_ulid
+ * @property string|null $prospect_name
+ * @property string|null $prospect_email
+ * @property string|null $prospect_phone
  * @property int $owner_id
  * @property int|null $branch_id
  * @property string $title
@@ -41,7 +45,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property CarbonImmutable|null $accepted_at
  * @property AcceptanceChannel|null $acceptance_channel
  * @property string|null $acceptance_note
- * @property-read Customer $customer
+ * @property-read Customer|null $customer
  * @property-read \Illuminate\Database\Eloquent\Collection<int, QuoteOption> $options
  */
 final class Quote extends Model
@@ -53,7 +57,7 @@ final class Quote extends Model
     use LogsActivity;
     use SoftDeletes;
 
-    protected $fillable = ['customer_id', 'title', 'sale_currency', 'sales_channel'];
+    protected $fillable = ['customer_id', 'title', 'sale_currency', 'sales_channel', 'prospect_name', 'prospect_email', 'prospect_phone'];
 
     /** @return list<string> */
     public function uniqueIds(): array
@@ -70,6 +74,17 @@ final class Quote extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    /** A quién va dirigida: el cliente o, mientras no se registre, el prospecto del lead. */
+    public function recipientName(): string
+    {
+        return $this->customer->display_name ?? (string) $this->prospect_name;
+    }
+
+    public function isForProspect(): bool
+    {
+        return $this->customer_id === null;
     }
 
     /** @return HasMany<QuoteOption, $this> */

@@ -11,18 +11,27 @@ use App\Modules\Crm\Exceptions\LeadRuleViolation;
 use App\Modules\Crm\Models\Lead;
 use App\Modules\Customers\Models\Customer;
 use App\Modules\Identity\Models\User;
+use App\Modules\Shared\Capabilities\Capabilities;
+use App\Modules\Shared\Enums\Capability;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 
 /**
  * Avanza el lead en el embudo. Perder exige motivo; ganar exige un cliente
- * (existente y visible para quien lo gana) y emite LeadWon.
+ * (existente y visible para quien lo gana) y emite LeadWon. "Cotizado" solo lo pone el envío de una
+ * cotización del sistema (MarkLeadQuoted); a mano no se puede.
  */
-final class MoveLeadAction
+final readonly class MoveLeadAction
 {
+    public function __construct(private Capabilities $capabilities) {}
+
     public function execute(Lead $lead, LeadStatus $next, User $actor, ?LostReason $lostReason = null, ?string $lostNote = null, ?Customer $customer = null): Lead
     {
-        if (! $lead->status->canTransitionTo($next)) {
+        if ($next === LeadStatus::Quoted) {
+            throw LeadRuleViolation::quotedOnlyByQuote();
+        }
+
+        if (! in_array($next, $lead->status->manualTransitions($this->capabilities->enabled(Capability::Quoting)), true)) {
             throw LeadRuleViolation::transition($lead->status, $next);
         }
 

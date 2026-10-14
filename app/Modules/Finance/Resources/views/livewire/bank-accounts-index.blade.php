@@ -35,9 +35,9 @@
                         <x-ui.badge :tone="$count > 0 ? Tone::Warning : Tone::Success">{{ trans_choice('finance.bank_accounts.pending_count', $count, ['count' => $count]) }}</x-ui.badge>
                     </td>
                     <td class="px-md py-sm">
-                        <div class="flex flex-wrap gap-sm">
-                            <a href="{{ route('finance.reconciliation', ['account' => $account->ulid]) }}" wire:navigate class="font-medium text-brand underline">{{ __('finance.bank_accounts.reconcile') }}</a>
-                            <a href="{{ route('finance.bank-accounts.edit', $account) }}" wire:navigate class="text-brand underline">{{ __('shared.edit') }}<span class="sr-only"> {{ $account->name }}</span></a>
+                        <div class="flex justify-end gap-xs">
+                            <x-ui.icon-button icon="reconcile" :href="route('finance.reconciliation', ['account' => $account->ulid])" :label="__('finance.bank_accounts.reconcile') . ' · ' . $account->name" />
+                            <x-ui.icon-button icon="edit" :href="route('finance.bank-accounts.edit', $account)" :label="__('shared.edit') . ' · ' . $account->name" />
                         </div>
                     </td>
                 </tr>

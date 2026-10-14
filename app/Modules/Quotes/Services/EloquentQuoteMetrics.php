@@ -42,11 +42,11 @@ final class EloquentQuoteMetrics implements QuoteMetrics
             ->with('customer:id,display_name')
             ->orderBy('valid_until')
             ->limit($limit)
-            ->get(['id', 'ulid', 'number', 'customer_id', 'valid_until'])
+            ->get(['id', 'ulid', 'number', 'customer_id', 'prospect_name', 'valid_until'])
             ->map(static fn(Quote $quote): ExpiringQuote => new ExpiringQuote(
                 $quote->ulid,
                 (string) $quote->number,
-                $quote->customer->display_name,
+                $quote->recipientName(),
                 $quote->valid_until ?? $until,
             ))
             ->all());

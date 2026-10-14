@@ -33,7 +33,7 @@
                             <a href="{{ route('quotes.show', $quote) }}" wire:navigate class="font-medium text-brand underline">{{ $quote->number }}</a>
                             <p class="text-caption text-text-subtle">{{ $quote->title }}</p>
                         </td>
-                        <td class="px-md py-sm">{{ $quote->customer->display_name }}</td>
+                        <td class="px-md py-sm">{{ $quote->recipientName() }}</td>
                         <td class="px-md py-sm"><x-ui.badge :tone="$quote->status->tone()">{{ $quote->status->label() }}</x-ui.badge></td>
                         <td class="px-md py-sm">{{ $quote->valid_until?->timezone(config('travel.agency.timezone'))->locale(app()->getLocale())->isoFormat('lll') ?? '—' }}</td>
                     </tr>

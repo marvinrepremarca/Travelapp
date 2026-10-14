@@ -10,6 +10,7 @@ use App\Modules\Shared\IntegrationEvents\CapabilitySubscriptions;
 use App\Modules\Shared\IntegrationEvents\CatchUpIntegrationEvents;
 use App\Modules\Shared\IntegrationEvents\IntegrationEventOutbox;
 use App\Modules\Shared\Routing\PathPrefix;
+use App\Modules\Shared\Support\IsoCatalog;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Console\Scheduling\Schedule;
@@ -37,6 +38,8 @@ final class AppServiceProvider extends ServiceProvider
         Capabilities::class => Capabilities::class,
         IntegrationEventOutbox::class => IntegrationEventOutbox::class,
         CapabilitySubscriptions::class => CapabilitySubscriptions::class,
+        // Un formulario puede tener varios selectores de país o moneda: el catálogo ICU se lee una sola vez.
+        IsoCatalog::class => IsoCatalog::class,
     ];
 
     public function boot(): void

@@ -44,11 +44,13 @@
                 </li>
             @endforeach
         </ul>
-        <table class="sr-only">
+        <div class="sr-only">
+        <table>
             <caption>{{ $caption }}</caption>
             @foreach ($items as $item)
                 <tr><th scope="row">{{ $item['label'] }}</th><td>{{ $item['display'] }}</td></tr>
             @endforeach
         </table>
+        </div>
     @endif
 </figure>

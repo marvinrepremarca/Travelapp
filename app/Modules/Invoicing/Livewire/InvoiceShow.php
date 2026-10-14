@@ -57,7 +57,7 @@ final class InvoiceShow extends Component
     public function addCharge(): void
     {
         if (count($this->charges) < self::MAX_CHARGES) {
-            $this->charges[] = ['description' => '', 'kind' => InvoiceLineKind::OwnIncome->value, 'amount' => ''];
+            $this->charges[] = ['description' => '', 'kind' => '', 'amount' => ''];
         }
     }
 

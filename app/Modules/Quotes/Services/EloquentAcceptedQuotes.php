@@ -22,6 +22,11 @@ final class EloquentAcceptedQuotes implements AcceptedQuotes
             throw QuoteRuleViolation::notAccepted();
         }
 
+        // El expediente es una venta: exige un cliente registrado, no basta el prospecto.
+        if ($quote->customer_id === null) {
+            throw QuoteRuleViolation::customerRequired();
+        }
+
         // Tras aceptar la cotización queda bloqueada: los ítems vigentes son los de la versión aceptada.
         $option = QuoteOption::query()->with('items')->whereKey($quote->accepted_option_id)->firstOrFail();
         $productUlids = CatalogProduct::query()

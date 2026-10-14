@@ -17,7 +17,8 @@ final readonly class EloquentSentQuotes implements SentQuotes
     public function share(string $quoteUlid): ?QuoteShare
     {
         $quote = Quote::query()->where('ulid', $quoteUlid)->first();
-        if (! $quote instanceof Quote || $quote->status !== QuoteStatus::Sent || ! $quote->valid_until instanceof CarbonImmutable || $quote->isPastValidity(CarbonImmutable::now())) {
+        // A un prospecto (sin cliente) no se le envía aviso automático: el asesor comparte el enlace.
+        if (! $quote instanceof Quote || $quote->customer_id === null || $quote->status !== QuoteStatus::Sent || ! $quote->valid_until instanceof CarbonImmutable || $quote->isPastValidity(CarbonImmutable::now())) {
             return null;
         }
 

@@ -47,7 +47,6 @@ final class ProductForm extends Component
     {
         Gate::authorize('manage', CatalogProduct::class);
         $this->timezone = config()->string('travel.agency.timezone');
-        $this->currency = config()->string('travel.agency.default_currency');
 
         if (! $product?->exists) {
             return;

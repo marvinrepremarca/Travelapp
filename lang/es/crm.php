@@ -8,6 +8,7 @@ return [
         'lost_reason_required' => 'Elige el motivo por el que se perdió.',
         'lead_customer_required' => 'Elige el cliente que compra (debe estar en tu alcance).',
         'lead_contact_required' => 'Escribe al menos un correo o un teléfono de contacto.',
+        'lead_quoted_by_quote' => 'El lead pasa a Cotizado solo cuando se le envía una cotización desde el sistema.',
     ],
     'lead_status' => [
         'new' => 'Nuevo',
@@ -55,6 +56,9 @@ return [
         'no_interactions' => 'Aún no hay contactos registrados.',
         'log_interaction' => 'Registrar',
         'advance' => 'Siguiente paso',
+        'quote_card' => 'Cotizar',
+        'quote' => 'Crear cotización para este lead',
+        'quote_help' => 'La cotización se precarga con los datos del lead, sin registrarlo como cliente. Al enviarla, el lead pasa a Cotizado.',
         'move_to' => 'Pasar a :status',
         'win_title' => 'Ganar',
         'win_hint' => 'Liga el lead al cliente que compra. Si no existe, créalo primero.',

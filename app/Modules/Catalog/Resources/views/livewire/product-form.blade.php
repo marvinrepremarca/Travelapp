@@ -25,7 +25,7 @@
     <x-ui.card :title="__('catalog.operation_section')">
         <div class="grid gap-md md:grid-cols-3">
             <x-ui.field :label="__('catalog.fields.destination_country')" for="destination_country">
-                <x-ui.input name="destination_country" wire:model="destination_country" maxlength="2" required />
+                <x-ui.country-select name="destination_country" wire:model="destination_country" required />
             </x-ui.field>
             <x-ui.field :label="__('catalog.fields.destination_city')" for="destination_city">
                 <x-ui.input name="destination_city" wire:model="destination_city" required />
@@ -37,7 +37,7 @@
                 <x-ui.select name="supplier_id" wire:model="supplier_id" :options="$suppliers" :placeholder="__('catalog.no_supplier')" />
             </x-ui.field>
             <x-ui.field :label="__('catalog.fields.currency')" for="currency" :hint="__('catalog.currency_hint')">
-                <x-ui.input name="currency" wire:model="currency" maxlength="3" hint required />
+                <x-ui.currency-select name="currency" wire:model="currency" hint required />
             </x-ui.field>
         </div>
     </x-ui.card>

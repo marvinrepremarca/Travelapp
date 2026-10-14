@@ -11,7 +11,7 @@
                 <x-ui.input name="account_last_digits" wire:model="account_last_digits" inputmode="numeric" maxlength="4" autocomplete="off" required hint />
             </x-ui.field>
             <x-ui.field :label="__('finance.bank_accounts.fields.currency')" for="currency" :hint="$currencyLocked ? __('finance.bank_accounts.currency_locked') : __('finance.bank_accounts.currency_hint')">
-                <x-ui.input name="currency" wire:model="currency" maxlength="3" :disabled="$currencyLocked" required hint />
+                <x-ui.currency-select name="currency" wire:model="currency" :disabled="$currencyLocked" required hint />
             </x-ui.field>
             <label class="flex items-center gap-sm text-body">
                 <input type="checkbox" wire:model="is_active" class="rounded-control border-border">

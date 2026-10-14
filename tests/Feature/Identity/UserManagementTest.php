@@ -99,7 +99,8 @@ it('invites a user who defines their own password', function (): void {
         ->set('name', 'Laura Gómez')
         ->set('email', 'Laura@Agencia.test')
         ->set('role', Role::TravelAgent->value)
-        ->assertSet('visibility_scope', VisibilityScope::Own->value)
+        ->assertSet('visibility_scope', '')
+        ->set('visibility_scope', VisibilityScope::Own->value)
         ->set('branch_id', (string) $branch->id)
         ->call('save')
         ->assertHasNoErrors()
@@ -127,6 +128,7 @@ it('edits a user and records the change', function (): void {
     Livewire::test(UserForm::class, ['user' => $user])
         ->assertSet('role', Role::TravelAgent->value)
         ->set('role', Role::Operations->value)
+        ->set('visibility_scope', VisibilityScope::All->value)
         ->set('name', 'Nombre Actualizado')
         ->call('save')
         ->assertHasNoErrors();
@@ -165,6 +167,7 @@ it('requires a branch for own or branch scopes', function (): void {
         ->set('name', 'Sin sucursal')
         ->set('email', 'sin@agencia.test')
         ->set('role', Role::TravelAgent->value)
+        ->set('visibility_scope', VisibilityScope::Own->value)
         ->set('branch_id', '')
         ->call('save')
         ->assertHasErrors(['branch_id' => __('identity.errors.branch_required')]);

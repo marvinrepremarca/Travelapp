@@ -22,7 +22,7 @@ return [
     'document_hint' => 'Sin puntos ni guiones. Se guarda cifrado.',
     'document_edit_hint' => 'Déjalo vacío para conservar el documento actual.',
     'birth_date_edit_hint' => 'Déjala vacía para conservar la fecha actual.',
-    'country_hint' => 'Código de dos letras (CO, US, ES…).',
+    'country_hint' => 'Elige el país por su nombre.',
     'notes_hint' => 'No escribas aquí datos de salud ni documentos.',
     'possible_duplicate' => 'Ya existe un cliente con este correo o teléfono. Revisa antes de crear uno nuevo.',
     'owner' => 'Asesor responsable',

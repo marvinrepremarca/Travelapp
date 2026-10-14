@@ -17,9 +17,11 @@ use App\Modules\Shared\ValueObjects\Percentage;
 use App\Modules\Suppliers\Models\Supplier;
 use Brick\Money\Money;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
@@ -44,6 +46,10 @@ final class PricingRulesManager extends Component
 
     /** @var array<string, mixed> */
     public array $tax = ['name' => '', 'rate' => '', 'exempt' => [], 'valid_from' => '', 'valid_until' => ''];
+
+    /** Regla en edición dentro de la pestaña visible; null = alta. */
+    #[Locked]
+    public ?string $editingUlid = null;
 
     public function mount(): void
     {
@@ -72,7 +78,7 @@ final class PricingRulesManager extends Component
 
         $currency = mb_strtoupper((string) $data['currency']);
 
-        MarkupRule::query()->create([
+        $this->persist(MarkupRule::query(), [
             'name' => $data['name'],
             'product_type' => $data['product_type'] ?: null,
             'supplier_id' => $data['supplier_id'] ?: null,
@@ -86,10 +92,9 @@ final class PricingRulesManager extends Component
             'priority' => (int) $data['priority'],
             'valid_from' => $data['valid_from'],
             'valid_until' => $data['valid_until'] ?: null,
-            'is_active' => true,
         ]);
 
-        $this->reset('markup');
+        $this->reset('markup', 'editingUlid');
     }
 
     public function addFee(): void
@@ -109,7 +114,7 @@ final class PricingRulesManager extends Component
 
         $currency = mb_strtoupper((string) $data['currency']);
 
-        FeeRule::query()->create([
+        $this->persist(FeeRule::query(), [
             'name' => $data['name'],
             'product_type' => $data['product_type'] ?: null,
             'sales_channel' => $data['sales_channel'] ?: null,
@@ -118,10 +123,9 @@ final class PricingRulesManager extends Component
             'currency' => $currency,
             'valid_from' => $data['valid_from'],
             'valid_until' => $data['valid_until'] ?: null,
-            'is_active' => true,
         ]);
 
-        $this->reset('fee');
+        $this->reset('fee', 'editingUlid');
     }
 
     public function addTax(): void
@@ -137,32 +141,80 @@ final class PricingRulesManager extends Component
             'tax.valid_until' => ['nullable', 'date', 'after_or_equal:tax.valid_from'],
         ], attributes: $this->prefixed('tax'))['tax'];
 
-        TaxRule::query()->create([
+        $this->persist(TaxRule::query(), [
             'name' => $data['name'],
             'rate_basis_points' => Percentage::fromString((string) $data['rate'])->basisPoints,
             'exempt_product_types' => array_values($data['exempt'] ?? []),
             'valid_from' => $data['valid_from'],
             'valid_until' => $data['valid_until'] ?: null,
-            'is_active' => true,
         ]);
 
-        $this->reset('tax');
+        $this->reset('tax', 'editingUlid');
     }
 
     public function toggle(string $type, string $ulid): void
     {
         Gate::authorize(Permission::PricingManage->value);
 
-        $model = match ($type) {
-            self::TAB_MARKUPS => MarkupRule::query(),
-            self::TAB_FEES => FeeRule::query(),
-            self::TAB_TAXES => TaxRule::query(),
-            default => abort(404),
-        };
-
-        $rule = $model->where('ulid', $ulid)->first() ?? abort(404);
+        $rule = $this->ruleQuery($type)->where('ulid', $ulid)->first() ?? abort(404);
         $rule->setAttribute('is_active', ! $rule->getAttribute('is_active'));
         $rule->save();
+    }
+
+    /** Carga la regla en el formulario de su pestaña; al guardar se actualiza en lugar de crear otra. */
+    public function edit(string $type, string $ulid): void
+    {
+        Gate::authorize(Permission::PricingManage->value);
+        $rule = $this->ruleQuery($type)->where('ulid', $ulid)->first() ?? abort(404);
+        $this->resetValidation();
+        $this->tab = $type;
+        $this->editingUlid = $rule->ulid;
+
+        match (true) {
+            $rule instanceof MarkupRule => $this->markup = [
+                'name' => $rule->name,
+                'product_type' => (string) $rule->product_type?->value,
+                'supplier_id' => (string) $rule->supplier_id,
+                'destination_country' => (string) $rule->destination_country,
+                'sales_channel' => (string) $rule->sales_channel?->value,
+                'kind' => $rule->kind->value,
+                'value' => $rule->rate_basis_points !== null ? Percentage::fromBasisPoints($rule->rate_basis_points)->toPercentString() : (string) $rule->amount()?->getAmount(),
+                'currency' => (string) $rule->currency,
+                'min_margin' => $rule->min_margin_basis_points !== null ? Percentage::fromBasisPoints($rule->min_margin_basis_points)->toPercentString() : '',
+                'priority' => (string) $rule->priority,
+                'valid_from' => $rule->valid_from->toDateString(),
+                'valid_until' => (string) $rule->valid_until?->toDateString(),
+            ],
+            $rule instanceof FeeRule => $this->fee = [
+                'name' => $rule->name,
+                'product_type' => (string) $rule->product_type?->value,
+                'sales_channel' => (string) $rule->sales_channel?->value,
+                'basis' => $rule->basis->value,
+                'amount' => (string) $rule->amount()->getAmount(),
+                'currency' => $rule->currency,
+                'valid_from' => $rule->valid_from->toDateString(),
+                'valid_until' => (string) $rule->valid_until?->toDateString(),
+            ],
+            $rule instanceof TaxRule => $this->tax = [
+                'name' => $rule->name,
+                'rate' => Percentage::fromBasisPoints($rule->rate_basis_points)->toPercentString(),
+                'exempt' => $rule->exempt_product_types ?? [],
+                'valid_from' => $rule->valid_from->toDateString(),
+                'valid_until' => (string) $rule->valid_until?->toDateString(),
+            ],
+        };
+    }
+
+    public function cancelEdit(): void
+    {
+        $this->resetValidation();
+        $this->reset('markup', 'fee', 'tax', 'editingUlid');
+    }
+
+    /** Al cambiar de pestaña se abandona la edición en curso. */
+    public function updatedTab(): void
+    {
+        $this->cancelEdit();
     }
 
     public function render(): View
@@ -180,6 +232,35 @@ final class PricingRulesManager extends Component
             'presenter' => app(MoneyPresenter::class),
         ])->title(__('pricing.rules.title'))
             ->layoutData(['heading' => __('pricing.rules.title')]);
+    }
+
+    /**
+     * Crea la regla o actualiza la que está en edición (las desactivadas siguen desactivadas).
+     *
+     * @param  Builder<MarkupRule>|Builder<FeeRule>|Builder<TaxRule>  $query
+     * @param  array<string, mixed>  $attributes
+     */
+    private function persist(Builder $query, array $attributes): void
+    {
+        if ($this->editingUlid === null) {
+            $query->create([...$attributes, 'is_active' => true]);
+
+            return;
+        }
+
+        $rule = $query->where('ulid', $this->editingUlid)->first() ?? abort(404);
+        $rule->update($attributes);
+    }
+
+    /** @return Builder<MarkupRule>|Builder<FeeRule>|Builder<TaxRule> */
+    private function ruleQuery(string $type): Builder
+    {
+        return match ($type) {
+            self::TAB_MARKUPS => MarkupRule::query(),
+            self::TAB_FEES => FeeRule::query(),
+            self::TAB_TAXES => TaxRule::query(),
+            default => abort(404),
+        };
     }
 
     /** @return array<string, string> */

@@ -120,6 +120,8 @@ return [
     'ui' => [
         // Página de muestra del sistema de diseño; solo para desarrollo y revisión.
         'showcase_enabled' => (bool) env('TRAVEL_UI_SHOWCASE_ENABLED', false),
+        // Tiempo que se muestra la confirmación «¡Copiado!» tras copiar al portapapeles.
+        'copy_feedback_ms' => (int) env('TRAVEL_UI_COPY_FEEDBACK_MS', 2000),
     ],
 
     'health' => [
@@ -129,6 +131,7 @@ return [
     'catalog' => [
         'per_page' => (int) env('TRAVEL_CATALOG_PER_PAGE', 20),
         'departures_per_page' => (int) env('TRAVEL_CATALOG_DEPARTURES_PER_PAGE', 15),
+        'seasons_per_page' => (int) env('TRAVEL_CATALOG_SEASONS_PER_PAGE', 10),
         'max_departure_capacity' => (int) env('TRAVEL_CATALOG_MAX_DEPARTURE_CAPACITY', 500),
         // Día máximo del itinerario de un paquete (0 = primer día).
         'max_package_days' => (int) env('TRAVEL_CATALOG_MAX_PACKAGE_DAYS', 30),

@@ -72,16 +72,6 @@ final class UserForm extends Component
         $this->branch_id = (string) $this->actor()->branch_id;
     }
 
-    /** Al elegir un rol se propone su alcance por defecto; el administrador puede cambiarlo. */
-    public function updatedRole(string $value): void
-    {
-        $role = Role::tryFrom($value);
-
-        if ($role !== null) {
-            $this->visibility_scope = $role->defaultScope()->value;
-        }
-    }
-
     public function save(InviteUserAction $invite, CreateUserWithTemporaryPasswordAction $createWithPassword, UpdateUserAction $update): void
     {
         $target = $this->target();

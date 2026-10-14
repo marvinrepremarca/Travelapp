@@ -7,6 +7,10 @@ namespace App\Modules\Bookings\Livewire;
 use App\Modules\Bookings\Actions\AddDirectItemAction;
 use App\Modules\Bookings\Data\DirectItemData;
 use App\Modules\Bookings\Models\Booking;
+use App\Modules\Catalog\Contracts\CatalogRates;
+use App\Modules\Catalog\Models\CatalogProduct;
+use App\Modules\Shared\Capabilities\Capabilities;
+use App\Modules\Shared\Enums\Capability;
 use App\Modules\Shared\Enums\ProductType;
 use App\Modules\Shared\Enums\SalesChannel;
 use App\Modules\Shared\Exceptions\BusinessRuleException;
@@ -14,6 +18,7 @@ use App\Modules\Suppliers\Models\Supplier;
 use Brick\Money\Money;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
@@ -27,6 +32,8 @@ final class DirectItemForm extends Component
 {
     private const AGES_SEPARATOR = ',';
 
+    private const AGES_PATTERN = '/^\s*\d{1,3}(\s*,\s*\d{1,3})*\s*$/';
+
     #[Locked]
     public string $bookingUlid = '';
 
@@ -36,12 +43,51 @@ final class DirectItemForm extends Component
         'nights' => '0', 'ages' => '', 'net_amount' => '', 'net_currency' => '', 'channel' => '',
     ];
 
+    /** Producto propio del catálogo (opcional): llena los datos del servicio y su neto sale de las tarifas por temporada. */
+    public string $catalogProduct = '';
+
     public function mount(Booking $booking): void
     {
         Gate::authorize('update', $booking);
         $this->bookingUlid = $booking->ulid;
-        $this->item['net_currency'] = $booking->sale_currency;
-        $this->item['channel'] = SalesChannel::Branch->value;
+    }
+
+    public function updatedCatalogProduct(string $ulid): void
+    {
+        $product = $ulid === '' ? null : $this->catalogProducts()->where('ulid', $ulid)->first();
+        if (! $product instanceof CatalogProduct) {
+            return;
+        }
+
+        $this->item = [...$this->item,
+            'description' => $product->name,
+            'product_type' => $product->product_type->value,
+            'destination_country' => $product->destination_country,
+            'supplier' => (string) $product->supplier_id,
+            'net_currency' => $product->currency,
+        ];
+    }
+
+    /** Neto del proveedor según la temporada de la fecha del servicio y la edad de cada pasajero. */
+    public function priceFromCatalog(CatalogRates $rates): void
+    {
+        $this->resetValidation();
+        $validated = $this->validate([
+            'catalogProduct' => ['required', Rule::exists('catalog_products', 'ulid')->where('is_active', true)],
+            'item.service_date' => ['required', 'date'],
+            'item.ages' => ['required', 'string', 'regex:' . self::AGES_PATTERN],
+        ], attributes: [...Arr::dot(trans('bookings.direct.item_fields')), 'catalogProduct' => __('bookings.direct.catalog_product')]);
+
+        try {
+            $quote = $rates->netPriceFor($validated['catalogProduct'], CarbonImmutable::parse($validated['item']['service_date']), $this->ages($validated['item']['ages']));
+        } catch (BusinessRuleException $violation) {
+            $this->addError('catalogProduct', $violation->getMessage());
+
+            return;
+        }
+
+        $this->item['net_amount'] = (string) $quote->total->getAmount();
+        $this->item['net_currency'] = $quote->total->getCurrency()->getCurrencyCode();
     }
 
     public function add(AddDirectItemAction $add): void
@@ -55,7 +101,7 @@ final class DirectItemForm extends Component
             'item.destination_country' => ['nullable', 'string', 'size:2', 'alpha'],
             'item.service_date' => ['required', 'date'],
             'item.nights' => ['required', 'integer', 'min:0'],
-            'item.ages' => ['required', 'string', 'regex:/^\s*\d{1,3}(\s*,\s*\d{1,3})*\s*$/'],
+            'item.ages' => ['required', 'string', 'regex:' . self::AGES_PATTERN],
             'item.net_amount' => ['required', 'numeric', 'gt:0'],
             'item.net_currency' => ['required', 'string', 'size:3', 'alpha'],
             'item.channel' => ['required', Rule::enum(SalesChannel::class)],
@@ -70,7 +116,7 @@ final class DirectItemForm extends Component
                 destinationCountry: $data['destination_country'] ? mb_strtoupper($data['destination_country']) : null,
                 serviceDate: CarbonImmutable::parse($data['service_date']),
                 nights: (int) $data['nights'],
-                passengerAges: array_map(intval(...), array_map(trim(...), explode(self::AGES_SEPARATOR, $data['ages']))),
+                passengerAges: $this->ages($data['ages']),
                 supplierNet: Money::of($data['net_amount'], mb_strtoupper($data['net_currency'])),
                 channel: SalesChannel::from($data['channel']),
             ), CarbonImmutable::now());
@@ -94,7 +140,25 @@ final class DirectItemForm extends Component
             'productTypes' => ProductType::cases(),
             'channels' => SalesChannel::cases(),
             'suppliers' => Supplier::query()->orderBy('trade_name')->pluck('trade_name', 'id')->all(),
+            'catalogProducts' => $this->catalogEnabled() ? $this->catalogProducts()->orderBy('name')->pluck('name', 'ulid')->all() : [],
         ])->title($title)->layoutData(['heading' => $title]);
+    }
+
+    /** @return list<int> */
+    private function ages(string $ages): array
+    {
+        return array_map(intval(...), array_map(trim(...), explode(self::AGES_SEPARATOR, $ages)));
+    }
+
+    private function catalogEnabled(): bool
+    {
+        return app(Capabilities::class)->enabled(Capability::OwnProduct);
+    }
+
+    /** @return Builder<CatalogProduct> */
+    private function catalogProducts(): Builder
+    {
+        return $this->catalogEnabled() ? CatalogProduct::query()->where('is_active', true) : CatalogProduct::query()->whereRaw('1 = 0');
     }
 
     private function booking(): Booking
