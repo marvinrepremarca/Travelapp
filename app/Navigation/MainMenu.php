@@ -40,9 +40,9 @@ final readonly class MainMenu
             ['customers', 'customers.index', Permission::CustomersView],
             ['leads', 'crm.leads.index', Permission::LeadsView],
             ['whatsapp', 'communications.inbox', Permission::ConversationsView],
+            ['quotes', 'quotes.index', Permission::QuotesView],
             ['flights', 'search.flights', Permission::SearchAccess],
             ['hotels', 'search.hotels', Permission::SearchAccess],
-            ['quotes', 'quotes.index', Permission::QuotesView],
         ],
         'operations' => [
             ['bookings', 'bookings.index', Permission::BookingsView],

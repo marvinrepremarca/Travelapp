@@ -58,7 +58,6 @@ final class DepartureShow extends Component
         $assignment = DepartureAssignment::query()->where('departure_ulid', $departure)->with(['guide:id,ulid', 'vehicle:id,ulid'])->first();
         $this->guide = (string) $assignment?->guide?->ulid;
         $this->vehicle = (string) $assignment?->vehicle?->ulid;
-        $this->severity = IncidentSeverity::Medium->value;
     }
 
     public function assign(AssignDepartureResourcesAction $assign): void

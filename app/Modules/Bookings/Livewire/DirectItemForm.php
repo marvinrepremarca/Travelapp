@@ -40,8 +40,6 @@ final class DirectItemForm extends Component
     {
         Gate::authorize('update', $booking);
         $this->bookingUlid = $booking->ulid;
-        $this->item['net_currency'] = $booking->sale_currency;
-        $this->item['channel'] = SalesChannel::Branch->value;
     }
 
     public function add(AddDirectItemAction $add): void

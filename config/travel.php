@@ -129,6 +129,7 @@ return [
     'catalog' => [
         'per_page' => (int) env('TRAVEL_CATALOG_PER_PAGE', 20),
         'departures_per_page' => (int) env('TRAVEL_CATALOG_DEPARTURES_PER_PAGE', 15),
+        'seasons_per_page' => (int) env('TRAVEL_CATALOG_SEASONS_PER_PAGE', 10),
         'max_departure_capacity' => (int) env('TRAVEL_CATALOG_MAX_DEPARTURE_CAPACITY', 500),
         // Día máximo del itinerario de un paquete (0 = primer día).
         'max_package_days' => (int) env('TRAVEL_CATALOG_MAX_PACKAGE_DAYS', 30),

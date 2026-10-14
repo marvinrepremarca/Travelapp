@@ -99,6 +99,8 @@ it('creates a direct booking and adds a service from the screens with quoting of
         ->set('item.nights', '2')
         ->set('item.ages', '40, 38')
         ->set('item.net_amount', '600000')
+        ->set('item.net_currency', $booking->sale_currency)
+        ->set('item.channel', SalesChannel::Branch->value)
         ->call('add')
         ->assertHasNoErrors()
         ->assertRedirect(route('bookings.show', $booking));

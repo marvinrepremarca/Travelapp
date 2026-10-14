@@ -50,7 +50,7 @@
                 <x-ui.input name="city" wire:model="city" />
             </x-ui.field>
             <x-ui.field :label="__('customers.fields.country')" for="country" :hint="__('customers.country_hint')">
-                <x-ui.input name="country" wire:model="country" maxlength="2" hint />
+                <x-ui.country-select name="country" wire:model="country" hint />
             </x-ui.field>
             <x-ui.field :label="__('customers.fields.notes')" for="notes" class="md:col-span-2" :hint="__('customers.notes_hint')">
                 <x-ui.input name="notes" wire:model="notes" hint />

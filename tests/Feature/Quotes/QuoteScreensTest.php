@@ -15,6 +15,7 @@ use App\Modules\Quotes\Livewire\QuoteShow;
 use App\Modules\Quotes\Livewire\QuotesIndex;
 use App\Modules\Quotes\Models\Quote;
 use App\Modules\Shared\Enums\ProductType;
+use App\Modules\Shared\Enums\SalesChannel;
 use Carbon\CarbonImmutable;
 use Livewire\Livewire;
 
@@ -74,6 +75,8 @@ it('creates a quote only for customers in scope', function (): void {
         ->assertDontSee('Familia Ajena')
         ->call('chooseCustomer', $foreign->ulid)
         ->set('title', 'Cartagena')
+        ->set('sale_currency', 'COP')
+        ->set('sales_channel', SalesChannel::Branch->value)
         ->call('save')
         ->assertHasErrors('customer_ulid')
         ->call('chooseCustomer', $customer->ulid)

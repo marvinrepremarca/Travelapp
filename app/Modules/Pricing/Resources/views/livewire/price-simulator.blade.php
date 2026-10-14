@@ -5,10 +5,10 @@
                 <x-ui.input name="net" inputmode="decimal" wire:model="net" hint required />
             </x-ui.field>
             <x-ui.field :label="__('pricing.simulator.fields.net_currency')" for="net_currency">
-                <x-ui.input name="net_currency" wire:model="net_currency" maxlength="3" />
+                <x-ui.currency-select name="net_currency" wire:model="net_currency" />
             </x-ui.field>
             <x-ui.field :label="__('pricing.simulator.fields.sale_currency')" for="sale_currency">
-                <x-ui.input name="sale_currency" wire:model="sale_currency" maxlength="3" />
+                <x-ui.currency-select name="sale_currency" wire:model="sale_currency" />
             </x-ui.field>
             <x-ui.field :label="__('pricing.simulator.fields.service_date')" for="service_date">
                 <x-ui.input name="service_date" type="date" wire:model="service_date" />
@@ -25,7 +25,7 @@
                 <x-ui.select name="supplier_id" wire:model="supplier_id" :options="$suppliers" :placeholder="__('pricing.any')" />
             </x-ui.field>
             <x-ui.field :label="__('pricing.simulator.fields.destination_country')" for="destination_country">
-                <x-ui.input name="destination_country" wire:model="destination_country" maxlength="2" />
+                <x-ui.country-select name="destination_country" wire:model="destination_country" />
             </x-ui.field>
             <x-ui.field :label="__('pricing.simulator.fields.passengers')" for="passengers">
                 <x-ui.input name="passengers" type="number" min="1" wire:model="passengers" />

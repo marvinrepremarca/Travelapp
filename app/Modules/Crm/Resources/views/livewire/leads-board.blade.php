@@ -11,9 +11,9 @@
     </div>
 
     {{-- Tablero kanban: una columna por etapa; en pantallas pequeñas las columnas se desplazan en horizontal. --}}
-    <div class="flex snap-x gap-md overflow-x-auto pb-sm md:grid md:grid-cols-3 md:items-start md:overflow-visible" wire:loading.class="opacity-50" wire:target="search,showMore">
+    <div class="flex snap-x gap-md overflow-x-auto pb-sm md:grid md:grid-cols-3 md:items-stretch md:overflow-visible" wire:loading.class="opacity-50" wire:target="search,showMore">
         @foreach ($columns as $column)
-            <section aria-labelledby="stage-{{ $column['status']->value }}" class="flex w-full shrink-0 snap-start flex-col gap-sm rounded-card bg-muted p-md md:shrink" wire:key="stage-{{ $column['status']->value }}">
+            <section aria-labelledby="stage-{{ $column['status']->value }}" class="flex min-h-board-column w-full shrink-0 snap-start flex-col gap-sm rounded-card bg-muted p-md md:shrink" wire:key="stage-{{ $column['status']->value }}">
                 <h2 id="stage-{{ $column['status']->value }}" class="flex items-center justify-between gap-sm text-heading-3 font-semibold">
                     {{ $column['status']->label() }}
                     <x-ui.badge :tone="$column['status']->tone()">{{ $column['total'] }}</x-ui.badge>

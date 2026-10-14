@@ -69,7 +69,6 @@ final class QuoteShow extends Component
         Gate::authorize('view', $quote);
         $this->quote = $quote;
         $this->optionUlid = (string) $quote->options()->value('ulid');
-        $this->item['net_currency'] = $quote->sale_currency;
         if (! $this->catalogAvailable()) {
             $this->item['kind'] = QuoteItemKind::Manual->value;
         }

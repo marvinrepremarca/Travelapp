@@ -15,15 +15,16 @@ use Illuminate\Support\Facades\DB;
 /** Crea una cotización en borrador, de quien la crea y en su sucursal, con la opción A lista para cargar ítems. */
 final class CreateQuoteAction
 {
-    public function execute(User $actor, Customer $customer, string $title, string $saleCurrency, SalesChannel $channel): Quote
+    public function execute(User $actor, Customer $customer, string $title, string $saleCurrency, SalesChannel $channel, ?string $leadUlid = null): Quote
     {
-        return DB::transaction(static function () use ($actor, $customer, $title, $saleCurrency, $channel): Quote {
+        return DB::transaction(static function () use ($actor, $customer, $title, $saleCurrency, $channel, $leadUlid): Quote {
             $quote = new Quote([
                 'customer_id' => $customer->id,
                 'title' => $title,
                 'sale_currency' => mb_strtoupper($saleCurrency),
                 'sales_channel' => $channel,
             ]);
+            $quote->lead_ulid = $leadUlid;
             $quote->owner_id = $actor->id;
             $quote->branch_id = $actor->branch_id;
             $quote->status = QuoteStatus::Draft;

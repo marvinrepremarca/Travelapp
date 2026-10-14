@@ -206,7 +206,7 @@
                     </x-ui.field>
                     <x-ui.field :label="__('suppliers.account_fields.number')" for="account.number"><x-ui.input name="account.number" wire:model="account.number" autocomplete="off" /></x-ui.field>
                     <x-ui.field :label="__('suppliers.account_fields.holder_name')" for="account.holder_name"><x-ui.input name="account.holder_name" wire:model="account.holder_name" /></x-ui.field>
-                    <x-ui.field :label="__('suppliers.account_fields.currency')" for="account.currency"><x-ui.input name="account.currency" wire:model="account.currency" maxlength="3" /></x-ui.field>
+                    <x-ui.field :label="__('suppliers.account_fields.currency')" for="account.currency"><x-ui.currency-select name="account.currency" wire:model="account.currency" /></x-ui.field>
                     <x-ui.button type="submit" variant="secondary" wire:loading.attr="disabled" wire:target="addBankAccount">{{ __('suppliers.add_account') }}</x-ui.button>
                 </form>
                 @endif

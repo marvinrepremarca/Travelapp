@@ -24,6 +24,11 @@ final class LeadRuleViolation extends BusinessRuleException
         return new self(__('crm.errors.lead_customer_required'));
     }
 
+    public static function quotedOnlyByQuote(): self
+    {
+        return new self(__('crm.errors.lead_quoted_by_quote'));
+    }
+
     public static function contactRequired(): self
     {
         return new self(__('crm.errors.lead_contact_required'));

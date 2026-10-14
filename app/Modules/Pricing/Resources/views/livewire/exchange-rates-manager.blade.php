@@ -29,8 +29,8 @@
         <x-ui.card :title="__('pricing.rates.record_title')">
             <form wire:submit="record" class="flex flex-col gap-md" novalidate>
                 <div class="grid grid-cols-2 gap-sm">
-                    <x-ui.field :label="__('pricing.rates.fields.base')" for="base"><x-ui.input name="base" wire:model="base" maxlength="3" /></x-ui.field>
-                    <x-ui.field :label="__('pricing.rates.fields.quote')" for="quote"><x-ui.input name="quote" wire:model="quote" maxlength="3" /></x-ui.field>
+                    <x-ui.field :label="__('pricing.rates.fields.base')" for="base"><x-ui.currency-select name="base" wire:model="base" /></x-ui.field>
+                    <x-ui.field :label="__('pricing.rates.fields.quote')" for="quote"><x-ui.currency-select name="quote" wire:model="quote" /></x-ui.field>
                 </div>
                 <x-ui.field :label="__('pricing.rates.fields.rate')" for="rate" :hint="__('pricing.rates.rate_hint')">
                     <x-ui.input name="rate" inputmode="decimal" wire:model="rate" hint />

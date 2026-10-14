@@ -137,6 +137,7 @@ it('requests credit notes and issues debit notes from the invoice screen', funct
         ->call('removeCharge', 1)
         ->set('charges.0.description', 'Cambio de fecha')
         ->set('charges.0.amount', '20000')
+        ->set('charges.0.kind', InvoiceLineKind::OwnIncome->value)
         ->set('debitReason', 'Cambio')
         ->call('issueDebit')
         ->assertHasNoErrors()

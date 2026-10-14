@@ -18,7 +18,7 @@
                 <x-ui.input name="birth_date" type="date" wire:model="birth_date" :hint="$isEditing" :required="! $isEditing" />
             </x-ui.field>
             <x-ui.field :label="__('customers.travelers.fields.nationality')" for="nationality" :hint="__('customers.country_hint')">
-                <x-ui.input name="nationality" wire:model="nationality" maxlength="2" hint required />
+                <x-ui.country-select name="nationality" wire:model="nationality" hint required />
             </x-ui.field>
         </div>
     </x-ui.card>
@@ -30,7 +30,7 @@
                 <x-ui.input name="passport_number" wire:model="passport_number" autocomplete="off" hint />
             </x-ui.field>
             <x-ui.field :label="__('customers.travelers.fields.passport_country')" for="passport_country">
-                <x-ui.input name="passport_country" wire:model="passport_country" maxlength="2" />
+                <x-ui.country-select name="passport_country" wire:model="passport_country" />
             </x-ui.field>
             <x-ui.field :label="__('customers.travelers.fields.passport_expires_on')" for="passport_expires_on">
                 <x-ui.input name="passport_expires_on" type="date" wire:model="passport_expires_on" />

@@ -28,6 +28,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property string $ulid
  * @property string|null $number
  * @property int $customer_id
+ * @property string|null $lead_ulid
  * @property int $owner_id
  * @property int|null $branch_id
  * @property string $title

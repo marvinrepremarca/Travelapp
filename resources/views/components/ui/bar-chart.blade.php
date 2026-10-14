@@ -39,10 +39,13 @@
         <span>{{ $items[$middle]['label'] ?? '' }}</span>
         <span>{{ $items[count($items) - 1]['label'] ?? '' }}</span>
     </figcaption>
-    <table class="sr-only">
+    {{-- El caption se dibuja fuera de la caja de la tabla: el contenedor oculto evita que se superponga al gráfico. --}}
+    <div class="sr-only">
+    <table>
         <caption>{{ $caption }}</caption>
         @foreach ($items as $item)
             <tr><th scope="row">{{ $item['label'] }}</th><td>{{ $item['display'] }}</td></tr>
         @endforeach
     </table>
+    </div>
 </figure>

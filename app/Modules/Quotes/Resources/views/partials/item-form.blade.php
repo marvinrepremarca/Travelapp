@@ -24,8 +24,8 @@
         <x-ui.field :label="__('quotes.item_fields.net_amount')" for="item.net_amount" :hint="__('quotes.net_hint')">
             <x-ui.input name="item.net_amount" type="number" min="0" step="any" wire:model="item.net_amount" hint />
         </x-ui.field>
-        <x-ui.field :label="__('quotes.item_fields.net_currency')" for="item.net_currency"><x-ui.input name="item.net_currency" wire:model="item.net_currency" maxlength="3" /></x-ui.field>
-        <x-ui.field :label="__('quotes.item_fields.destination_country')" for="item.destination_country"><x-ui.input name="item.destination_country" wire:model="item.destination_country" maxlength="2" /></x-ui.field>
+        <x-ui.field :label="__('quotes.item_fields.net_currency')" for="item.net_currency"><x-ui.currency-select name="item.net_currency" wire:model="item.net_currency" /></x-ui.field>
+        <x-ui.field :label="__('quotes.item_fields.destination_country')" for="item.destination_country"><x-ui.country-select name="item.destination_country" wire:model="item.destination_country" /></x-ui.field>
     @endif
     <x-ui.field :label="__('quotes.item_fields.service_date')" for="item.service_date"><x-ui.input name="item.service_date" type="date" wire:model="item.service_date" /></x-ui.field>
     <x-ui.field :label="__('quotes.item_fields.nights')" for="item.nights"><x-ui.input name="item.nights" type="number" min="0" wire:model="item.nights" /></x-ui.field>

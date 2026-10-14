@@ -7,7 +7,8 @@
 
     <x-ui.card :title="__('catalog.seasons.title')">
         <p class="mb-md text-text-subtle">{{ __('catalog.seasons.help') }}</p>
-        @if ($product->seasons->isEmpty())
+        <label class="mb-md flex items-center gap-sm text-body"><input type="checkbox" wire:model.live="showPastSeasons" class="rounded-control border-border"> {{ __('catalog.seasons.show_past') }}</label>
+        @if ($seasons->isEmpty())
             <x-ui.empty-state :title="__('catalog.seasons.empty')" />
         @else
             <x-ui.table :caption="__('catalog.seasons.title')">
@@ -17,9 +18,10 @@
                         @foreach ($passengerTypes as $type)
                             <th scope="col" class="px-md py-sm">{{ $type->label() }}</th>
                         @endforeach
+                        @if ($canManage)<th scope="col" class="px-md py-sm"><span class="sr-only">{{ __('shared.actions') }}</span></th>@endif
                     </tr>
                 </x-slot:head>
-                @foreach ($product->seasons as $season)
+                @foreach ($seasons as $season)
                     <tr wire:key="season-{{ $season->ulid }}">
                         <td class="px-md py-sm">
                             <span class="font-medium">{{ $season->name }}</span>
@@ -29,12 +31,22 @@
                             @php($rate = $season->rates->firstWhere('passenger_type', $type))
                             <td class="px-md py-sm">{{ $rate ? $presenter->format(Money::ofMinor($rate->net_amount_minor, $product->currency)) : __('catalog.seasons.no_rate') }}</td>
                         @endforeach
+                        @if ($canManage)
+                            <td class="px-md py-sm text-right">
+                                <x-ui.button variant="ghost" wire:click="editSeason('{{ $season->ulid }}')" wire:loading.attr="disabled">{{ __('shared.edit') }}<span class="sr-only"> {{ $season->name }}</span></x-ui.button>
+                            </td>
+                        @endif
                     </tr>
                 @endforeach
             </x-ui.table>
+            <div class="mt-md">{{ $seasons->links() }}</div>
         @endif
 
         @if ($canManage)
+            @if ($editingSeason !== null)
+                <h3 class="mt-md font-medium">{{ __('catalog.seasons.edit_title') }}</h3>
+                <x-ui.alert>{{ __('catalog.seasons.edit_help') }}</x-ui.alert>
+            @endif
             <form wire:submit="addSeason" class="mt-md grid gap-md md:grid-cols-3 md:items-end" novalidate>
                 <x-ui.field :label="__('catalog.season_fields.name')" for="season.name"><x-ui.input name="season.name" wire:model="season.name" required /></x-ui.field>
                 <x-ui.field :label="__('catalog.season_fields.starts_on')" for="season.starts_on"><x-ui.input name="season.starts_on" type="date" wire:model="season.starts_on" required /></x-ui.field>
@@ -44,7 +56,10 @@
                         <x-ui.input name="season.{{ $type->value }}" type="number" min="0" step="any" wire:model="season.{{ $type->value }}" />
                     </x-ui.field>
                 @endforeach
-                <x-ui.button type="submit" wire:loading.attr="disabled" wire:target="addSeason">{{ __('catalog.seasons.add') }}</x-ui.button>
+                <div class="flex flex-wrap gap-sm">
+                    <x-ui.button type="submit" wire:loading.attr="disabled" wire:target="addSeason">{{ $editingSeason === null ? __('catalog.seasons.add') : __('catalog.seasons.save') }}</x-ui.button>
+                    @if ($editingSeason !== null)<x-ui.button type="button" variant="secondary" wire:click="cancelEdit">{{ __('shared.cancel') }}</x-ui.button>@endif
+                </div>
             </form>
         @endif
     </x-ui.card>
@@ -67,6 +82,7 @@
                                 <x-ui.badge :tone="Tone::Danger">{{ __('catalog.departures.sold_out') }}</x-ui.badge>
                             @endif
                             @if ($canManage)
+                                <x-ui.button variant="ghost" wire:click="editDeparture('{{ $departure->ulid }}')" wire:loading.attr="disabled">{{ __('shared.edit') }}</x-ui.button>
                                 <x-ui.button variant="ghost" wire:click="toggleDeparture('{{ $departure->ulid }}')" wire:loading.attr="disabled">
                                     {{ $departure->status === \App\Modules\Catalog\Enums\DepartureStatus::Open ? __('catalog.departures.close') : __('catalog.departures.reopen') }}
                                 </x-ui.button>
@@ -83,7 +99,10 @@
                 <x-ui.field :label="__('catalog.departure_fields.service_date')" for="departure.service_date"><x-ui.input name="departure.service_date" type="date" wire:model="departure.service_date" required /></x-ui.field>
                 <x-ui.field :label="__('catalog.departure_fields.starts_at')" for="departure.starts_at"><x-ui.input name="departure.starts_at" type="time" wire:model="departure.starts_at" required /></x-ui.field>
                 <x-ui.field :label="__('catalog.departure_fields.capacity')" for="departure.capacity"><x-ui.input name="departure.capacity" type="number" min="1" wire:model="departure.capacity" required /></x-ui.field>
-                <x-ui.button type="submit" wire:loading.attr="disabled" wire:target="addDeparture">{{ __('catalog.departures.add') }}</x-ui.button>
+                <div class="flex flex-wrap gap-sm">
+                    <x-ui.button type="submit" wire:loading.attr="disabled" wire:target="addDeparture">{{ $editingDeparture === null ? __('catalog.departures.add') : __('catalog.departures.save') }}</x-ui.button>
+                    @if ($editingDeparture !== null)<x-ui.button type="button" variant="secondary" wire:click="cancelEdit">{{ __('shared.cancel') }}</x-ui.button>@endif
+                </div>
             </form>
         @endif
     </x-ui.card>

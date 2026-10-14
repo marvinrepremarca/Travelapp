@@ -79,9 +79,8 @@ it('runs the whole commercial funnel with only commercial on', function (): void
     $lead = Lead::factory()->ownedBy($agent)->inStatus(LeadStatus::Contacted)->create();
     actingAs($agent);
 
-    // La etapa «Cotizado» del embudo es manual: no necesita la capacidad Cotizaciones.
+    // Sin Cotizaciones no hay cotización que envíe el lead a «Cotizado»: un lead contactado se gana directamente.
     Livewire::test(LeadShow::class, ['lead' => $lead])
-        ->call('move', LeadStatus::Quoted->value)
         ->set('customerUlid', $customer->ulid)
         ->call('move', LeadStatus::Won->value)
         ->assertHasNoErrors();

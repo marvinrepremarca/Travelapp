@@ -231,7 +231,7 @@ it('creates and edits bank accounts with validated forms', function (): void {
     actingAs(financeUser());
 
     Livewire::test(BankAccountForm::class)
-        ->assertSet('currency', 'COP')
+        ->assertSet('currency', '')
         ->set('account_last_digits', '12')
         ->set('currency', 'XYZ')
         ->set('format.amount_column', '')

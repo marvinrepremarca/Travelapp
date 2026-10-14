@@ -25,6 +25,16 @@ final class CatalogRuleViolation extends BusinessRuleException
         return self::make('overlapping_season', __('catalog.errors.overlapping_season'));
     }
 
+    public static function capacityBelowReserved(int $reserved): self
+    {
+        return self::make('capacity_below_reserved', __('catalog.errors.capacity_below_reserved', ['reserved' => $reserved]));
+    }
+
+    public static function departureHasPassengers(): self
+    {
+        return self::make('departure_has_passengers', __('catalog.errors.departure_has_passengers'));
+    }
+
     public static function noSeasonForDate(string $date): self
     {
         return self::make('no_season_for_date', __('catalog.errors.no_season_for_date', ['date' => $date]));

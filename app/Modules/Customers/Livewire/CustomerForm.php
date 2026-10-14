@@ -158,7 +158,7 @@ final class CustomerForm extends Component
         session()->flash('status', __($isEditing ? 'customers.saved' : 'customers.created', ['name' => $saved->display_name]));
         $followUp = $isEditing ? null : $origins->attach($this->actor(), $this->fromLead, $saved->id);
         if ($followUp instanceof CustomerOriginFollowUp && $capabilities->allowsRoute(self::QUOTE_ROUTE)) {
-            $this->redirectRoute(self::QUOTE_ROUTE, ['customer' => $saved->ulid, 'title' => $followUp->quoteTitle, 'channel' => $followUp->channel->value], navigate: true);
+            $this->redirectRoute(self::QUOTE_ROUTE, ['customer' => $saved->ulid, 'title' => $followUp->quoteTitle, 'channel' => $followUp->channel->value, 'lead' => $this->fromLead], navigate: true);
 
             return;
         }

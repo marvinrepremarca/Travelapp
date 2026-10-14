@@ -13,6 +13,8 @@ use App\Modules\Crm\Exceptions\LeadRuleViolation;
 use App\Modules\Crm\Models\Lead;
 use App\Modules\Customers\Models\Customer;
 use App\Modules\Identity\Models\User;
+use App\Modules\Shared\Capabilities\Capabilities;
+use App\Modules\Shared\Enums\Capability;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -72,6 +74,7 @@ final class LeadShow extends Component
     public function render(): View
     {
         $lead = $this->lead()->load(['interactions', 'customer']);
+        $manual = $lead->status->manualTransitions(app(Capabilities::class)->enabled(Capability::Quoting));
 
         return view('crm::livewire.lead-show', [
             'lead' => $lead,
@@ -79,8 +82,9 @@ final class LeadShow extends Component
             'lostReasons' => LostReason::cases(),
             'customers' => Customer::query()->visibleTo($this->actor())->orderBy('display_name')->limit(config()->integer('travel.crm.per_page'))->pluck('display_name', 'ulid')->all(),
             'users' => User::query()->whereIn('id', $lead->interactions->pluck('user_id')->push($lead->owner_id))->pluck('name', 'id'),
-            'nextSteps' => array_values(array_filter($lead->status->allowedTransitions(), static fn(LeadStatus $status): bool => ! in_array($status, [LeadStatus::Won, LeadStatus::Lost], true))),
-            'canWin' => $lead->status->canTransitionTo(LeadStatus::Won),
+            'nextSteps' => array_values(array_filter($manual, static fn(LeadStatus $status): bool => ! in_array($status, [LeadStatus::Won, LeadStatus::Lost], true))),
+            'canWin' => in_array(LeadStatus::Won, $manual, true),
+            'canQuote' => $lead->status->canBeQuoted(),
             'canLose' => $lead->status->canTransitionTo(LeadStatus::Lost),
         ])->title($lead->contact_name)
             ->layoutData(['heading' => $lead->contact_name]);

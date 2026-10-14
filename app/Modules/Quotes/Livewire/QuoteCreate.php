@@ -13,6 +13,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
@@ -35,11 +36,14 @@ final class QuoteCreate extends Component
     #[Url(as: 'channel', except: '')]
     public string $sales_channel = '';
 
+    /** Prospecto desde el que se cotiza: al enviar la cotización, Comercial lo marca cotizado. */
+    #[Url(as: 'lead', except: '')]
+    public string $lead_ulid = '';
+
     public function mount(): void
     {
         Gate::authorize('create', Quote::class);
-        $this->sale_currency = config()->string('travel.agency.default_currency');
-        $this->sales_channel = (SalesChannel::tryFrom($this->sales_channel) ?? SalesChannel::Branch)->value;
+        $this->sales_channel = SalesChannel::tryFrom($this->sales_channel)->value ?? '';
     }
 
     public function chooseCustomer(string $ulid): void
@@ -66,7 +70,8 @@ final class QuoteCreate extends Component
             return;
         }
 
-        $quote = $create->execute($this->actor(), $customer, $validated['title'], $validated['sale_currency'], SalesChannel::from($validated['sales_channel']));
+        $leadUlid = Str::isUlid($this->lead_ulid) ? mb_strtolower($this->lead_ulid) : null;
+        $quote = $create->execute($this->actor(), $customer, $validated['title'], $validated['sale_currency'], SalesChannel::from($validated['sales_channel']), $leadUlid);
 
         session()->flash('status', __('quotes.created', ['number' => $quote->number]));
         $this->redirectRoute('quotes.show', $quote, navigate: true);

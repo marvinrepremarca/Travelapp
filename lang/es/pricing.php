@@ -53,6 +53,7 @@ return [
     'rules' => [
         'title' => 'Reglas de precio',
         'add' => 'Agregar regla',
+        'update' => 'Guardar cambios',
         'empty' => 'Sin reglas registradas.',
         'tabs' => [
             'markups' => 'Markups',

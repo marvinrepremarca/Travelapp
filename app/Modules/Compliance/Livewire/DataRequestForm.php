@@ -40,8 +40,6 @@ final class DataRequestForm extends Component
     public function mount(): void
     {
         $this->authorizeCompliance();
-        $this->type = DataRequestType::Access->value;
-        $this->channel = ConsentChannel::Email->value;
         $this->received_on = $this->today()->toDateString();
     }
 

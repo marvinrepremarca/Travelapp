@@ -38,7 +38,6 @@ final class ObligationForm extends Component
     public function mount(?ComplianceObligation $obligation = null): void
     {
         $this->authorizeCompliance();
-        $this->recurrence = ObligationRecurrence::Once->value;
         $this->responsible_id = (string) $this->actor()->id;
         if ($obligation?->exists) {
             $this->obligationUlid = $obligation->ulid;

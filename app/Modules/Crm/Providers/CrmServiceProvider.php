@@ -6,6 +6,7 @@ namespace App\Modules\Crm\Providers;
 
 use App\Modules\Crm\Contracts\LeadIntake;
 use App\Modules\Crm\Contracts\LeadMetrics;
+use App\Modules\Crm\Listeners\MarkLeadQuoted;
 use App\Modules\Crm\Livewire\LeadForm;
 use App\Modules\Crm\Livewire\LeadsBoard;
 use App\Modules\Crm\Livewire\LeadShow;
@@ -16,8 +17,11 @@ use App\Modules\Crm\Services\EloquentLeadMetrics;
 use App\Modules\Crm\Services\LeadCustomerOrigins;
 use App\Modules\Crm\Services\NullLeadMetrics;
 use App\Modules\Customers\Contracts\CustomerOrigins;
+use App\Modules\Quotes\Events\QuoteSent;
 use App\Modules\Shared\Capabilities\Capabilities;
 use App\Modules\Shared\Enums\Capability;
+use App\Modules\Shared\Enums\CatchUpPolicy;
+use App\Modules\Shared\IntegrationEvents\CapabilitySubscriptions;
 use App\Modules\Shared\Routing\PathPrefix;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -59,5 +63,8 @@ final class CrmServiceProvider extends ServiceProvider
         Livewire::component('crm.lead-show', LeadShow::class);
 
         Gate::policy(Lead::class, LeadPolicy::class);
+
+        // Al volver a encender Comercial se repasan los envíos pendientes: el embudo debe reflejar lo cotizado.
+        $this->app->make(CapabilitySubscriptions::class)->listen(Capability::Commercial, QuoteSent::class, MarkLeadQuoted::class, CatchUpPolicy::Replay);
     }
 }

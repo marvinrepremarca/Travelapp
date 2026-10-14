@@ -27,6 +27,25 @@ enum LeadStatus: string
         };
     }
 
+    /**
+     * Pasos que una persona puede dar. "Cotizado" lo pone solo el envío de una cotización; con Cotizaciones
+     * apagada no hay cotización posible, así que un lead contactado se puede ganar directamente (ADR-0007).
+     *
+     * @return list<self>
+     */
+    public function manualTransitions(bool $quotingEnabled): array
+    {
+        $next = array_values(array_filter($this->allowedTransitions(), static fn(self $status): bool => $status !== self::Quoted));
+
+        return $this === self::Contacted && ! $quotingEnabled ? [self::Won, ...$next] : $next;
+    }
+
+    /** Estados desde los que el envío de una cotización marca el lead como cotizado. */
+    public function canBeQuoted(): bool
+    {
+        return in_array($this, [self::New, self::Contacted], true);
+    }
+
     public function canTransitionTo(self $next): bool
     {
         return in_array($next, $this->allowedTransitions(), true);

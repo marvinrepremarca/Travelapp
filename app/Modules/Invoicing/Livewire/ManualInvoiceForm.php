@@ -47,7 +47,7 @@ final class ManualInvoiceForm extends Component
 
     public function addLine(): void
     {
-        $this->lines[] = ['description' => '', 'kind' => InvoiceLineKind::OwnIncome->value, 'product_type' => '', 'amount' => ''];
+        $this->lines[] = ['description' => '', 'kind' => '', 'product_type' => '', 'amount' => ''];
     }
 
     public function removeLine(int $index): void
