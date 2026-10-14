@@ -120,6 +120,8 @@ return [
     'ui' => [
         // Página de muestra del sistema de diseño; solo para desarrollo y revisión.
         'showcase_enabled' => (bool) env('TRAVEL_UI_SHOWCASE_ENABLED', false),
+        // Tiempo que se muestra la confirmación «¡Copiado!» tras copiar al portapapeles.
+        'copy_feedback_ms' => (int) env('TRAVEL_UI_COPY_FEEDBACK_MS', 2000),
     ],
 
     'health' => [

@@ -33,7 +33,7 @@
                         @endforeach
                         @if ($canManage)
                             <td class="px-md py-sm text-right">
-                                <x-ui.button variant="ghost" wire:click="editSeason('{{ $season->ulid }}')" wire:loading.attr="disabled">{{ __('shared.edit') }}<span class="sr-only"> {{ $season->name }}</span></x-ui.button>
+                                <x-ui.icon-button icon="edit" :label="__('shared.edit') . ' · ' . $season->name" wire:click="editSeason('{{ $season->ulid }}')" wire:loading.attr="disabled" />
                             </td>
                         @endif
                     </tr>
@@ -82,10 +82,11 @@
                                 <x-ui.badge :tone="Tone::Danger">{{ __('catalog.departures.sold_out') }}</x-ui.badge>
                             @endif
                             @if ($canManage)
-                                <x-ui.button variant="ghost" wire:click="editDeparture('{{ $departure->ulid }}')" wire:loading.attr="disabled">{{ __('shared.edit') }}</x-ui.button>
-                                <x-ui.button variant="ghost" wire:click="toggleDeparture('{{ $departure->ulid }}')" wire:loading.attr="disabled">
-                                    {{ $departure->status === \App\Modules\Catalog\Enums\DepartureStatus::Open ? __('catalog.departures.close') : __('catalog.departures.reopen') }}
-                                </x-ui.button>
+                                @php($isOpen = $departure->status === \App\Modules\Catalog\Enums\DepartureStatus::Open)
+                                <x-ui.icon-button icon="edit" :label="__('shared.edit') . ' · ' . $departure->service_date->toDateString()" wire:click="editDeparture('{{ $departure->ulid }}')" wire:loading.attr="disabled" />
+                                <x-ui.icon-button :icon="$isOpen ? 'deactivate' : 'activate'" :tone="$isOpen ? 'danger' : 'success'"
+                                    :label="($isOpen ? __('catalog.departures.close') : __('catalog.departures.reopen')) . ' · ' . $departure->service_date->toDateString()"
+                                    wire:click="toggleDeparture('{{ $departure->ulid }}')" wire:loading.attr="disabled" />
                             @endif
                         </div>
                     </li>

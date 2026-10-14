@@ -10,7 +10,7 @@
                 <x-ui.input name="issued-password" x-ref="password" value="{{ $issuedPassword }}" readonly autocomplete="off" />
             </x-ui.field>
             <div class="flex flex-wrap justify-end gap-sm">
-                <x-ui.button variant="secondary" type="button" x-on:click="navigator.clipboard.writeText($refs.password.value)">{{ __('identity.users.copy_password') }}</x-ui.button>
+                <x-ui.copy-button :text="$issuedPassword" :label="__('identity.users.copy_password')" />
                 <x-ui.button type="button" wire:click="finishIssuing">{{ __('identity.users.temporary_password_done') }}</x-ui.button>
             </div>
         </div>

@@ -58,7 +58,7 @@
                 @foreach ($advances as $advance)
                     <li class="flex flex-wrap items-center justify-between gap-sm py-sm" wire:key="advance-{{ $advance->ulid }}">
                         <span>{{ $advance->concept }} · {{ $advance->method->label() }} · <span class="font-medium">{{ $presenter->format($advance->amount()) }}</span></span>
-                        <x-ui.button variant="secondary" wire:click="applyAdvance('{{ $advance->ulid }}')" wire:loading.attr="disabled">{{ __('payments.advances.apply') }}</x-ui.button>
+                        <x-ui.icon-button icon="pay" tone="neutral" :label="__('payments.advances.apply')" wire:click="applyAdvance('{{ $advance->ulid }}')" wire:loading.attr="disabled" />
                     </li>
                 @endforeach
             </ul>
@@ -80,10 +80,9 @@
                                 @if ($payment->reference) · {{ __('payments.list.reference', ['reference' => $payment->reference]) }} @endif
                             </p>
                             @if ($payment->method === PaymentMethod::OnlineLink && $payment->status === PaymentStatus::Pending && $payment->link_url)
-                                <div class="mt-xs flex flex-col gap-xs md:flex-row" x-data="{ copied: false }">
+                                <div class="mt-xs flex flex-col gap-xs md:flex-row">
                                     <x-ui.input name="link-{{ $payment->ulid }}" :value="$payment->link_url" readonly x-ref="link" aria-label="{{ __('payments.list.link') }}" />
-                                    <x-ui.button type="button" variant="secondary" x-on:click="navigator.clipboard.writeText($refs.link.value); copied = true">{{ __('quotes.public.copy_link') }}</x-ui.button>
-                                    <span class="text-caption text-success" x-show="copied" x-cloak role="status">{{ __('quotes.public.copied') }}</span>
+                                    <x-ui.copy-button :text="$payment->link_url" :label="__('quotes.public.copy_link')" />
                                 </div>
                                 <p class="text-caption text-text-subtle">{{ __('payments.list.link_expires', ['date' => $payment->link_expires_at?->timezone($timezone)->locale(app()->getLocale())->isoFormat('lll')]) }}</p>
                             @endif
@@ -91,8 +90,8 @@
                         <div class="flex items-center gap-sm">
                             <x-ui.badge :tone="$payment->status->tone()">{{ $payment->status->label() }}</x-ui.badge>
                             @if ($canValidate && $payment->method === PaymentMethod::BankTransfer && $payment->status === PaymentStatus::Pending)
-                                <x-ui.button variant="secondary" wire:click="validateTransfer('{{ $payment->ulid }}', true)" wire:loading.attr="disabled">{{ __('payments.list.approve') }}</x-ui.button>
-                                <x-ui.button variant="ghost" wire:click="validateTransfer('{{ $payment->ulid }}', false)" wire:loading.attr="disabled" wire:confirm="{{ __('payments.list.confirm_reject') }}">{{ __('payments.list.reject') }}</x-ui.button>
+                                <x-ui.icon-button icon="check" tone="success" :label="__('payments.list.approve')" wire:click="validateTransfer('{{ $payment->ulid }}', true)" wire:loading.attr="disabled" />
+                                <x-ui.icon-button icon="close" tone="danger" :label="__('payments.list.reject')" wire:click="validateTransfer('{{ $payment->ulid }}', false)" wire:loading.attr="disabled" wire:confirm="{{ __('payments.list.confirm_reject') }}" />
                             @endif
                         </div>
                     </li>
@@ -128,7 +127,7 @@
                                 <x-ui.badge :tone="$item->status->tone()">{{ $item->status->label() }}</x-ui.badge>
                                 @if ($canValidate && $item->status === \App\Modules\Payments\Enums\RefundStatus::Approved)
                                     <x-ui.input name="payoutReference" wire:model="payoutReference" :aria-label="__('payments.refunds.payout_reference')" :placeholder="__('payments.refunds.payout_reference')" />
-                                    <x-ui.button variant="secondary" wire:click="payRefund('{{ $item->ulid }}')" wire:loading.attr="disabled">{{ __('payments.refunds.pay') }}</x-ui.button>
+                                    <x-ui.icon-button icon="pay" tone="neutral" :label="__('payments.refunds.pay')" wire:click="payRefund('{{ $item->ulid }}')" wire:loading.attr="disabled" />
                                 @endif
                             </div>
                         </li>

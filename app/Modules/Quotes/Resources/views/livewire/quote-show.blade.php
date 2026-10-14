@@ -39,13 +39,12 @@
             @endif
             @error('quote')<x-ui.alert :tone="Tone::Danger">{{ $message }}</x-ui.alert>@enderror
             @if ($customerLink)
-                <div class="flex flex-col gap-xs" x-data="{ copied: false }">
+                <div class="flex flex-col gap-xs">
                     <label for="customer-link" class="text-caption text-text-subtle">{{ __('quotes.public.link_label') }}</label>
                     <div class="flex flex-col gap-sm md:flex-row">
                         <x-ui.input name="customer-link" :value="$customerLink" readonly x-ref="link" />
-                        <x-ui.button type="button" variant="secondary" x-on:click="navigator.clipboard.writeText($refs.link.value); copied = true">{{ __('quotes.public.copy_link') }}</x-ui.button>
+                        <x-ui.copy-button :text="$customerLink" :label="__('quotes.public.copy_link')" />
                     </div>
-                    <p class="text-caption text-success" x-show="copied" x-cloak role="status">{{ __('quotes.public.copied') }}</p>
                 </div>
             @endif
 

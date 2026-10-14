@@ -45,9 +45,7 @@
                             <td class="px-md py-sm">{{ $candidate->customerName }}</td>
                             <td class="px-md py-sm font-medium">{{ $presenter->format($candidate->total) }}</td>
                             <td class="px-md py-sm">
-                                <x-ui.button type="button" wire:click="issue('{{ $candidate->ulid }}')" wire:confirm="{{ __('invoicing.confirm_issue', ['booking' => $candidate->number]) }}" wire:loading.attr="disabled" wire:target="issue('{{ $candidate->ulid }}')">
-                                    {{ __('invoicing.issue') }}
-                                </x-ui.button>
+                                <x-ui.icon-button icon="document" tone="neutral" :label="__('invoicing.issue')" wire:click="issue('{{ $candidate->ulid }}')" wire:confirm="{{ __('invoicing.confirm_issue', ['booking' => $candidate->number]) }}" wire:loading.attr="disabled" wire:target="issue('{{ $candidate->ulid }}')" />
                             </td>
                         </tr>
                     @endforeach

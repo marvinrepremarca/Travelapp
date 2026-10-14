@@ -92,6 +92,10 @@ return [
     'saving' => 'Guardando…',
     'cancel' => 'Cancelar',
     'select' => 'Seleccione',
+    'copy' => 'Copiar',
+    'copied' => '¡Copiado!',
+    'open_menu' => 'Abrir menú',
+    'close_menu' => 'Cerrar menú',
     'choose_country' => 'Seleccione un país',
     'choose_currency' => 'Seleccione una moneda',
     'customer_picker' => [

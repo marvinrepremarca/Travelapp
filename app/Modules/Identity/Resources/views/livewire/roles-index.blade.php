@@ -16,9 +16,8 @@
                 <td class="px-md py-sm">{{ (int) ($count->users_count ?? 0) }}</td>
                 <td class="px-md py-sm">{{ (int) ($count->permissions_count ?? 0) }}</td>
                 <td class="px-md py-sm text-right">
-                    <a class="text-brand underline" href="{{ route('identity.roles.edit', $role->value) }}">
-                        {{ $role === $locked ? __('identity.role_permissions.view') : __('identity.role_permissions.edit') }}<span class="sr-only"> {{ $role->label() }}</span>
-                    </a>
+                    <x-ui.icon-button :icon="$role === $locked ? 'view' : 'edit'" :href="route('identity.roles.edit', $role->value)"
+                        :label="($role === $locked ? __('identity.role_permissions.view') : __('identity.role_permissions.edit')) . ' · ' . $role->label()" />
                 </td>
             </tr>
         @endforeach

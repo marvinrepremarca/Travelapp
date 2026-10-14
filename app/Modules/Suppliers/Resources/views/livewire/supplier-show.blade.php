@@ -60,10 +60,10 @@
                                 @if ($commission->appliesOn($today)) <x-ui.badge :tone="Tone::Success">{{ __('suppliers.current') }}</x-ui.badge> @endif
                             </td>
                             @if ($canManage)
-                                <td class="px-md py-sm">
+                                <td class="px-md py-sm text-right">
                                     @if ($commission->valid_until === null)
-                                        <x-ui.button variant="ghost" wire:click="endCommission({{ $commission->id }})" wire:loading.attr="disabled"
-                                            wire:confirm="{{ __('suppliers.confirm_end_commission') }}">{{ __('suppliers.end_commission') }}</x-ui.button>
+                                        <x-ui.icon-button icon="close" tone="danger" :label="__('suppliers.end_commission') . ' · ' . $commission->product_type->label()"
+                                            wire:click="endCommission({{ $commission->id }})" wire:loading.attr="disabled" wire:confirm="{{ __('suppliers.confirm_end_commission') }}" />
                                     @endif
                                 </td>
                             @endif
@@ -117,14 +117,12 @@
                             </p>
                             <p class="text-caption text-text-subtle">{{ $contact->email }} {{ $contact->phone }}</p>
                             @if ($canManageRecords)
-                                <div class="flex flex-wrap gap-sm">
-                                    <x-ui.button variant="ghost" wire:click="startEditContact({{ $contact->id }})" wire:loading.attr="disabled">
-                                        {{ __('shared.edit') }}<span class="sr-only"> {{ $contact->name }}</span>
-                                    </x-ui.button>
-                                    <x-ui.button variant="ghost" wire:click="toggleContact({{ $contact->id }})" wire:loading.attr="disabled"
-                                        wire:confirm="{{ $contact->is_active ? __('suppliers.confirm_deactivate_contact') : __('suppliers.confirm_reactivate_record') }}">
-                                        {{ $contact->is_active ? __('suppliers.deactivate_record') : __('suppliers.reactivate_record') }}<span class="sr-only"> {{ $contact->name }}</span>
-                                    </x-ui.button>
+                                <div class="flex gap-xs">
+                                    <x-ui.icon-button icon="edit" :label="__('shared.edit') . ' · ' . $contact->name" wire:click="startEditContact({{ $contact->id }})" wire:loading.attr="disabled" />
+                                    <x-ui.icon-button :icon="$contact->is_active ? 'deactivate' : 'activate'" :tone="$contact->is_active ? 'danger' : 'success'"
+                                        :label="($contact->is_active ? __('suppliers.deactivate_record') : __('suppliers.reactivate_record')) . ' · ' . $contact->name"
+                                        wire:click="toggleContact({{ $contact->id }})" wire:loading.attr="disabled"
+                                        wire:confirm="{{ $contact->is_active ? __('suppliers.confirm_deactivate_contact') : __('suppliers.confirm_reactivate_record') }}" />
                                 </div>
                             @endif
                         @endif
@@ -172,20 +170,16 @@
                                     @unless ($account->is_active) <x-ui.badge :tone="Tone::Warning">{{ __('suppliers.record_inactive') }}</x-ui.badge> @endunless
                                 </p>
                                 <p class="text-caption text-text-subtle">{{ $revealed[$account->ulid] ?? $account->maskedNumber() }} · {{ $account->holder_name }}</p>
-                                <div class="flex flex-wrap gap-sm">
+                                <div class="flex gap-xs">
                                     @if ($canSeeBank)
-                                        <x-ui.button variant="ghost" wire:click="revealAccount('{{ $account->ulid }}')" wire:loading.attr="disabled">
-                                            {{ __('suppliers.reveal_account') }}<span class="sr-only"> {{ $account->bank_name }}</span>
-                                        </x-ui.button>
+                                        <x-ui.icon-button icon="view" :label="__('suppliers.reveal_account') . ' · ' . $account->bank_name" wire:click="revealAccount('{{ $account->ulid }}')" wire:loading.attr="disabled" />
                                     @endif
                                     @if ($canManageRecords)
-                                        <x-ui.button variant="ghost" wire:click="startEditAccount('{{ $account->ulid }}')" wire:loading.attr="disabled">
-                                            {{ __('shared.edit') }}<span class="sr-only"> {{ $account->bank_name }}</span>
-                                        </x-ui.button>
-                                        <x-ui.button variant="ghost" wire:click="toggleAccount('{{ $account->ulid }}')" wire:loading.attr="disabled"
-                                            wire:confirm="{{ $account->is_active ? __('suppliers.confirm_deactivate_account') : __('suppliers.confirm_reactivate_record') }}">
-                                            {{ $account->is_active ? __('suppliers.deactivate_record') : __('suppliers.reactivate_record') }}<span class="sr-only"> {{ $account->bank_name }}</span>
-                                        </x-ui.button>
+                                        <x-ui.icon-button icon="edit" :label="__('shared.edit') . ' · ' . $account->bank_name" wire:click="startEditAccount('{{ $account->ulid }}')" wire:loading.attr="disabled" />
+                                        <x-ui.icon-button :icon="$account->is_active ? 'deactivate' : 'activate'" :tone="$account->is_active ? 'danger' : 'success'"
+                                            :label="($account->is_active ? __('suppliers.deactivate_record') : __('suppliers.reactivate_record')) . ' · ' . $account->bank_name"
+                                            wire:click="toggleAccount('{{ $account->ulid }}')" wire:loading.attr="disabled"
+                                            wire:confirm="{{ $account->is_active ? __('suppliers.confirm_deactivate_account') : __('suppliers.confirm_reactivate_record') }}" />
                                     @endif
                                 </div>
                             @endif

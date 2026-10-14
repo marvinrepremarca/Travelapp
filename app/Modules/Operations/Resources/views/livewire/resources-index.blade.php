@@ -24,7 +24,7 @@
                         <th scope="row" class="px-md py-sm text-left font-medium">{{ $guide->name }} @unless ($guide->is_active)<x-ui.badge :tone="Tone::Neutral">{{ __('operations.inactive') }}</x-ui.badge>@endunless</th>
                         <td class="px-md py-sm">{{ $guide->phone }}</td>
                         <td class="px-md py-sm">{{ $guide->languages ?? '—' }}</td>
-                        <td class="px-md py-sm"><a href="{{ route('operations.guides.edit', $guide) }}" wire:navigate class="text-brand underline">{{ __('shared.edit') }}<span class="sr-only"> {{ $guide->name }}</span></a></td>
+                        <td class="px-md py-sm text-right"><x-ui.icon-button icon="edit" :href="route('operations.guides.edit', $guide)" :label="__('shared.edit') . ' · ' . $guide->name" /></td>
                     </tr>
                 @endforeach
             </x-ui.table>
@@ -53,7 +53,7 @@
                         <th scope="row" class="px-md py-sm text-left font-medium">{{ $vehicle->plate }} @unless ($vehicle->is_active)<x-ui.badge :tone="Tone::Neutral">{{ __('operations.inactive') }}</x-ui.badge>@endunless</th>
                         <td class="px-md py-sm">{{ $vehicle->description }}</td>
                         <td class="px-md py-sm">{{ $vehicle->capacity }}</td>
-                        <td class="px-md py-sm"><a href="{{ route('operations.vehicles.edit', $vehicle) }}" wire:navigate class="text-brand underline">{{ __('shared.edit') }}<span class="sr-only"> {{ $vehicle->plate }}</span></a></td>
+                        <td class="px-md py-sm text-right"><x-ui.icon-button icon="edit" :href="route('operations.vehicles.edit', $vehicle)" :label="__('shared.edit') . ' · ' . $vehicle->plate" /></td>
                     </tr>
                 @endforeach
             </x-ui.table>

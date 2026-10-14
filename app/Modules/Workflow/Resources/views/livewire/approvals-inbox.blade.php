@@ -60,10 +60,8 @@
                         <td class="px-md py-sm">{{ $approval->decision_note }}</td>
                         <td class="px-md py-sm">
                             @unless ($approval->status->isFinal())
-                                <x-ui.button variant="ghost" wire:click="cancel('{{ $approval->ulid }}')" wire:loading.attr="disabled"
-                                    wire:confirm="{{ __('workflow.approvals.confirm_cancel') }}">
-                                    {{ __('workflow.approvals.cancel') }}<span class="sr-only"> {{ $approval->summary }}</span>
-                                </x-ui.button>
+                                <x-ui.icon-button icon="close" tone="danger" :label="__('workflow.approvals.cancel') . ' · ' . $approval->summary"
+                                    wire:click="cancel('{{ $approval->ulid }}')" wire:loading.attr="disabled" wire:confirm="{{ __('workflow.approvals.confirm_cancel') }}" />
                             @endunless
                         </td>
                     </tr>

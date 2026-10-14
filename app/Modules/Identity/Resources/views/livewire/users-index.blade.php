@@ -34,7 +34,7 @@
                         <x-ui.alert>{{ __('identity.users.temporary_password_reveal_help') }}</x-ui.alert>
                         <x-ui.input name="revealed-password" x-ref="password" value="{{ $revealedPassword }}" readonly autocomplete="off" />
                         <div class="flex flex-wrap justify-end gap-sm">
-                            <x-ui.button variant="secondary" type="button" x-on:click="navigator.clipboard.writeText($refs.password.value)">{{ __('identity.users.copy_password') }}</x-ui.button>
+                            <x-ui.copy-button :text="$revealedPassword" :label="__('identity.users.copy_password')" />
                             <x-ui.button type="button" wire:click="hideTemporaryPassword">{{ __('identity.users.temporary_password_done') }}</x-ui.button>
                         </div>
                     </div>
@@ -74,23 +74,19 @@
                         </td>
                         @if ($canManage || $canViewTemporaryPasswords)
                             <td class="px-md py-sm">
-                                <div class="flex flex-wrap justify-end gap-sm">
+                                <div class="flex justify-end gap-xs">
                                     @if ($canViewTemporaryPasswords && $user->must_change_password)
-                                        <x-ui.button variant="ghost" wire:click="revealTemporaryPassword('{{ $user->ulid }}')" wire:loading.attr="disabled">
-                                            {{ __('identity.users.reveal_temporary_password') }}<span class="sr-only"> {{ $user->name }}</span>
-                                        </x-ui.button>
+                                        <x-ui.icon-button icon="key" :label="__('identity.users.reveal_temporary_password') . ' · ' . $user->name"
+                                            wire:click="revealTemporaryPassword('{{ $user->ulid }}')" wire:loading.attr="disabled" />
                                     @endif
                                     @if ($canManage)
-                                        <a href="{{ route('identity.users.edit', $user) }}" wire:navigate class="text-brand underline">
-                                            {{ __('shared.edit') }}<span class="sr-only"> {{ $user->name }}</span>
-                                        </a>
-                                        <x-ui.button variant="ghost" wire:click="resendInvitation('{{ $user->ulid }}')" wire:loading.attr="disabled">
-                                            {{ __('identity.users.resend_invitation') }}<span class="sr-only"> {{ $user->name }}</span>
-                                        </x-ui.button>
-                                        <x-ui.button variant="ghost" wire:click="toggleActive('{{ $user->ulid }}')" wire:loading.attr="disabled"
-                                            wire:confirm="{{ $user->is_active ? __('identity.users.confirm_deactivate', ['name' => $user->name]) : __('identity.users.confirm_activate', ['name' => $user->name]) }}">
-                                            {{ $user->is_active ? __('identity.users.deactivate') : __('identity.users.activate') }}<span class="sr-only"> {{ $user->name }}</span>
-                                        </x-ui.button>
+                                        <x-ui.icon-button icon="edit" :href="route('identity.users.edit', $user)" :label="__('shared.edit') . ' · ' . $user->name" />
+                                        <x-ui.icon-button icon="mail" :label="__('identity.users.resend_invitation') . ' · ' . $user->name"
+                                            wire:click="resendInvitation('{{ $user->ulid }}')" wire:loading.attr="disabled" />
+                                        <x-ui.icon-button :icon="$user->is_active ? 'deactivate' : 'activate'" :tone="$user->is_active ? 'danger' : 'success'"
+                                            :label="($user->is_active ? __('identity.users.deactivate') : __('identity.users.activate')) . ' · ' . $user->name"
+                                            wire:click="toggleActive('{{ $user->ulid }}')" wire:loading.attr="disabled"
+                                            wire:confirm="{{ $user->is_active ? __('identity.users.confirm_deactivate', ['name' => $user->name]) : __('identity.users.confirm_activate', ['name' => $user->name]) }}" />
                                     @endif
                                 </div>
                             </td>

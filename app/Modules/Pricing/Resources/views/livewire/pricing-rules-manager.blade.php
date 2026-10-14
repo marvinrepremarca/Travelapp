@@ -30,11 +30,11 @@
                                 · {{ $rule->valid_from->toDateString() }} – {{ $rule->valid_until?->toDateString() ?? __('suppliers.open_ended') }}
                             </p>
                         </div>
-                        <div class="flex gap-sm">
-                            <x-ui.button variant="ghost" wire:click="edit('{{ PricingRulesManager::TAB_MARKUPS }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled">{{ __('shared.edit') }}<span class="sr-only"> {{ $rule->name }}</span></x-ui.button>
-                            <x-ui.button variant="ghost" wire:click="toggle('{{ PricingRulesManager::TAB_MARKUPS }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled">
-                            {{ $rule->is_active ? __('suppliers.deactivate') : __('suppliers.activate') }}<span class="sr-only"> {{ $rule->name }}</span>
-                        </x-ui.button>
+                        <div class="flex gap-xs">
+                            <x-ui.icon-button icon="edit" :label="__('shared.edit') . ' · ' . $rule->name" wire:click="edit('{{ PricingRulesManager::TAB_MARKUPS }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled" />
+                            <x-ui.icon-button :icon="$rule->is_active ? 'deactivate' : 'activate'" :tone="$rule->is_active ? 'danger' : 'success'"
+                                :label="($rule->is_active ? __('suppliers.deactivate') : __('suppliers.activate')) . ' · ' . $rule->name"
+                                wire:click="toggle('{{ PricingRulesManager::TAB_MARKUPS }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled" />
                         </div>
                     </li>
                 @empty
@@ -71,11 +71,11 @@
                             <p class="font-medium">{{ $rule->name }} <x-ui.badge :tone="$rule->is_active ? Tone::Success : Tone::Neutral">{{ $rule->is_active ? __('shared.active') : __('shared.inactive') }}</x-ui.badge></p>
                             <p class="text-caption text-text-subtle">{{ $presenter->format($rule->amount()) }} · {{ $rule->basis->label() }} · {{ $rule->product_type?->label() ?? __('pricing.any') }} · {{ $rule->sales_channel?->label() ?? __('pricing.any') }}</p>
                         </div>
-                        <div class="flex gap-sm">
-                            <x-ui.button variant="ghost" wire:click="edit('{{ PricingRulesManager::TAB_FEES }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled">{{ __('shared.edit') }}<span class="sr-only"> {{ $rule->name }}</span></x-ui.button>
-                            <x-ui.button variant="ghost" wire:click="toggle('{{ PricingRulesManager::TAB_FEES }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled">
-                            {{ $rule->is_active ? __('suppliers.deactivate') : __('suppliers.activate') }}<span class="sr-only"> {{ $rule->name }}</span>
-                        </x-ui.button>
+                        <div class="flex gap-xs">
+                            <x-ui.icon-button icon="edit" :label="__('shared.edit') . ' · ' . $rule->name" wire:click="edit('{{ PricingRulesManager::TAB_FEES }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled" />
+                            <x-ui.icon-button :icon="$rule->is_active ? 'deactivate' : 'activate'" :tone="$rule->is_active ? 'danger' : 'success'"
+                                :label="($rule->is_active ? __('suppliers.deactivate') : __('suppliers.activate')) . ' · ' . $rule->name"
+                                wire:click="toggle('{{ PricingRulesManager::TAB_FEES }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled" />
                         </div>
                     </li>
                 @empty
@@ -108,11 +108,11 @@
                             <p class="text-caption text-text-subtle">{{ __('suppliers.percent', ['value' => Percentage::fromBasisPoints($rule->rate_basis_points)->toPercentString()]) }} · {{ $rule->valid_from->toDateString() }} – {{ $rule->valid_until?->toDateString() ?? __('suppliers.open_ended') }}
                                 @if ($rule->exempt_product_types) · {{ __('pricing.rules.exempt', ['types' => collect($rule->exempt_product_types)->map(fn ($type) => \App\Modules\Shared\Enums\ProductType::from($type)->label())->implode(', ')]) }} @endif</p>
                         </div>
-                        <div class="flex gap-sm">
-                            <x-ui.button variant="ghost" wire:click="edit('{{ PricingRulesManager::TAB_TAXES }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled">{{ __('shared.edit') }}<span class="sr-only"> {{ $rule->name }}</span></x-ui.button>
-                            <x-ui.button variant="ghost" wire:click="toggle('{{ PricingRulesManager::TAB_TAXES }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled">
-                            {{ $rule->is_active ? __('suppliers.deactivate') : __('suppliers.activate') }}<span class="sr-only"> {{ $rule->name }}</span>
-                        </x-ui.button>
+                        <div class="flex gap-xs">
+                            <x-ui.icon-button icon="edit" :label="__('shared.edit') . ' · ' . $rule->name" wire:click="edit('{{ PricingRulesManager::TAB_TAXES }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled" />
+                            <x-ui.icon-button :icon="$rule->is_active ? 'deactivate' : 'activate'" :tone="$rule->is_active ? 'danger' : 'success'"
+                                :label="($rule->is_active ? __('suppliers.deactivate') : __('suppliers.activate')) . ' · ' . $rule->name"
+                                wire:click="toggle('{{ PricingRulesManager::TAB_TAXES }}', '{{ $rule->ulid }}')" wire:loading.attr="disabled" />
                         </div>
                     </li>
                 @empty
