@@ -73,10 +73,8 @@
             @capability(\App\Modules\Shared\Enums\Capability::Quoting)
                 <x-ui.card :title="__('crm.leads.quote_card')">
                     <p class="mb-sm text-caption text-text-subtle">{{ __('crm.leads.quote_help') }}</p>
-                    {{-- Sin cliente, primero se registra con los datos del lead; al guardarlo se sigue a la cotización ya ligada al lead. --}}
-                    <x-ui.link-button :href="$lead->customer === null
-                        ? route('customers.create', ['lead' => $lead->ulid])
-                        : route('quotes.create', ['lead' => $lead->ulid, 'customer' => $lead->customer->ulid, 'title' => $lead->quoteTitle(), 'channel' => $lead->channel->value])">{{ __('crm.leads.quote') }}</x-ui.link-button>
+                    {{-- La cotización precarga los datos del lead; no exige registrarlo como cliente. --}}
+                    <x-ui.link-button :href="route('quotes.create', ['lead' => $lead->ulid])">{{ __('crm.leads.quote') }}</x-ui.link-button>
                 </x-ui.card>
             @endcapability
         @endif

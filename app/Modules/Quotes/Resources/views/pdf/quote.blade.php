@@ -1,7 +1,7 @@
 @extends('documents::layout')
 
 @section('content')
-    <p>{{ __('quotes.pdf.prepared_for', ['customer' => $quote->customer->display_name]) }}</p>
+    <p>{{ __('quotes.pdf.prepared_for', ['customer' => $quote->recipientName()]) }}</p>
     <p class="subtle">
         {{ __('quotes.public.subtitle', ['number' => $quote->number, 'version' => $version->version]) }} ·
         {{ __('quotes.validity', ['date' => $version->valid_until->timezone($timezone)->locale(app()->getLocale())->isoFormat('lll')]) }}

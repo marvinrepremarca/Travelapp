@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Quotes\Livewire;
 
+use App\Modules\Crm\Contracts\LeadProspects;
+use App\Modules\Crm\Data\LeadProspect;
 use App\Modules\Customers\Models\Customer;
 use App\Modules\Identity\Models\User;
 use App\Modules\Quotes\Actions\CreateQuoteAction;
@@ -44,6 +46,20 @@ final class QuoteCreate extends Component
     {
         Gate::authorize('create', Quote::class);
         $this->sales_channel = SalesChannel::tryFrom($this->sales_channel)->value ?? '';
+
+        // Desde un lead: se precargan sus datos; si ya tiene cliente se usa ese, si no la cotización va al prospecto.
+        $prospect = $this->prospect();
+        if ($prospect instanceof LeadProspect) {
+            $this->customer_ulid = $this->customer_ulid !== '' ? $this->customer_ulid : (string) $prospect->customerUlid;
+            $this->title = $this->title !== '' ? $this->title : $prospect->quoteTitle;
+            $this->sales_channel = $this->sales_channel !== '' ? $this->sales_channel : $prospect->channel->value;
+        }
+    }
+
+    /** Quita el cliente elegido: la cotización vuelve a dirigirse al prospecto del lead. */
+    public function useProspect(): void
+    {
+        $this->customer_ulid = '';
     }
 
     public function chooseCustomer(string $ulid): void
@@ -56,22 +72,22 @@ final class QuoteCreate extends Component
     {
         Gate::authorize('create', Quote::class);
         $validated = $this->validate([
-            'customer_ulid' => ['required', 'string'],
+            'customer_ulid' => [$this->prospect() instanceof LeadProspect ? 'nullable' : 'required', 'string'],
             'title' => ['required', 'string', 'max:255'],
             'sale_currency' => ['required', 'string', 'size:3', 'alpha'],
             'sales_channel' => ['required', Rule::enum(SalesChannel::class)],
         ], attributes: $this->attributes());
 
         // Solo clientes dentro del alcance: uno ajeno se trata como inexistente.
-        $customer = $this->visibleCustomers()->where('ulid', $validated['customer_ulid'])->first();
-        if (! $customer instanceof Customer) {
+        $customer = ($validated['customer_ulid'] ?? '') === '' ? null : $this->visibleCustomers()->where('ulid', $validated['customer_ulid'])->first();
+        if (($validated['customer_ulid'] ?? '') !== '' && ! $customer instanceof Customer) {
             $this->addError('customer_ulid', __('quotes.errors.customer_not_found'));
 
             return;
         }
 
-        $leadUlid = Str::isUlid($this->lead_ulid) ? mb_strtolower($this->lead_ulid) : null;
-        $quote = $create->execute($this->actor(), $customer, $validated['title'], $validated['sale_currency'], SalesChannel::from($validated['sales_channel']), $leadUlid);
+        $prospect = $this->prospect();
+        $quote = $create->execute($this->actor(), $customer, $validated['title'], $validated['sale_currency'], SalesChannel::from($validated['sales_channel']), $prospect?->leadUlid, $prospect);
 
         session()->flash('status', __('quotes.created', ['number' => $quote->number]));
         $this->redirectRoute('quotes.show', $quote, navigate: true);
@@ -88,9 +104,20 @@ final class QuoteCreate extends Component
 
         return view('quotes::livewire.quote-create', [
             'selected' => $selected,
+            'prospect' => $this->prospect(),
             'matches' => $matches,
             'channels' => SalesChannel::cases(),
         ])->title(__('quotes.create'))->layoutData(['heading' => __('quotes.create')]);
+    }
+
+    /** Lead abierto y visible desde el que se cotiza; memorizado por request. */
+    private function prospect(): ?LeadProspect
+    {
+        if (! Str::isUlid($this->lead_ulid)) {
+            return null;
+        }
+
+        return once(fn(): ?LeadProspect => app(LeadProspects::class)->prospect($this->actor(), mb_strtolower($this->lead_ulid)));
     }
 
     /** @return Builder<Customer> */

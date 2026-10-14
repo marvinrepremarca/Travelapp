@@ -1,5 +1,19 @@
 <form wire:submit="save" class="flex max-w-page flex-col gap-lg" novalidate>
-    <x-ui.customer-picker :title="__('quotes.fields.customer_ulid')" error="customer_ulid" :selected="$selected" :matches="$matches" :search="$customerSearch" />
+    @if ($prospect && ! $selected)
+        <x-ui.card :title="__('quotes.prospect.title')">
+            <dl class="grid gap-sm md:grid-cols-3">
+                <div><dt class="text-caption text-text-subtle">{{ __('quotes.prospect.name') }}</dt><dd class="font-medium">{{ $prospect->name }}</dd></div>
+                <div><dt class="text-caption text-text-subtle">{{ __('quotes.prospect.email') }}</dt><dd>{{ $prospect->email ?? '—' }}</dd></div>
+                <div><dt class="text-caption text-text-subtle">{{ __('quotes.prospect.phone') }}</dt><dd>{{ $prospect->phone ?? '—' }}</dd></div>
+            </dl>
+            <p class="mt-sm text-caption text-text-subtle">{{ __('quotes.prospect.help') }}</p>
+        </x-ui.card>
+    @endif
+    <x-ui.customer-picker :title="$prospect ? __('quotes.prospect.customer_optional') : __('quotes.fields.customer_ulid')" error="customer_ulid" :selected="$selected" :matches="$matches" :search="$customerSearch">
+        @if ($prospect && $selected)
+            <x-ui.button type="button" variant="ghost" wire:click="useProspect">{{ __('quotes.prospect.use_prospect', ['name' => $prospect->name]) }}</x-ui.button>
+        @endif
+    </x-ui.customer-picker>
 
     <x-ui.card>
         <div class="grid gap-md md:grid-cols-3">

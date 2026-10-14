@@ -242,26 +242,45 @@ it('marks the lead quoted only when a quote created from it is sent', function (
         ->and($won->fresh()?->status)->toBe(LeadStatus::Won);
 });
 
-it('offers to quote from the lead and remembers the lead on the quote', function (): void {
+it('quotes a lead as a prospect without registering a customer', function (): void {
     $agent = agent();
-    $customer = Customer::factory()->ownedBy($agent)->create();
-    $lead = Lead::factory()->ownedBy($agent)->inStatus(LeadStatus::Contacted)->create();
+    $lead = Lead::factory()->ownedBy($agent)->inStatus(LeadStatus::Contacted)->create(['contact_name' => 'Marta Gil', 'email' => 'marta@correo.test', 'phone' => '+57 300 000 0000', 'destination' => 'Cartagena']);
     actingAs($agent);
 
     Livewire::test(LeadShow::class, ['lead' => $lead])
-        ->assertSee(route('customers.create', ['lead' => $lead->ulid]))
+        ->assertSee(route('quotes.create', ['lead' => $lead->ulid]))
         ->assertDontSee(__('crm.leads.move_to', ['status' => LeadStatus::Quoted->label()]));
 
-    $lead->forceFill(['customer_id' => $customer->id])->save();
-    Livewire::test(LeadShow::class, ['lead' => $lead])
-        ->assertSee(route('quotes.create', ['lead' => $lead->ulid, 'customer' => $customer->ulid, 'title' => $lead->quoteTitle(), 'channel' => $lead->channel->value]));
-
-    Livewire::withQueryParams(['lead' => $lead->ulid, 'title' => 'Viaje', 'channel' => $lead->channel->value])
+    Livewire::withQueryParams(['lead' => $lead->ulid])
         ->test(App\Modules\Quotes\Livewire\QuoteCreate::class)
-        ->call('chooseCustomer', $customer->ulid)
+        ->assertSee('Marta Gil')
+        ->assertSee('marta@correo.test')
+        ->assertSet('title', $lead->quoteTitle())
+        ->assertSet('sales_channel', $lead->channel->value)
         ->set('sale_currency', 'COP')
         ->call('save')
         ->assertHasNoErrors();
 
-    expect(App\Modules\Quotes\Models\Quote::query()->sole()->lead_ulid)->toBe($lead->ulid);
+    $quote = App\Modules\Quotes\Models\Quote::query()->sole();
+    expect($quote->customer_id)->toBeNull()
+        ->and($quote->lead_ulid)->toBe($lead->ulid)
+        ->and($quote->recipientName())->toBe('Marta Gil')
+        ->and($quote->prospect_email)->toBe('marta@correo.test')
+        ->and(Customer::query()->count())->toBe(0);
+});
+
+it('uses the customer already linked to the lead', function (): void {
+    $agent = agent();
+    $customer = Customer::factory()->ownedBy($agent)->create();
+    $lead = Lead::factory()->ownedBy($agent)->inStatus(LeadStatus::Contacted)->create(['customer_id' => $customer->id]);
+    actingAs($agent);
+
+    Livewire::withQueryParams(['lead' => $lead->ulid])
+        ->test(App\Modules\Quotes\Livewire\QuoteCreate::class)
+        ->assertSet('customer_ulid', $customer->ulid)
+        ->set('sale_currency', 'COP')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(App\Modules\Quotes\Models\Quote::query()->sole()->customer_id)->toBe($customer->id);
 });

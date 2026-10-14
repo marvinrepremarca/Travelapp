@@ -58,7 +58,7 @@ return [
         'advance' => 'Siguiente paso',
         'quote_card' => 'Cotizar',
         'quote' => 'Crear cotización para este lead',
-        'quote_help' => 'Si el lead aún no es cliente, primero lo registras con sus datos ya cargados. Al enviar la cotización, el lead pasa a Cotizado.',
+        'quote_help' => 'La cotización se precarga con los datos del lead, sin registrarlo como cliente. Al enviarla, el lead pasa a Cotizado.',
         'move_to' => 'Pasar a :status',
         'win_title' => 'Ganar',
         'win_hint' => 'Liga el lead al cliente que compra. Si no existe, créalo primero.',
