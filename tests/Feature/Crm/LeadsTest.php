@@ -249,8 +249,12 @@ it('offers to quote from the lead and remembers the lead on the quote', function
     actingAs($agent);
 
     Livewire::test(LeadShow::class, ['lead' => $lead])
-        ->assertSee(route('quotes.create', ['lead' => $lead->ulid, 'title' => $lead->quoteTitle(), 'channel' => $lead->channel->value]))
+        ->assertSee(route('customers.create', ['lead' => $lead->ulid]))
         ->assertDontSee(__('crm.leads.move_to', ['status' => LeadStatus::Quoted->label()]));
+
+    $lead->forceFill(['customer_id' => $customer->id])->save();
+    Livewire::test(LeadShow::class, ['lead' => $lead])
+        ->assertSee(route('quotes.create', ['lead' => $lead->ulid, 'customer' => $customer->ulid, 'title' => $lead->quoteTitle(), 'channel' => $lead->channel->value]));
 
     Livewire::withQueryParams(['lead' => $lead->ulid, 'title' => 'Viaje', 'channel' => $lead->channel->value])
         ->test(App\Modules\Quotes\Livewire\QuoteCreate::class)

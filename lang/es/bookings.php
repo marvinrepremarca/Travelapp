@@ -120,7 +120,12 @@ return [
         'back_to_booking' => 'Volver al expediente',
         'choose' => 'Elige una opción',
         'no_supplier' => 'Sin proveedor',
-        'country_hint' => 'Código de dos letras (CO, US…).',
+        'catalog_title' => 'Producto del catálogo (opcional)',
+        'catalog_product' => 'Producto propio',
+        'catalog_hint' => 'Llena los datos del servicio. Indica fecha y edades y usa «Calcular neto» para tomarlo de la tarifa de la temporada.',
+        'no_catalog_product' => 'Servicio sin producto del catálogo',
+        'price_from_catalog' => 'Calcular neto',
+        'country_hint' => 'País donde se presta el servicio.',
         'ages_hint' => 'Edades de los pasajeros a la fecha del servicio, separadas por comas (p. ej. 35, 33, 8).',
         'net_hint' => 'Lo que cobra el proveedor, sin margen de la agencia.',
         'fields' => [

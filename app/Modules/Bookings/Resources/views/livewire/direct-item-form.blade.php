@@ -5,6 +5,17 @@
     @if (session('status'))<x-ui.alert :tone="Tone::Success" role="status">{{ session('status') }}</x-ui.alert>@endif
     <p class="text-text-subtle">{{ __('bookings.direct.add_item_intro', ['customer' => $booking->customer->display_name]) }}</p>
 
+    @if ($catalogProducts !== [])
+        <x-ui.card :title="__('bookings.direct.catalog_title')">
+            <div class="flex flex-col gap-md md:flex-row md:items-end">
+                <x-ui.field :label="__('bookings.direct.catalog_product')" for="catalogProduct" :hint="__('bookings.direct.catalog_hint')" class="md:flex-1">
+                    <x-ui.select name="catalogProduct" wire:model.live="catalogProduct" :options="$catalogProducts" :placeholder="__('bookings.direct.no_catalog_product')" hint />
+                </x-ui.field>
+                <x-ui.button type="button" variant="secondary" wire:click="priceFromCatalog" wire:loading.attr="disabled" wire:target="priceFromCatalog">{{ __('bookings.direct.price_from_catalog') }}</x-ui.button>
+            </div>
+        </x-ui.card>
+    @endif
+
     <div class="grid gap-md md:grid-cols-3">
         <x-ui.field :label="__('bookings.direct.item_fields.item.description')" for="item.description" class="md:col-span-2">
             <x-ui.input name="item.description" wire:model="item.description" />
