@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 return [
-    'home' => 'Inicio y guía de puesta en marcha',
+    'home' => 'Inicio',
     'step' => 'Paso :number',
     'stages' => [
         'setup' => [
@@ -65,6 +65,29 @@ return [
         'audit' => ['label' => 'Auditoría', 'hint' => 'Quién cambió qué y cuándo.'],
         'profitability' => ['label' => 'Rentabilidad', 'hint' => 'Venta, costo, margen, comisiones y penalidades por expediente, asesor y sucursal.'],
         'security' => ['label' => 'Mi seguridad', 'hint' => 'Tu contraseña y verificación en dos pasos.'],
+    ],
+    'home_page' => [
+        'title' => 'Inicio',
+        'greeting' => 'Hola, :name',
+        'account_title' => 'Tu cuenta',
+        'email' => 'Correo',
+        'role' => 'Rol',
+        'no_role' => 'Sin rol asignado',
+        'branch' => 'Sucursal',
+        'no_branch' => 'Sin sucursal',
+        'scope' => 'Qué información ves',
+        'scope_help' => [
+            'own' => 'Solo los registros que tienes a tu cargo.',
+            'branch' => 'Los registros de tu sucursal.',
+            'all' => 'Los registros de toda la agencia.',
+        ],
+        'security' => 'Seguridad',
+        'two_factor_on' => 'Verificación en dos pasos activa',
+        'two_factor_off' => 'Verificación en dos pasos inactiva',
+        'manage_security' => 'Configurar seguridad',
+        'shortcuts_title' => 'Lo que puedes hacer',
+        'no_shortcuts' => 'Aún no tienes accesos',
+        'no_shortcuts_help' => 'Pide al Gerente de la agencia que habilite los permisos de tu rol.',
     ],
     'guide' => [
         'title' => 'Guía de puesta en marcha',

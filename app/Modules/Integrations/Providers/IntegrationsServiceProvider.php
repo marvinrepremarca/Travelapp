@@ -18,6 +18,9 @@ use App\Modules\Pricing\Contracts\OfficialExchangeRateSource;
 use App\Modules\Search\Contracts\FlightProvider;
 use App\Modules\Search\Contracts\HotelProvider;
 use App\Modules\Shared\Routing\PathPrefix;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -39,8 +42,14 @@ final class IntegrationsServiceProvider extends ServiceProvider
         $this->app->tag([FakeWhatsAppChannel::class], MessagingChannel::TAG);
     }
 
+    /** Límite por IP del simulador de WhatsApp: es público (sin sesión), así que no puede usarse para inundar la bandeja. */
+    public const SIMULATOR_LIMITER = 'whatsapp-simulator';
+
     public function boot(): void
     {
+        RateLimiter::for(self::SIMULATOR_LIMITER, static fn(Request $request): Limit => Limit::perMinute(config()->integer('travel.communications.simulator_requests_per_minute'))
+            ->by((string) $request->ip()));
+
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'integrations');
         Livewire::component('integrations.whatsapp-simulator', WhatsAppSimulator::class);

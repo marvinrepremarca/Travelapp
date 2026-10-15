@@ -24,18 +24,25 @@ it('hides steps without permission but keeps the numbering', function (): void {
         ->and($stages[0]['number'])->toBe(2);
 });
 
-it('shows the numbered menu and the startup guide on the home page', function (): void {
-    actingAs(userWithRole(Role::AgencyOwner))->get(route('dashboard'))
+it('shows the capabilities home only to those who administer the platform', function (Role $role): void {
+    actingAs(userWithRole($role))->get(route('dashboard'))
         ->assertOk()
-        ->assertSee(__('navigation.guide.title'))
-        ->assertSee('1. ' . __('navigation.stages.setup.title'))
-        ->assertSee(__('navigation.items.agency.hint'))
-        ->assertSee(__('navigation.guide.flow'));
+        ->assertSee(__('capabilities.guide.title'))
+        ->assertDontSee(__('navigation.home_page.shortcuts_title'));
+})->with([Role::AgencyOwner, Role::SystemAdmin]);
 
-    actingAs(agent())->get(route('dashboard'))
+it('shows everyone else a personal home with their account and shortcuts', function (): void {
+    $agent = agent();
+
+    actingAs($agent)->get(route('dashboard'))
         ->assertOk()
-        ->assertDontSee(__('navigation.items.agency.label'))
-        ->assertSee(__('navigation.items.quotes.label'));
+        ->assertDontSee(__('capabilities.guide.title'))
+        ->assertSee(__('navigation.home_page.greeting', ['name' => Illuminate\Support\Str::before($agent->name, ' ')]))
+        ->assertSee($agent->email)
+        ->assertSee(Role::TravelAgent->label())
+        ->assertSee(__('navigation.home_page.scope_help.' . $agent->visibility_scope->value))
+        ->assertSee(route('quotes.index'))
+        ->assertDontSee(__('navigation.items.agency.label'));
 });
 
 it('marks the current page in the menu', function (): void {
