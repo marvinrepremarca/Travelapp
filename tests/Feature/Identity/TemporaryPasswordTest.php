@@ -52,6 +52,8 @@ it('still invites by email when no temporary password is requested', function ()
     actingAs(userWithRole(Role::AgencyOwner));
 
     Livewire::test(UserForm::class)
+        ->assertSet('withTemporaryPassword', true)
+        ->set('withTemporaryPassword', false)
         ->set('name', 'Mario Ruiz')
         ->set('email', 'mario@agencia.test')
         ->set('role', Role::Finance->value)
