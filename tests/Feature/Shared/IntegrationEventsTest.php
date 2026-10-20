@@ -138,3 +138,40 @@ it('rebuilds events with enums, dates and nulls from the outbox', function (): v
     expect($serializer->fromPayload(BookingItemConfirmed::class, $serializer->toPayload($confirmed)))->toEqual($confirmed)
         ->and($serializer->fromPayload(PaymentReceived::class, $serializer->toPayload($received)))->toEqual($received);
 });
+
+it('replays only what happened since the configured start date when a capability is turned on later', function (): void {
+    app(CapabilitySubscriptions::class)->listen(Capability::Compliance, QuoteSent::class, RecordingQuoteListener::class, CatchUpPolicy::Replay);
+    disableCapabilities(Capability::Compliance);
+
+    $this->travelTo(CarbonImmutable::parse('2026-12-31 18:00', config()->string('travel.agency.timezone')));
+    (new QuoteSent('01OLD', 1))->publish();
+    $this->travelTo(CarbonImmutable::parse('2027-01-01 08:00', config()->string('travel.agency.timezone')));
+    (new QuoteSent('01NEW', 1))->publish();
+
+    config()->set('capabilities.replay_since.compliance', '2027-01-01');
+    enableCapabilities(Capability::Compliance);
+    app(CatchUpIntegrationEvents::class)->run();
+
+    expect(RecordingQuoteListener::$handled)->toBe(['01NEW']);
+});
+
+it('replays the whole history when no start date is configured', function (): void {
+    expect(app(Capabilities::class)->replaySince(Capability::Accounting))->toBeNull();
+});
+
+it('reports an invalid start date before deploying', function (string $value): void {
+    config()->set('capabilities.replay_since.accounting', $value);
+
+    expect(app(Capabilities::class)->replaySince(Capability::Accounting))->toBeNull()
+        ->and(app(Capabilities::class)->problems())->toContain(__('capabilities.invalid_replay_since', ['capability' => Capability::Accounting->label(), 'value' => $value]));
+    artisan('capabilities:status --check')->assertFailed();
+})->with(['01/01/2027', '2027-02-30', 'enero']);
+
+it('shows the start date of each capability in the status command', function (): void {
+    config()->set('capabilities.replay_since.accounting', '2027-01-01');
+
+    artisan('capabilities:status')
+        ->expectsOutputToContain('2027-01-01')
+        ->expectsOutputToContain(__('capabilities.status.replay_all'))
+        ->assertSuccessful();
+});

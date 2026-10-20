@@ -39,6 +39,7 @@ return [
         'how_to' => 'Para cambiar las capacidades activas, el administrador técnico ajusta la configuración del despliegue y verifica con la comprobación de capacidades.',
     ],
     'missing_requirement' => ':capability necesita :required, que está apagada',
+    'invalid_replay_since' => 'La fecha de inicio de :capability («:value») no es válida: usa AAAA-MM-DD.',
     'invalid_configuration' => 'Configuración de capacidades inválida: :problems',
     'catch_up' => [
         'done' => 'Eventos pendientes procesados: :count',
@@ -49,6 +50,8 @@ return [
         'requires' => 'Requiere',
         'on' => 'encendida',
         'off' => 'apagada',
+        'replay_since' => 'Reprocesa desde',
+        'replay_all' => 'toda la historia',
         'ok' => 'Configuración de capacidades válida.',
     ],
 ];

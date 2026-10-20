@@ -21,6 +21,25 @@ return [
         'compliance' => (bool) env('CAPABILITY_COMPLIANCE_ENABLED', true),
     ],
 
+    /*
+     * Fecha (AAAA-MM-DD, zona de la agencia) desde la que una capacidad reprocesa lo ocurrido mientras estuvo
+     * apagada. Vacía = toda la historia. Útil al contratar una capacidad tiempo después: p. ej. Contabilidad
+     * desde el 1 de enero, con los saldos anteriores cargados a mano, sin traer las ventas del año pasado.
+     */
+    'replay_since' => [
+        'commercial' => env('CAPABILITY_COMMERCIAL_REPLAY_SINCE'),
+        'quoting' => env('CAPABILITY_QUOTING_REPLAY_SINCE'),
+        'own_product' => env('CAPABILITY_OWN_PRODUCT_REPLAY_SINCE'),
+        'bookings' => env('CAPABILITY_BOOKINGS_REPLAY_SINCE'),
+        'operations' => env('CAPABILITY_OPERATIONS_REPLAY_SINCE'),
+        'collections' => env('CAPABILITY_COLLECTIONS_REPLAY_SINCE'),
+        'accounting' => env('CAPABILITY_ACCOUNTING_REPLAY_SINCE'),
+        'invoicing' => env('CAPABILITY_INVOICING_REPLAY_SINCE'),
+        'messaging' => env('CAPABILITY_MESSAGING_REPLAY_SINCE'),
+        'portals' => env('CAPABILITY_PORTALS_REPLAY_SINCE'),
+        'compliance' => env('CAPABILITY_COMPLIANCE_REPLAY_SINCE'),
+    ],
+
     // Reproceso de eventos pendientes al encender una capacidad (bitácora de integración).
     'catch_up' => [
         'cron' => env('CAPABILITY_CATCH_UP_CRON', '*/5 * * * *'),
