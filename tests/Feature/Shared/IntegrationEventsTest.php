@@ -18,6 +18,7 @@ use App\Modules\Shared\IntegrationEvents\CapabilitySubscriptions;
 use App\Modules\Shared\IntegrationEvents\CatchUpIntegrationEvents;
 use App\Modules\Shared\IntegrationEvents\EventSerializer;
 use App\Modules\Shared\IntegrationEvents\IntegrationEventDelivery;
+use App\Modules\Shared\IntegrationEvents\PruneIntegrationEvents;
 use App\Modules\Shared\IntegrationEvents\StoredIntegrationEvent;
 use App\Modules\Suppliers\Enums\PaymentTerms;
 use App\Modules\Suppliers\Models\Supplier;
@@ -174,4 +175,47 @@ it('shows the start date of each capability in the status command', function ():
         ->expectsOutputToContain('2027-01-01')
         ->expectsOutputToContain(__('capabilities.status.replay_all'))
         ->assertSuccessful();
+});
+
+it('prunes events every subscriber received after the retention period and keeps the rest', function (): void {
+    app(CapabilitySubscriptions::class)->listen(Capability::Compliance, QuoteSent::class, RecordingQuoteListener::class, CatchUpPolicy::Replay);
+    config()->set('capabilities.retention.delivered_days', 90);
+    config()->set('capabilities.retention.pending_days', 730);
+
+    $this->travelTo(CarbonImmutable::parse('2026-01-01 10:00'));
+    (new QuoteSent('01DELIVERED', 1))->publish();
+    disableCapabilities(Capability::Compliance);
+    (new QuoteSent('01PENDING', 1))->publish();
+    enableCapabilities(Capability::Compliance);
+    $this->travelTo(CarbonImmutable::parse('2026-05-01 10:00'));
+    (new QuoteSent('01RECENT', 1))->publish();
+
+    $this->travelTo(CarbonImmutable::parse('2026-06-01 10:00'));
+    artisan('capabilities:prune')->expectsOutputToContain(__('capabilities.prune.done', ['count' => 1]))->assertSuccessful();
+
+    $left = StoredIntegrationEvent::query()->pluck('payload')->map(static fn(array $payload): string => $payload['quoteUlid'])->sort()->values()->all();
+    expect($left)->toBe(['01PENDING', '01RECENT'])
+        ->and(IntegrationEventDelivery::query()->whereNotIn('integration_event_id', StoredIntegrationEvent::query()->pluck('id'))->exists())->toBeFalse();
+});
+
+it('prunes pending events once the pending retention expires', function (): void {
+    app(CapabilitySubscriptions::class)->listen(Capability::Compliance, QuoteSent::class, RecordingQuoteListener::class, CatchUpPolicy::Replay);
+    config()->set('capabilities.retention.pending_days', 730);
+    disableCapabilities(Capability::Compliance);
+
+    $this->travelTo(CarbonImmutable::parse('2024-01-01 10:00'));
+    (new QuoteSent('01OLD', 1))->publish();
+    $this->travelTo(CarbonImmutable::parse('2026-06-01 10:00'));
+    (new QuoteSent('01NEW', 1))->publish();
+
+    expect(app(PruneIntegrationEvents::class)->run(CarbonImmutable::now()))->toBe(1)
+        ->and(StoredIntegrationEvent::query()->sole()->payload['quoteUlid'])->toBe('01NEW');
+});
+
+it('prunes old events nobody listens to', function (): void {
+    $this->travelTo(CarbonImmutable::parse('2026-01-01 10:00'));
+    StoredIntegrationEvent::query()->create(['name' => 'nobody.listens', 'payload' => [], 'occurred_at' => CarbonImmutable::now()]);
+    $this->travelTo(CarbonImmutable::parse('2026-06-01 10:00'));
+
+    expect(app(PruneIntegrationEvents::class)->run(CarbonImmutable::now()))->toBe(1);
 });

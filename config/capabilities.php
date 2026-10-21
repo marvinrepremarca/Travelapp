@@ -46,4 +46,12 @@ return [
         'chunk' => (int) env('CAPABILITY_CATCH_UP_CHUNK', 100),
         'lock_seconds' => (int) env('CAPABILITY_CATCH_UP_LOCK_SECONDS', 120),
     ],
+
+    // Retención de la bitácora de integración: los datos de negocio no se tocan.
+    'retention' => [
+        'delivered_days' => (int) env('CAPABILITY_EVENTS_DELIVERED_RETENTION_DAYS', 90),
+        'pending_days' => (int) env('CAPABILITY_EVENTS_PENDING_RETENTION_DAYS', 730),
+        'cron' => env('CAPABILITY_EVENTS_PRUNE_CRON', '30 3 * * *'),
+        'chunk' => (int) env('CAPABILITY_EVENTS_PRUNE_CHUNK', 500),
+    ],
 ];

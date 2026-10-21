@@ -41,6 +41,9 @@ return [
     'missing_requirement' => ':capability necesita :required, que está apagada',
     'invalid_replay_since' => 'La fecha de inicio de :capability («:value») no es válida: usa AAAA-MM-DD.',
     'invalid_configuration' => 'Configuración de capacidades inválida: :problems',
+    'prune' => [
+        'done' => 'Eventos de integración borrados: :count',
+    ],
     'catch_up' => [
         'done' => 'Eventos pendientes procesados: :count',
     ],
