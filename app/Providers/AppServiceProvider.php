@@ -9,6 +9,7 @@ use App\Modules\Shared\Enums\Capability;
 use App\Modules\Shared\IntegrationEvents\CapabilitySubscriptions;
 use App\Modules\Shared\IntegrationEvents\CatchUpIntegrationEvents;
 use App\Modules\Shared\IntegrationEvents\IntegrationEventOutbox;
+use App\Modules\Shared\IntegrationEvents\PruneIntegrationEvents;
 use App\Modules\Shared\Routing\PathPrefix;
 use App\Modules\Shared\Support\IsoCatalog;
 use Carbon\CarbonImmutable;
@@ -76,6 +77,12 @@ final class AppServiceProvider extends ServiceProvider
             $schedule->call(static fn(): int => app(CatchUpIntegrationEvents::class)->run())
                 ->name('capabilities:catch-up')
                 ->cron(config()->string('capabilities.catch_up.cron'))
+                ->withoutOverlapping()
+                ->onOneServer();
+
+            $schedule->call(static fn(): int => app(PruneIntegrationEvents::class)->run(CarbonImmutable::now()))
+                ->name('capabilities:prune')
+                ->cron(config()->string('capabilities.retention.cron'))
                 ->withoutOverlapping()
                 ->onOneServer();
         });

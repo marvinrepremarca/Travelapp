@@ -134,3 +134,18 @@ Pasos recomendados al contratar una capacidad nueva:
 3. `php artisan capabilities:status --check` y `php artisan optimize`.
 4. Opcional: `php artisan capabilities:catch-up` para procesar de inmediato.
 
+
+## 8. Retención de la bitácora de eventos
+
+Los eventos entre capacidades se guardan en `integration_events` (con sus entregas en `integration_event_deliveries`). Para que no crezcan sin límite, la tarea diaria `capabilities:prune` borra:
+
+| Qué | Cuándo | Variable (días) |
+|---|---|---|
+| Eventos que ya recibieron **todas** las capacidades que los usan | Pasados 90 días | `CAPABILITY_EVENTS_DELIVERED_RETENTION_DAYS` |
+| Eventos que nadie escucha en este despliegue | Pasados 90 días | `CAPABILITY_EVENTS_DELIVERED_RETENTION_DAYS` |
+| Eventos **pendientes** de una capacidad apagada | Pasados 730 días | `CAPABILITY_EVENTS_PENDING_RETENTION_DAYS` |
+
+- **Los datos de negocio no se tocan** (ventas, pagos, facturas, expedientes viven en sus propias tablas). Solo se limpian los mensajes entre capacidades.
+- Consecuencia del plazo de pendientes: una capacidad que se enciende después de 730 días apagada **ya no recibe** lo ocurrido antes de ese plazo. Si la agencia la contrata tarde, combínalo con la fecha de inicio (sección 7).
+- Horario: `CAPABILITY_EVENTS_PRUNE_CRON` (por defecto 3:30 a. m.); lotes de `CAPABILITY_EVENTS_PRUNE_CHUNK`.
+- Ejecución manual: `php artisan capabilities:prune`.
