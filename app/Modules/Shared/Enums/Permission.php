@@ -31,6 +31,7 @@ enum Permission: string
     case ApprovalsDataExports = 'workflow.approvals.data_exports';
     case OperationsManage = 'operations.manage';
     case ComplianceManage = 'compliance.manage';
+    case CapabilitiesView = 'organization.capabilities.view';
     case SuppliersView = 'suppliers.view';
     case CatalogView = 'catalog.view';
     case PricingView = 'pricing.view';

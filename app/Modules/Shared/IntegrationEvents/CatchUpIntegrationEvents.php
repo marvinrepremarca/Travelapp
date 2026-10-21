@@ -50,8 +50,12 @@ final readonly class CatchUpIntegrationEvents
     /** @return Builder<StoredIntegrationEvent> */
     private function pending(Subscription $subscription): Builder
     {
+        $since = $this->capabilities->replaySince($subscription->capability);
+
         return StoredIntegrationEvent::query()
             ->where('name', $subscription->event::eventName())
+            // Lo anterior a la fecha de inicio contratada no se trae: la capacidad arranca limpia desde ahí.
+            ->when($since instanceof \Carbon\CarbonImmutable, static fn(Builder $query) => $query->where('occurred_at', '>=', $since))
             ->whereNotExists(static fn(QueryBuilder $query) => $query->selectRaw('1')
                 ->from('integration_event_deliveries')
                 ->whereColumn('integration_event_deliveries.integration_event_id', 'integration_events.id')

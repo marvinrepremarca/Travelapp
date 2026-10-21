@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Modules\Integrations\Http\Controllers\FakeCheckoutController;
 use App\Modules\Integrations\Livewire\WhatsAppSimulator;
+use App\Modules\Integrations\Providers\IntegrationsServiceProvider;
 use App\Modules\Shared\Capabilities\Capabilities;
 use App\Modules\Shared\Enums\Capability;
 use Illuminate\Support\Facades\Route;
@@ -17,5 +18,5 @@ Route::middleware(['web', 'signed', Capabilities::middleware(Capability::Collect
         Route::post('/complete', [FakeCheckoutController::class, 'complete'])->name('.complete');
     });
 
-// Simulador de WhatsApp de la demo (se desactiva con TRAVEL_WHATSAPP_SIMULATOR=false).
-Route::middleware(['web', 'auth', Capabilities::middleware(Capability::Messaging)])->get('/integrations/whatsapp-simulator', WhatsAppSimulator::class)->name('integrations.whatsapp-simulator');
+// Simulador de WhatsApp de la demo, sin sesión: quien escribe es un interesado, no un usuario. Se desactiva con TRAVEL_WHATSAPP_SIMULATOR=false.
+Route::middleware(['web', 'throttle:' . IntegrationsServiceProvider::SIMULATOR_LIMITER, Capabilities::middleware(Capability::Messaging)])->get('/integrations/whatsapp-simulator', WhatsAppSimulator::class)->name('integrations.whatsapp-simulator');

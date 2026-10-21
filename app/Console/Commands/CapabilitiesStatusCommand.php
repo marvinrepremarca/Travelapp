@@ -18,11 +18,12 @@ final class CapabilitiesStatusCommand extends Command
     public function handle(Capabilities $capabilities): int
     {
         $this->table(
-            [__('capabilities.status.capability'), __('capabilities.status.state'), __('capabilities.status.requires')],
+            [__('capabilities.status.capability'), __('capabilities.status.state'), __('capabilities.status.requires'), __('capabilities.status.replay_since')],
             array_map(static fn(Capability $c): array => [
                 $c->label(),
                 __($capabilities->enabled($c) ? 'capabilities.status.on' : 'capabilities.status.off'),
                 implode(', ', array_map(static fn(Capability $r): string => $r->label(), $c->requires())),
+                $capabilities->replaySince($c)?->setTimezone(config()->string('travel.agency.timezone'))->toDateString() ?? __('capabilities.status.replay_all'),
             ], Capability::cases()),
         );
 

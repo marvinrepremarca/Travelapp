@@ -7,7 +7,9 @@ namespace App\Modules\Integrations\Livewire;
 use App\Modules\Communications\Contracts\ConversationTranscripts;
 use App\Modules\Communications\Contracts\InboundMessages;
 use App\Modules\Integrations\Adapters\FakeWhatsApp\FakeWhatsAppChannel;
+use App\Modules\Integrations\Providers\IntegrationsServiceProvider;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -16,7 +18,7 @@ use Livewire\Component;
  * Simulador de WhatsApp de la demo: escribe como si fueras el cliente. Cada mensaje entra por el mismo
  * webhook firmado que usaría el proveedor real, así que el sistema no sabe que es una simulación.
  */
-#[Layout('components.layouts.backoffice')]
+#[Layout('components.layouts.guest')]
 final class WhatsAppSimulator extends Component
 {
     #[Url(except: '')]
@@ -40,6 +42,15 @@ final class WhatsAppSimulator extends Component
             'name' => ['nullable', 'string', 'max:100'],
             'text' => ['required', 'string', 'max:' . config()->integer('travel.communications.max_message_length')],
         ], attributes: ['phone' => __('integrations.whatsapp.phone'), 'name' => __('integrations.whatsapp.name'), 'text' => __('integrations.whatsapp.text')]);
+
+        // Los envíos viajan por /livewire/update (no por la ruta): se limita aquí con el mismo cupo por IP.
+        $key = IntegrationsServiceProvider::SIMULATOR_LIMITER . ':' . request()->ip();
+        if (RateLimiter::tooManyAttempts($key, config()->integer('travel.communications.simulator_requests_per_minute'))) {
+            $this->addError('text', __('integrations.whatsapp.too_many'));
+
+            return;
+        }
+        RateLimiter::hit($key);
 
         $webhook = $channel->webhookFor($this->phone, $this->text, $this->name !== '' ? $this->name : null);
         $inbound->accept(FakeWhatsAppChannel::KEY, $webhook['body'], $webhook['headers']);

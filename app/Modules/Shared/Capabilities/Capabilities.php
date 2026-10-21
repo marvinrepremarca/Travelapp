@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Modules\Shared\Capabilities;
 
 use App\Modules\Shared\Enums\Capability;
+use Carbon\CarbonImmutable;
+use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 
@@ -20,12 +22,35 @@ final class Capabilities
 
     private const LIST_SEPARATOR = ',';
 
+    private const REPLAY_SINCE_FORMAT = '!Y-m-d';
+
     /** @var array<string, bool>|null */
     private ?array $states = null;
 
     public function enabled(Capability $capability): bool
     {
         return $this->states()[$capability->value];
+    }
+
+    /**
+     * Instante (UTC) desde el que la capacidad reprocesa eventos al encenderse; null = toda la historia.
+     * La fecha se interpreta al inicio del día en la zona de la agencia.
+     */
+    public function replaySince(Capability $capability): ?CarbonImmutable
+    {
+        $value = $this->replaySinceValue($capability);
+        if ($value === null) {
+            return null;
+        }
+
+        try {
+            $date = CarbonImmutable::createFromFormat(self::REPLAY_SINCE_FORMAT, $value, config()->string('travel.agency.timezone'));
+        } catch (InvalidFormatException) {
+            // Fecha mal escrita: se reporta en problems() y el despliegue no arranca.
+            return null;
+        }
+
+        return $date instanceof CarbonImmutable && $date->format('Y-m-d') === $value ? $date->utc() : null;
     }
 
     /**
@@ -37,6 +62,10 @@ final class Capabilities
     {
         $problems = [];
         foreach (Capability::cases() as $capability) {
+            if ($this->replaySinceValue($capability) !== null && ! $this->replaySince($capability) instanceof CarbonImmutable) {
+                $problems[] = __('capabilities.invalid_replay_since', ['capability' => $capability->label(), 'value' => $this->replaySinceValue($capability)]);
+            }
+
             if (! $this->enabled($capability)) {
                 continue;
             }
@@ -113,6 +142,13 @@ final class Capabilities
     public static function routeUrl(string $name, mixed $parameters = []): ?string
     {
         return app(self::class)->allowsRoute($name) ? route($name, $parameters) : null;
+    }
+
+    private function replaySinceValue(Capability $capability): ?string
+    {
+        $value = config("capabilities.replay_since.{$capability->value}");
+
+        return is_string($value) && trim($value) !== '' ? trim($value) : null;
     }
 
     /** @return array<string, bool> */

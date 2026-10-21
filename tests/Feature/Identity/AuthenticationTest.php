@@ -63,7 +63,7 @@ it('throttles repeated failed logins', function (): void {
 it('shows the dashboard to authenticated users', function (): void {
     actingAs(agent())->get(route('dashboard'))
         ->assertOk()
-        ->assertSee(__('navigation.guide.title'));
+        ->assertSee(__('navigation.home_page.account_title'));
 });
 
 it('logs out', function (): void {

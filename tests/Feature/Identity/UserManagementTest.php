@@ -96,6 +96,7 @@ it('invites a user who defines their own password', function (): void {
     actingAs(agencyOwner());
 
     Livewire::test(UserForm::class)
+        ->set('withTemporaryPassword', false)
         ->set('name', 'Laura Gómez')
         ->set('email', 'Laura@Agencia.test')
         ->set('role', Role::TravelAgent->value)

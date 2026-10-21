@@ -18,6 +18,7 @@ return [
     ],
     'whatsapp' => [
         'title' => 'Simulador de WhatsApp (demo)',
+        'too_many' => 'Enviaste muchos mensajes seguidos. Espera un minuto e inténtalo de nuevo.',
         'hint' => 'Escribe como si fueras el cliente. Cada mensaje llega al sistema por el mismo webhook firmado que usaría WhatsApp real; las respuestas del bot y del asesor aparecen aquí.',
         'phone' => 'Teléfono del cliente',
         'name' => 'Nombre en WhatsApp',

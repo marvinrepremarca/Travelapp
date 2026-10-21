@@ -188,6 +188,7 @@ return [
         'simulator_enabled' => (bool) env('TRAVEL_WHATSAPP_SIMULATOR', true),
         'simulator_default_phone' => env('TRAVEL_WHATSAPP_SIMULATOR_PHONE', '+57 300 123 4567'),
         'simulator_history' => (int) env('TRAVEL_WHATSAPP_SIMULATOR_HISTORY', 50),
+        'simulator_requests_per_minute' => (int) env('TRAVEL_WHATSAPP_SIMULATOR_REQUESTS_PER_MINUTE', 30),
         // Recordatorio de saldo: días antes de la fecha límite de pago y hora del envío diario.
         'balance_reminder_days_before' => (int) env('TRAVEL_BALANCE_REMINDER_DAYS_BEFORE', 3),
         'balance_reminder_time' => env('TRAVEL_BALANCE_REMINDER_TIME', '09:00'),

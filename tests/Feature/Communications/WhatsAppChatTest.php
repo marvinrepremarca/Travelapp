@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 use function Pest\Laravel\postJson;
 
 const CUSTOMER_PHONE = '+57 300 555 1234';
@@ -269,4 +270,25 @@ it('goes from the chat to the customer record when quoting is off', function ():
         ->assertSee(__('communications.open_customer'))
         ->call('quote')
         ->assertRedirect(route('customers.show', $customer->ulid));
+});
+
+it('lets a prospect without an account use the simulator', function (): void {
+    get(route('integrations.whatsapp-simulator'))->assertOk()->assertSee(__('integrations.whatsapp.title'));
+
+    Livewire::test(WhatsAppSimulator::class)
+        ->set('phone', CUSTOMER_PHONE)
+        ->set('text', 'Hola, quiero ir a Cartagena')
+        ->call('send')
+        ->assertHasNoErrors()
+        ->assertSee('Hola, quiero ir a Cartagena');
+});
+
+it('limits how many messages the public simulator accepts per minute', function (): void {
+    config()->set('travel.communications.simulator_requests_per_minute', 1);
+
+    Livewire::test(WhatsAppSimulator::class)
+        ->set('phone', CUSTOMER_PHONE)
+        ->set('text', 'Primero')->call('send')->assertHasNoErrors()
+        ->set('text', 'Segundo')->call('send')
+        ->assertHasErrors(['text' => __('integrations.whatsapp.too_many')]);
 });

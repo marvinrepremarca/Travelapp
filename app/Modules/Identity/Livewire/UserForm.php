@@ -39,7 +39,7 @@ final class UserForm extends Component
     public string $visibility_scope = '';
 
     /** Alta sin correo: el sistema genera una contraseña temporal y el administrador la entrega en persona. */
-    public bool $withTemporaryPassword = false;
+    public bool $withTemporaryPassword = true;
 
     /**
      * Contraseña temporal recién generada, mostrada una sola vez. Es protegida (no pública) para que
